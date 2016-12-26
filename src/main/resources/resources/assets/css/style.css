@@ -1,0 +1,30 @@
+@import url(http://fonts.googleapis.com/earlyaccess/notosanskr.css);
+@import url(http://fonts.googleapis.com/earlyaccess/jejugothic.css);
+*{
+	font-family: 'Noto Sans KR';
+}
+.card-header{
+	border-bottom:1px solid #EEEEEE;
+	padding:15px;
+}
+.p-5{
+	padding:5px;
+}
+.text-tag{
+	margin-left:5px;
+}
+.collection-title{
+	color:#777;
+}
+.collection-item.avatar{
+	padding:15px;
+}
+.logo{
+	margin-left:20px;
+}
+.input-field input[type=search]{
+	height:64px;
+}
+.hover:hover{
+	cursor:pointer;
+}

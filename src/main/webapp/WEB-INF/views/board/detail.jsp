@@ -1,0 +1,143 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+    <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+    <%@ taglib uri="http://java.sun.com/jstl/core_rt" prefix="c" %>
+    <%@ taglib prefix="sec"
+	uri="http://www.springframework.org/security/tags"%>
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<title>게시판 자세히 보기</title>
+
+<!--Import Google Icon Font-->
+<link href="http://fonts.googleapis.com/icon?family=Material+Icons"
+	rel="stylesheet">
+<!-- Compiled and minified CSS -->
+<link rel="stylesheet"	href="https://cdnjs.cloudflare.com/ajax/libs/normalize/5.0.0/normalize.min.css">
+<link rel="stylesheet"	href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.8/css/materialize.min.css">
+	
+<!-- Compiled and minified JavaScript -->
+<script	src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.8/js/materialize.min.js"></script>
+
+<link rel="stylesheet"	href="/assets/css/style.css">
+</head>
+<body>
+	<!-- 게시물 컨트롤러 만들기 -->
+	<div class="container">
+		<ul class="collection">
+		    <li class="collection-item avatar">
+		      <img src="${content.user.thumbnail}" alt="" class="circle">
+		      <span class="title">${content.user.nickname}</span>
+		      <p>${content.title}</p>
+		      <p>
+		      	${content.description}
+		      </p>
+		      <div class="secondary-content"><a href="#!"><i class="material-icons grey-text text-darken-2">settings</i></a>
+		      <a href="#!"><i class="material-icons grey-text text-darken-2">delete_forever</i></a>
+		      </div>
+		      <br>
+		      <p class="right-align"><span class="chip transparent red-text text-lighten-2">답변대기중</span><span class="chip transparent"><fmt:formatDate value="${content.created}" pattern="yyyy년 MM월 dd일 HH시"/></span></p>
+		      <p class="right-align">
+
+				 <span class="chip red lighten-2 white-text">태그부분</span>
+		      </p>
+		    </li>
+		  </ul>
+		  <sec:authorize access="isAnonymous()">
+		  	<div class="collection">
+			<div class="collection-item center">
+				<a>로그인</a> 하셔야 답변을 다실 수 있습니다.
+			</div>
+			</div>
+		
+		  </sec:authorize>
+		  <sec:authorize access="isAuthenticated()">
+		  <sec:authentication var="user" property="principal"/>
+		<div class="collection">
+			<div class="collection-item">
+		    	<span class="chip transparent">
+					<img src="${user.thumbnail}" alt="Contact Person">
+					    ${user.nickname}
+				</span>
+			<div class="input-field">
+				<input id="c_content" name="c_content" type="text" />
+				<label class="active" for="c_content">내용을 작성해주시기 바랍니다.</label>
+			</div>
+			<div class="right-align"><button class="btn red lighten-2 white-text">답변하기</button></div>
+		    </div>
+		</div>
+		</sec:authorize>
+		
+		<div class="collection">
+			<div class="collection-item">
+		    	<span class="chip transparent right"><a class="grey-text">2016년 12월 22일</a>&nbsp;<a href="#" class="blue-text">수정</a>&nbsp;<a href="#" class="blue-text">삭제</a></span>
+		    	<span class="chip transparent">
+					<img src="/assets/img/user-star.png" alt="Contact Person">
+					    Jane Doe
+				</span>
+				<br>
+				<span class="collection-title">스프링 프레임워크 질문합니다.</span>
+		    </div>
+	  </div>
+	  <div class="center">
+	  	<button class="btn red lighten-2" onclick="window.close();">닫기</button>
+	  </div>
+	</div>
+	<div id="preloader" class="fixed-action-btn">
+	<div class="preloader-wrapper active">
+      <div class="spinner-layer spinner-blue">
+        <div class="circle-clipper left">
+          <div class="circle"></div>
+        </div><div class="gap-patch">
+          <div class="circle"></div>
+        </div><div class="circle-clipper right">
+          <div class="circle"></div>
+        </div>
+      </div>
+
+      <div class="spinner-layer spinner-red">
+        <div class="circle-clipper left">
+          <div class="circle"></div>
+        </div><div class="gap-patch">
+          <div class="circle"></div>
+        </div><div class="circle-clipper right">
+          <div class="circle"></div>
+        </div>
+      </div>
+
+      <div class="spinner-layer spinner-yellow">
+        <div class="circle-clipper left">
+          <div class="circle"></div>
+        </div><div class="gap-patch">
+          <div class="circle"></div>
+        </div><div class="circle-clipper right">
+          <div class="circle"></div>
+        </div>
+      </div>
+
+      <div class="spinner-layer spinner-green">
+        <div class="circle-clipper left">
+          <div class="circle"></div>
+        </div><div class="gap-patch">
+          <div class="circle"></div>
+        </div><div class="circle-clipper right">
+          <div class="circle"></div>
+        </div>
+      </div>
+    </div>
+	</div>
+<script type="text/javascript">
+$(document).ready(function() {
+	$('.chips-placeholder').material_chip({
+	    placeholder: 'Enter a tag',
+	    secondaryPlaceholder: 'Enter a tag',
+	  });
+	$('#preloader').hide();
+  });
+</script>
+</body>
+</html>
