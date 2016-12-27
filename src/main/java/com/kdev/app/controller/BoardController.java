@@ -29,6 +29,8 @@ import com.kdev.app.domain.BoardDTO;
 import com.kdev.app.domain.BoardVO;
 import com.kdev.app.domain.UserVO;
 import com.kdev.app.exception.BoardNotFoundException;
+import com.kdev.app.exception.ExceptionResponse;
+import com.kdev.app.exception.ValidException;
 import com.kdev.app.service.BoardRepositoryService;
 import com.kdev.app.service.UserRepositoryService;
 
@@ -65,9 +67,16 @@ public class BoardController {
 		
 		BoardVO boardVO = boardRepositoryService.findOne(id);
 		
-		if(boardVO == null)
-			return new ResponseEntity<Object>(null, HttpStatus.NOT_FOUND);
-		
+		/**
+		 * 에러 처리 방법 1
+		 */
+		if(boardVO == null){
+			ExceptionResponse response = new ExceptionResponse();
+			response.setRequest("요청 게시물 번호 : "+id);
+			response.setResponse("해당 번호의 게시물을 찾을 수 없습니다.");
+			response.setHttpStatus("404");
+			return new ResponseEntity<Object>(response, HttpStatus.NOT_FOUND);
+		}
 		return new ResponseEntity<Object>(boardVO, HttpStatus.OK);
 	}
 	
@@ -79,8 +88,9 @@ public class BoardController {
 	@Secured(value="ROLE_USER")
 	@RequestMapping(value="/board", method=RequestMethod.POST, produces=MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Object> createBoard(@RequestBody @Valid BoardDTO.Create createBoard, BindingResult result, Principal principal){
+		
 		if(result.hasErrors()){
-			return new ResponseEntity<Object>(result.getAllErrors().toString(), HttpStatus.BAD_REQUEST);
+			throw new ValidException();
 		}
 		UserVO userVO = userRepositroyService.findUserByEmail(principal.getName());
 		createBoard.setUser(userVO);
