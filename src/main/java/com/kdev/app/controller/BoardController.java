@@ -28,6 +28,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import com.kdev.app.domain.BoardDTO;
 import com.kdev.app.domain.BoardVO;
 import com.kdev.app.domain.UserVO;
+import com.kdev.app.exception.BoardNotFoundException;
 import com.kdev.app.service.BoardRepositoryService;
 import com.kdev.app.service.UserRepositoryService;
 
@@ -54,7 +55,8 @@ public class BoardController {
 	public String findBoardOne(@PathVariable int id, Model model){
 		BoardVO boardVO = boardRepositoryService.findOne(id);	
 		if(boardVO == null)
-			return "board/form";
+			throw new BoardNotFoundException("게시물을 찾을 수 없습니다.");
+		model.addAttribute("content", boardVO);
 		return "board/detail";
 	}
 	
@@ -121,11 +123,15 @@ public class BoardController {
 		BoardVO boardVO = boardRepositoryService.findOne(id);
 		
 		if(!(boardVO.getUser().getId().equals(userVO.getId())))
-			return new ResponseEntity<Object>(null, HttpStatus.FORBIDDEN);
+			return new ResponseEntity<Object>(update, HttpStatus.FORBIDDEN);
 		
-		update.setId(id);
-		update.setUser(userVO);
-		BoardVO updated = boardRepositoryService.update(update);
+		boardVO.setCategory(update.getCategory());
+		boardVO.setDescription(update.getDescription());
+		boardVO.setTitle(update.getTitle());
+		boardVO.setTags(update.getTags());
+
+		BoardVO updated = boardRepositoryService.update(boardVO);
+		updated.setCreated(boardVO.getCreated());
 		return new ResponseEntity<Object>(updated, HttpStatus.ACCEPTED);
 	}
 	
@@ -142,10 +148,10 @@ public class BoardController {
 		BoardVO boardVO = boardRepositoryService.findOne(id);
 		
 		if(!(boardVO.getUser().getId().equals(userVO.getId())))
-			return new ResponseEntity<Object>(null, HttpStatus.FORBIDDEN);
+			return new ResponseEntity<Object>(boardVO, HttpStatus.FORBIDDEN);
 		
 		boardRepositoryService.delete(id);
-		return new ResponseEntity<Object>(null, HttpStatus.ACCEPTED);
+		return new ResponseEntity<Object>(boardVO, HttpStatus.ACCEPTED);
 		
 	}
 }

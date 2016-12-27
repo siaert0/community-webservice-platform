@@ -13,12 +13,17 @@
 	      <a href="${pageContext.request.contextPath}/login"><span class="white-text name">로그인</span></a><br>
 	  </sec:authorize>
       <sec:authorize access="isAuthenticated()">
-      	  <a href="${pageContext.request.contextPath}/settings"><img class="circle" src="${user.thumbnail}" style="margin:0 auto;"></a>
-	      <a href="#"><span class="white-text name">${user.nickname}</span></a>
+      	  <a><img class="circle" src="${user.thumbnail}" style="margin:0 auto;"></a>
+	      <a><span class="white-text name">${user.nickname}</span></a>
 	      <form name="logoutform" action="/logout"	method="post">
     		<input type="hidden"  name="${_csrf.parameterName}"	value="${_csrf.token}"/>
     	  </form>
 	      <a href="#" onclick="logoutform.submit();"><span class="white-text email">로그아웃</span></a>
       </sec:authorize>
     </div></li>
+    <li><a href="#"><i class="material-icons">home</i>홈</a></li>
+    <li><div class="divider"></div></li>
+    <li><a class="subheader">IT 관련 사이트</a></li>
+    <li><a href="http://stackoverflow.com/" target="_blank"><i class="material-icons">link</i>스택 오버플로우</a></li>
+    <li><a href="http://okky.kr/" target="_blank"><i class="material-icons">link</i>OKKY</a></li>
 </ul>

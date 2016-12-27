@@ -1,8 +1,10 @@
 package com.kdev.app.controller;
 
+import java.security.Principal;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 
 import org.modelmapper.ModelMapper;
@@ -12,6 +14,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.social.connect.Connection;
 import org.springframework.social.connect.ConnectionKey;
 import org.springframework.social.connect.ConnectionRepository;
@@ -21,8 +26,8 @@ import org.springframework.social.kakao.api.KakaoProfile;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -30,8 +35,8 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.SessionAttributes;
 
 import com.kdev.app.domain.UserDTO;
+import com.kdev.app.domain.UserDetailsVO;
 import com.kdev.app.domain.UserVO;
-import com.kdev.app.exception.EmailDuplicatedException;
 import com.kdev.app.service.UserRepositoryService;
 
 /**
@@ -67,6 +72,18 @@ public class UserController {
 		org.springframework.social.facebook.api.User facebookUser = facebook.fetchObject("me", org.springframework.social.facebook.api.User.class, fields);
 		UserDTO.Create user = new UserDTO.Create();
 		
+		//가입 여부 확인
+		UserVO isUser = userRepositroyService.findUserById(facebookUser.getId());
+		if(isUser != null){
+			if(!isUser.getEmail().equals("")){
+				//가입 되있을 경우 로그인 처리
+				UserDetailsVO userDetailsVO = new UserDetailsVO(isUser);
+				Authentication authentication = new UsernamePasswordAuthenticationToken(userDetailsVO, null, userDetailsVO.getAuthorities());
+				SecurityContextHolder.getContext().setAuthentication(authentication);
+				return "redirect:/";
+			}
+		}
+		
 		user.setId(facebookUser.getId());
 		user.setNickname(facebookUser.getName());
 		user.setThumbnail("https://graph.facebook.com/"+facebookUser.getId()+"/picture");
@@ -85,7 +102,19 @@ public class UserController {
 		}
 		kakao = connection.getApi();
 		KakaoProfile KakaoUser = kakao.userOperation().getUserProfile();
+		
+		//가입 여부 확인
+		UserVO isUser = userRepositroyService.findUserById(String.valueOf(KakaoUser.getId()));
 		UserDTO.Create user = new UserDTO.Create();
+		if(isUser != null){
+			if(!isUser.getEmail().equals(null)){
+				//가입 되있을 경우 로그인 처리
+				UserDetailsVO userDetailsVO = new UserDetailsVO(isUser);
+				Authentication authentication = new UsernamePasswordAuthenticationToken(userDetailsVO, null, userDetailsVO.getAuthorities());
+				SecurityContextHolder.getContext().setAuthentication(authentication);
+				return "redirect:/";
+			}
+		}		
 		
 		user.setId(String.valueOf(KakaoUser.getId()));
 		user.setNickname(KakaoUser.getProperties().getNickname());
@@ -122,4 +151,16 @@ public class UserController {
 		map.put("responseMessage", "해당 이메일은 사용가능 합니다.");
 		return new ResponseEntity<Object>(map,HttpStatus.OK);
 	}
+	
+	@RequestMapping(value="/user/{id}", method = RequestMethod.DELETE, produces=MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<Object> delete(@PathVariable String id, Principal principal, HttpSession session){
+		UserDetailsVO userDetailsVO = (UserDetailsVO)principal;
+		if(!userDetailsVO.getId().equals(id)){
+			return new ResponseEntity<Object>(HttpStatus.FORBIDDEN);
+		}
+		userRepositroyService.delete(id);
+		session.invalidate();
+		return new ResponseEntity<Object>(HttpStatus.OK);
+	}
+	
 }

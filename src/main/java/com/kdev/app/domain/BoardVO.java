@@ -46,7 +46,7 @@ public class BoardVO {
 	@PrimaryKeyJoinColumn(name = "userid", referencedColumnName = "id")
     private UserVO user;
 	
-	@OneToMany(fetch=FetchType.EAGER, cascade = CascadeType.ALL)
-	@JoinColumn(name = "board_id")
+	@OneToMany(fetch=FetchType.EAGER)
+	@JoinColumn(name = "boardid")
 	private Collection<CommentVO> comments;
 }

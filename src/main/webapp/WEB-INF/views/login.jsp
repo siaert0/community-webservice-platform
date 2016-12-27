@@ -32,6 +32,9 @@ header, article, footer {
         	<c:if test="${not empty SPRING_SECURITY_LAST_EXCEPTION}">
         		<p class="red-text">아이디 또는 비밀번호가 올바르지 않습니다. 다시 시도해주세요</p>
         	</c:if>
+        	<c:if test="${not empty USER_WITHDRAW_EXCEPTION}">
+        		<p class="red-text">${USER_WITHDRAW_EXCEPTION}</p>
+        	</c:if>
         </div>
         <br>
 	    <div class="input-field col s12 l5">

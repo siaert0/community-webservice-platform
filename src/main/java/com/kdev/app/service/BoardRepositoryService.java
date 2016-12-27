@@ -13,12 +13,16 @@ import com.kdev.app.domain.UserVO;
 import com.kdev.app.exception.NotCreatedException;
 import com.kdev.app.exception.UserNotFoundException;
 import com.kdev.app.repository.BoardRepository;
+import com.kdev.app.repository.CommentRepository;
 
 @Service
 @Transactional
 public class BoardRepositoryService {
 	@Autowired
 	private BoardRepository boardRepository;
+	
+	@Autowired
+	private CommentRepository commentRepository;
 	
 	@Autowired 
 	ModelMapper modelMapper;
@@ -44,17 +48,13 @@ public class BoardRepositoryService {
 		return boardRepository.findAllByUser(userVO, pageable);
 	}
 	
-	public BoardVO update(BoardDTO.Update update){
-		return boardRepository.saveAndFlush(modelMapper.map(update, BoardVO.class));
+	public BoardVO update(BoardVO update){
+		return boardRepository.saveAndFlush(update);
 	}
 	
-	public boolean delete(int id){
-		try{
-			boardRepository.delete(id);
-		}catch (IllegalArgumentException e) {
-			return false;
-		}
-		return true;
+	public void delete(int id){
+		commentRepository.deleteByboardid(id);
+		boardRepository.delete(id);
 	}
 	
 	public BoardVO findOne(int id){

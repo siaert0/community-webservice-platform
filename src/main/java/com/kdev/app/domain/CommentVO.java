@@ -39,6 +39,6 @@ public class CommentVO {
 	@PrimaryKeyJoinColumn(name = "userid", referencedColumnName = "id")
     private UserVO user;
 	
-	@Column(name = "board_id")
-	private int board_id;
+	@Column(name = "boardid")
+	private int boardid;
 }

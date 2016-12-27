@@ -49,6 +49,7 @@
 				<div id="q_tags" class="chips chips-placeholder"></div>
 			</div>
 			<div class="input-field col s12 right-align">
+				<a class="waves-effect waves-light btn btn-flat" onclick="history.back();">뒤로가기</a>
 				<a class="waves-effect waves-light btn btn-flat" onclick="board_post();"><i class="material-icons">send</i></a>
 			</div>
 		</div>

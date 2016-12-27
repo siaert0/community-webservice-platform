@@ -35,7 +35,7 @@
 	}
 </style>
 </head>
-<body  id="BoardController" ng-controller="BoardController">
+<body id="BoardController" ng-controller="BoardController">
 <sec:authentication var="user" property="principal"/>
 	<header>
 		<div class="navbar-fixed">

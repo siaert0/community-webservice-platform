@@ -52,7 +52,7 @@ header, article, footer {
           <button type="button" class="btn" onclick="checkByEmail();">중복확인</button>
         </div>
         <div class="input-field col s12">
-          <input id="password" type="text" class="validate" placeholder="" value="">
+          <input id="password" type="password" class="validate" placeholder="" value="">
           <label for="password">비밀번호</label>
         </div>
         <div class="input-field col s12">

@@ -68,4 +68,10 @@ public class UserRepositoryService implements UserDetailsService {
 		
 		return new UserDetailsVO(findUser);
 	}
+	
+	public void delete(String id){
+		UserVO userVO = userRepository.findById(id);
+		userVO.setEmail(null);
+		userRepository.save(userVO);
+	}
 }
