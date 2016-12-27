@@ -1,34 +1,32 @@
-<%@ page language="java" contentType="text/html; charset=UTF-8"
-    pageEncoding="UTF-8"%>
-<%@ taglib prefix="sec"
-	uri="http://www.springframework.org/security/tags"%>
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags"%>
 <sec:authentication var="user" property="principal"/>
 <!DOCTYPE html>
 <html>
 <head>
+<!-- 스프링 시큐리티의 CSRF 토큰을 AJAX에서 사용 -->
 <meta id="_csrf" name="_csrf" content="${_csrf.token}" />
-<!-- default header name is X-CSRF-TOKEN -->
-<meta id="_csrf_header" name="_csrf_header"
-	content="${_csrf.headerName}" />
+<meta id="_csrf_header" name="_csrf_header" content="${_csrf.headerName}" />
+
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<title>질문 폼 만들기</title>
+
+<title>게시물 작성하기</title>
 
 <!--Import Google Icon Font-->
-<link href="http://fonts.googleapis.com/icon?family=Material+Icons"
-	rel="stylesheet">
+<link href="http://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 <!-- Compiled and minified CSS -->
 <link rel="stylesheet"	href="https://cdnjs.cloudflare.com/ajax/libs/normalize/5.0.0/normalize.min.css">
 <link rel="stylesheet"	href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.8/css/materialize.min.css">
-	
-<!-- Compiled and minified JavaScript -->
-<script	src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.8/js/materialize.min.js"></script>
-
 <link rel="stylesheet"	href="/assets/css/style.css">
 </head>
 <body>
+	<header>
+		<c:import url="/sidenav" />
+	</header>
+	<article>
 	<div class="container">
 	<div class="collection">
 			<div class="collection-item">
@@ -37,6 +35,14 @@
 					    ${user.nickname}
 				</span>
 			<div class="row">
+			<div class="input-field col s12">
+				<select id="q_category">
+			      <option value="" disabled selected>카테고리를 선택해주세요</option>
+			      <option value="질문">질문</option>
+			      <option value="정보">정보</option>
+			      <option value="뉴스">뉴스</option>
+			    </select>
+			</div>
 			<div class="input-field col s12">
 				<input id="q_title" name="q_title" type="text" />
 				<label class="active" for="q_title">제목</label>
@@ -56,6 +62,7 @@
 		</div>
 	</div>
 	</div>
+	</article>
 	<div id="preloader" class="fixed-action-btn">
 	<div class="preloader-wrapper active">
       <div class="spinner-layer spinner-blue">
@@ -99,16 +106,30 @@
       </div>
     </div>
 	</div>
+	<!-- Compiled and minified JavaScript -->
+<script	src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.8/js/materialize.min.js"></script>
 <script type="text/javascript">
-$(document).ready(function() {
+var token = $("meta[name='_csrf']").attr("content");
+var header = $("meta[name='_csrf_header']").attr("content");
+
+$(function() {
 	$('.chips-placeholder').material_chip({
 	    placeholder: 'Enter a tag',
 	    secondaryPlaceholder: 'Enter a tag',
 	  });
+	$('select').material_select();
 	$('#preloader').hide();
-  });
+	$(document).ajaxSend(function(e, xhr, options) {
+		xhr.setRequestHeader(header, token);
+	});
+});
   
 function board_post(){
+	if($('#q_category').val() == "" || $('#q_category').val() == null){
+		alert("카테고리를 선택하셔야 합니다.");
+		return;
+	}
 	
 	if($('#q_title').val() == "" || $('#q_title').val() == null){
 		alert("제목을 작성하셔야 합니다.");
@@ -123,7 +144,7 @@ function board_post(){
 	$('#preloader').show();	
 	
 	var boardObject = new Object();
-	boardObject.category = "질문";
+	boardObject.category = $('#q_category').val();
 	boardObject.title = $('#q_title').val();
 	boardObject.description = $('#q_content').val();
 	var chips = $('#q_tags').material_chip('data');
@@ -149,15 +170,5 @@ function board_post(){
 	$('#preloader').hide();
 }
 </script>
-<script>
-		var token = $("meta[name='_csrf']").attr("content");
-		var header = $("meta[name='_csrf_header']").attr("content");
-
-		$(function() {
-			$(document).ajaxSend(function(e, xhr, options) {
-				xhr.setRequestHeader(header, token);
-			});
-		});
-	</script>
 </body>
 </html>

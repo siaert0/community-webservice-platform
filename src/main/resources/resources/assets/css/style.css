@@ -28,3 +28,12 @@
 .hover:hover{
 	cursor:pointer;
 }
+header, article, footer{
+	    padding-left: 300px;
+	}
+
+@media only screen and (max-width: 992px){
+	header, article, footer{
+	    padding-left: 0;
+	}
+}

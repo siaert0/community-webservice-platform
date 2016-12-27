@@ -13,6 +13,9 @@ app.directive('krInput', [ '$parse', function($parse) {
 } ]);
 
 app.controller('BoardController', function($scope, $http, $log){
+	$scope.pagesize = 5;
+	$scope.totalElements = 0;
+	
 	$scope.updateModel = function (data){
 		$scope.boardContents = data;
 	}
@@ -22,8 +25,11 @@ app.controller('BoardController', function($scope, $http, $log){
 	$scope.move = function (value){
 		location.href="/board/"+value;
 	}
+	$scope.pageChange = function(page){
+		getInformation('',page,$scope.pagesize);
+	}
 	
-	getInformation('');
+	getInformation('',1,$scope.pagesize);
 });
 
 app.controller('DetailController', function($scope, $http, $log){
@@ -34,7 +40,6 @@ app.controller('DetailController', function($scope, $http, $log){
         return JSON.parse(json);
     }
 	$scope.requestBoardDelete = function (){
-		console.log($scope.boardContent);
 		$.ajax({
 			type	: 'DELETE',
 			url		: '/board/'+$scope.boardContent.id,
@@ -50,7 +55,6 @@ app.controller('DetailController', function($scope, $http, $log){
 		});
 	}
 	$scope.requestBoardUpdate = function(){
-		//모달로 변경합시다.
 		$('#u_b_description').val($scope.boardContent.description);
 		$('#u_b_title').val($scope.boardContent.title);
 		var tags = JSON.parse($scope.boardContent.tags);
@@ -77,10 +81,11 @@ app.controller('DetailController', function($scope, $http, $log){
 			},
 			error	: function(response){
 				console.log(response);
-				alert("오류가 발생하였습니다.", 3000);
+				alert("오류가 발생하였습니다.");
 			}
 		});
 	}
+	
 	$scope.requestUpdate = function(comment, index){
 		//모달로 변경합시다.
 		$('#u_c_description').val(comment.description);
@@ -97,11 +102,14 @@ app.controller('DetailController', function($scope, $http, $log){
 	}
 });
 
-function getInformation(value){
+function getInformation(value, page, size){
 	var scope = angular.element(document.getElementById("BoardController")).scope();
 	var dataObject = {
-		category : 	value
+		category : 	value,
+		page : page,
+		size : size,
 	};
+	
 	$.ajax({
 		type	: 'GET',
 		url		: '/board',
@@ -111,6 +119,7 @@ function getInformation(value){
 			console.log(response);
 			if(response != "" && response != null){
 				scope.$apply(function () {
+					scope.totalElements = response.totalElements;
 					scope.updateModel(response.content);
 				});
 			}
@@ -162,7 +171,6 @@ function comment(board){
 			Materialize.updateTextFields();
 			var scope = angular.element(document.getElementById("DetailController")).scope();
 			scope.$apply(function () {
-				console.log(response);
 				scope.boardContent.comments.push(response);
 			});
 		},
@@ -227,7 +235,6 @@ function updateBoard(board){
 		contentType: 'application/json',
 		dataType	: 'JSON',
 		success	: function(response){
-			
 			var scope = angular.element(document.getElementById("DetailController")).scope();
 			scope.$apply(function () {
 				scope.boardContent = response;

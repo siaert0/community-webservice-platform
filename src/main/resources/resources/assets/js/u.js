@@ -63,28 +63,3 @@ function register(){
     	});
 	
 }
-function registerAuth(){
-	if($('#code').val() == "" || $('#code').val() == null){
-		alert("인증코드를 반드시 입력해주세요.");
-		$('#code').focus();
-		return;
-	}
-	var AuthObject = new Object(); 
-	AuthObject.code = $('#code').val();
-	
-	$.ajax({
-		type	: 'POST',
-		url		: '/register/auth',
-		data	: AuthObject,
-		dataType	: 'JSON',
-		success	: function(response){
-			alert("인증되었습니다.");
-			location.href="/"
-		},
-		error : function(response){
-			alert("해당 인증코드는 올바르지 않습니다.");
-			
-    		}
-    	});
-	
-}

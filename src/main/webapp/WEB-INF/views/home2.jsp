@@ -62,7 +62,7 @@
 				
 				<!-- 게시물 영역 -->
 				<div class="row">
-				<div dir-paginate="x in search_contents = (boardContents | filter:searchKeyword | orderBy:-index) | itemsPerPage:pagesize" pagination-id="boardpage" total-items="totalElements">
+				<div dir-paginate="x in search_contents = (boardContents | filter:searchKeyword | orderBy:-index) | itemsPerPage:9" pagination-id="boardpage">
 					<div class="col s12">
 						<div class="card sticky-action hoverable hover" data-ng-click="move(x.id)">
 							<div class="card-image" style="padding:20px; padding-bottom:0;">
@@ -100,9 +100,7 @@
 						    template-url="/assets/html/dirPagination.tpl.html"
 						    direction-links="true"
 	   						boundary-links="true"
-						    pagination-id="boardpage"
-						    on-page-change="pageChange(newPageNumber)"
-						    >
+						    pagination-id="boardpage">
 						</dir-pagination-controls>
 					</div>
 			</div>
