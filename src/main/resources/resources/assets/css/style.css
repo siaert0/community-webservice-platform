@@ -1,6 +1,5 @@
 @import url(http://fonts.googleapis.com/earlyaccess/notosanskr.css);
-@import url(http://fonts.googleapis.com/earlyaccess/jejugothic.css);
-*{
+body{
 	font-family: 'Noto Sans KR';
 }
 .card-header{
@@ -36,4 +35,16 @@ header, article, footer{
 	header, article, footer{
 	    padding-left: 0;
 	}
+}
+.board-red{
+	border:1px solid #e57373;
+}
+.selectedComment{
+	border:2px solid #81c784;
+}
+.selectedboard{
+	border-left:2px solid #81c784;
+}
+.commentedBoard{
+	border-left:2px solid #4fc3f7;
 }

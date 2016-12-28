@@ -20,6 +20,7 @@
 <!-- Compiled and minified CSS -->
 <link rel="stylesheet"	href="https://cdnjs.cloudflare.com/ajax/libs/normalize/5.0.0/normalize.min.css">
 <link rel="stylesheet"	href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.8/css/materialize.min.css">
+<link rel="stylesheet"  href="/assets/css/tag-basic-style.css">
 <link rel="stylesheet"	href="/assets/css/style.css">
 </head>
 <body id="DetailController" ng-controller="DetailController">
@@ -43,23 +44,16 @@
 	<!-- 게시물 컨트롤러 만들기 -->
 	<div class="container">
 	<div class="card sticky-action" ng-if="boardContent != null">
-		<div class="card-image" style="padding:20px; padding-bottom:0;">
-		    <span class="chip red lighten-2 hover white-text" style="border-radius:0; position:absolute; top:0; right:0; margin-right:0; padding-left:0;">
-		    	<span class="chip blue lighten-2 hover white-text" data-ng-click="" style="border-radius:0; margin-right:10px;">답변 {{boardContent.comments.length}}개</span>
+		<div class="card-image" style="padding:20px; padding-bottom:0; padding-right:140px;">
+		    <span class="chip teal lighten-2 hover white-text" style="border-radius:0; position:absolute; top:0; right:0; margin-right:0; padding-left:0;">
+		    	<span class="chip lighten-2 hover white-text" data-ng-click="" style="border-radius:0; margin-right:10px;" ng-class="{blue:boardContent.selected == 0 && boardContent.comments.length > 0, red:boardContent.selected == 0 && boardContent.comments.length == 0, green:boardContent.selected != 0}">답변 {{boardContent.comments.length}}개</span>
 		    	{{boardContent.category}}
 		    </span>
 			<span style="font-weight:700; font-size:18px;">{{boardContent.title}}</span>
 		</div>
 		<div class="card-content">
 			<div class="justify-align">
-				<sec:authorize access="isAuthenticated()">
-			     <c:if test="${content.user.id == user.id}">
-			     	<div class="secondary-content">
-			     		<a class="hover" data-ng-click="requestBoardUpdate();"><i class="material-icons grey-text text-darken-2">settings</i></a>
-			     		<a class="hover" data-ng-click="requestBoardDelete();"><i class="material-icons grey-text text-darken-2">delete_forever</i></a>
-			     	</div>
-			     </c:if>
-	    		</sec:authorize>
+				
 				{{boardContent.description}}
 			</div>
 		</div>
@@ -68,22 +62,24 @@
 			    <img style="height:100%;" ng-src="{{boardContent.user.thumbnail}}">
 			   {{boardContent.user.nickname}}
 			  </span>
-			 <span class="tags" ng-if="boardContent.tags != null" ng-init="chip=parseJson(boardContent.tags)">
-				<span ng-repeat="t in chip"><span class="chip red lighten-2 hover white-text" style="">{{t.tag}} </span></span>
+			  		<sec:authorize access="isAuthenticated()">
+			     <c:if test="${content.user.id == user.id}">
+			     
+			     <span class="chip white lighten-2 hover blue-text left" data-ng-click="requestBoardUpdate();" style="border-radius:0;">수정</span>
+			     <span class="chip white lighten-2 hover blue-text left" data-ng-click="requestBoardDelete();" style="border-radius:0;">삭제</span>
+			   </c:if>
+	    		</sec:authorize>
+			 <span class="tags" ng-if="boardContent.tags != null" ng-init="tags=parseJson(boardContent.tags)">
+				<span ng-repeat="tag in tags"><span class="chip red lighten-2 hover white-text" style="">{{tag}} </span></span>
 			</span>
 			
 			 
 		<span class="chip grey darken-2 white-text">{{boardContent.created | date:'yyyy년 MM월 dd일 h:mma'}}</span>
+
 		</div>
 	</div>
 					
-		  <sec:authorize access="isAnonymous()">
-		  	<div class="collection">
-			<div class="collection-item center">
-				<a href="/login?redirect=board/{{boardContent.id}}">로그인</a> 하셔야 답변을 다실 수 있습니다.
-			</div>
-			</div>
-		  </sec:authorize>
+
 		  <sec:authorize access="isAuthenticated()">
 		  <!-- 게시물 업데이트 모달 박스 영역 -->
 			<div id="updateBoardModal" class="modal modal-fixed-footer white">
@@ -104,7 +100,7 @@
 							<label for="u_b_description">DESCRIPTION</label>
 						</div>
 						<div class="input-field col s12">
-								<div id="u_b_tags" class="chips chips-placeholder"></div>
+								<div id="u_b_tags" class="tags" data-tags-input-name="tag"></div>
 						</div>					
 					</div>
 				</div>
@@ -117,23 +113,7 @@
 				</div>
 			</div>
 			
-		<!-- 답변 박스 영역 -->	
-		<div class="collection col m4">
-			<div class="collection-item">
-		    	<span class="chip transparent">
-					<img src="${user.thumbnail}" alt="Contact Person">
-					    ${user.nickname}
-				</span>
-			<div class="input-field">
-				<input id="c_description" name="c_description" type="text" />
-				<label class="active" for="c_description">내용을 작성해주시기 바랍니다.</label>
-			</div>
-			<div class="input-field">
-				<div id="c_tags" class="chips chips-placeholder"></div>
-			</div>
-			<div class="right-align"><button id="comment_form_btn" class="btn teal lighten-2 white-text" onclick="comment(${content.id});">답변하기</button></div>
-		    </div>
-		</div>
+		
 		<!-- 답변 업데이트 모달 박스 영역 -->
 			<div id="updateCommentModal" class="modal modal-fixed-footer white">
 				<div class="modal-content">
@@ -144,7 +124,7 @@
 									<label for="u_c_description">DESCRIPTION</label>
 								</div>
 																<div class="input-field col s12">
-								<div id="u_c_tags" class="chips chips-placeholder"></div>
+								<div id="u_c_tags" class="tags" data-tags-input-name="tag"></div>
 				</div>
 						</div>					
 					</div>
@@ -158,13 +138,16 @@
 		</sec:authorize>
 		
 		<!-- 게시물 답변 영역 -->
-		<div class="collection" dir-paginate="comment in search_contents = (boardContent.comments | filter:searchKeyword | orderBy:'-id') | itemsPerPage:5" pagination-id="commentpage">
+		<div class="collection" ng-class="{selectedComment:boardContent.selected == comment.id}" dir-paginate="comment in search_contents = (boardContent.comments | filter:searchKeyword | orderBy:'-id') | itemsPerPage:5" pagination-id="commentpage">
 			<div class="collection-item">
 		    	<span class="chip transparent right"><a class="grey-text">{{comment.created | date:'yyyy년 MM월 dd일 h:mma'}}</a>&nbsp;
 		    	<sec:authorize access="isAuthenticated()">
+		    	<span ng-if="boardContent.selected == 0 && boardContent.user.id == ${user.id} && ${user.id} != comment.user.id">
+		    		<a class="green-text hover" data-ng-click="selectedComment(comment, $index);">선택</a>
+		    	</span>
 		    	<span ng-if="comment.user.id == ${user.id}">
-		    		<a class="blue-text hover" data-ng-click="requestUpdate(comment, $index);">수정</a>&nbsp;
-		    		<a class="blue-text hover" data-ng-click="requestDelete(comment);">삭제</a>
+		    		<a class="blue-text hover" data-ng-click="requestUpdateComment(comment, $index);">수정</a>&nbsp;
+		    		<a class="blue-text hover" data-ng-click="requestDeleteComment(comment);">삭제</a>
 		    	</span>
 		    	</sec:authorize>
 		    	</span>
@@ -177,8 +160,8 @@
 				
 		    </div>
 		    <div class="collection-item" ng-if="comment.tags != '[]'">
-		    <span class="tags" ng-init="chip=parseJson(comment.tags)">
-								<span ng-repeat="t in chip"><span class="chip red lighten-2 hover white-text" style="border-radius:0;">{{t.tag}} </span></span>
+		    <span class="tags" ng-init="tags=parseJson(comment.tags)">
+								<span ng-repeat="tag in tags"><span class="chip red lighten-2 hover white-text" style="border-radius:0;">{{tag}} </span></span>
 				</span>
 		    </div>
 		    </div>
@@ -193,7 +176,33 @@
 				</dir-pagination-controls>
 					
 				</div>
-
+		  <sec:authorize access="isAnonymous()">
+		  	<div class="collection">
+			<div class="collection-item center">
+				<a href="/login?redirect=board/{{boardContent.id}}">로그인</a> 하셔야 답변을 다실 수 있습니다.
+			</div>
+			</div>
+		  </sec:authorize>
+		  <sec:authorize access="isAuthenticated()">
+		  <!-- 답변 박스 영역 -->	
+		<div class="collection col m4">
+			<div class="collection-item">
+		    	<span class="chip transparent">
+					<img src="${user.thumbnail}" alt="Contact Person">
+					    ${user.nickname}
+				</span>
+			<div class="input-field">
+				<textarea id="c_description" class="materialize-textarea"></textarea>
+				<label class="active" for="c_description">내용을 작성해주시기 바랍니다.</label>
+			</div>
+			<div class="input-field">
+				<div id="c_tags" class="tags" data-tags-input-name="tag"></div>
+			</div>
+			<div class="right-align"><button id="comment_form_btn" class="btn teal lighten-2 white-text" onclick="comment(${content.id});">답변하기</button></div>
+		    </div>
+		</div>
+		</sec:authorize>
+		
 	  <div class="center">
 	  	<button class="btn red lighten-2" onclick="location.href='/';">이전으로</button>
 	  	<p></p>
@@ -256,6 +265,7 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.8/js/materialize.min.js"></script>
 <script	src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.7/angular.min.js"></script>
 <script	src="/assets/js/dirPagination.js"></script>
+<script src="/assets/js/tagging.js"></script>
 <script src="/assets/js/app.js"></script>
 <script type="text/javascript">
 var token = $("meta[name='_csrf']").attr("content");
@@ -265,13 +275,20 @@ $(function() {
 	$(document).ajaxSend(function(e, xhr, options) {
 		xhr.setRequestHeader(header, token);
 	});
-	$('.chips-placeholder').material_chip({
-	    placeholder: 'Enter a tag',
-	    secondaryPlaceholder: 'Enter a tag',
-	  });
 	$('.modal').modal();
 	$(".button-collapse").sideNav();
 	$('#preloader').hide();
+	$('.tags').tagging({
+		"no-backspace": true,
+		"no-duplicate": true,
+	    "no-duplicate-callback": window.alert,
+	    "no-duplicate-text": "태그 중복 방지 ->",
+	    "forbidden-chars-text": "금지 문자 ->",
+	    "forbidden-words-text":"금지 단어 ->",
+		"no-spacebar":true,
+		"tags-limit":8,
+		"edit-on-delete":false
+	});
 	getBoardDetail(${content.id});
 });
 </script>

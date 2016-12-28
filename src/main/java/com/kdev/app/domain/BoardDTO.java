@@ -25,6 +25,7 @@ public class BoardDTO {
 		private String description;
 		private String tags;
 		private UserVO user;
+		private int selected;
 		private Date created;
 		private Collection<CommentVO> comments;
 	}

@@ -20,6 +20,7 @@
 <!-- Compiled and minified CSS -->
 <link rel="stylesheet"	href="https://cdnjs.cloudflare.com/ajax/libs/normalize/5.0.0/normalize.min.css">
 <link rel="stylesheet"	href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.8/css/materialize.min.css">
+<link rel="stylesheet"  href="/assets/css/tag-basic-style.css">
 <link rel="stylesheet"	href="/assets/css/style.css">
 </head>
 <body>
@@ -52,7 +53,7 @@
 				<label for="q_content">내용</label>
 			</div>
 			<div class="input-field col s12">
-				<div id="q_tags" class="chips chips-placeholder"></div>
+				<div data-tags-input-name="tag" id="q_tags" class="tags">지우고 태그를 작성하세요</div>
 			</div>
 			<div class="input-field col s12 right-align">
 				<a class="waves-effect waves-light btn btn-flat" onclick="history.back();">뒤로가기</a>
@@ -109,15 +110,23 @@
 	<!-- Compiled and minified JavaScript -->
 <script	src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.8/js/materialize.min.js"></script>
+<script src="/assets/js/tagging.js"></script>
 <script type="text/javascript">
 var token = $("meta[name='_csrf']").attr("content");
 var header = $("meta[name='_csrf_header']").attr("content");
 
 $(function() {
-	$('.chips-placeholder').material_chip({
-	    placeholder: 'Enter a tag',
-	    secondaryPlaceholder: 'Enter a tag',
-	  });
+	$('.tags').tagging({
+		"no-backspace": true,
+		"no-duplicate": true,
+	    "no-duplicate-callback": window.alert,
+	    "no-duplicate-text": "태그 중복 방지 ->",
+	    "forbidden-chars":[],
+	    "forbidden-words":[],
+		"no-spacebar":true,
+		"tags-limit":8,
+		"edit-on-delete":false
+	});
 	$('select').material_select();
 	$('#preloader').hide();
 	$(document).ajaxSend(function(e, xhr, options) {
@@ -147,8 +156,7 @@ function board_post(){
 	boardObject.category = $('#q_category').val();
 	boardObject.title = $('#q_title').val();
 	boardObject.description = $('#q_content').val();
-	var chips = $('#q_tags').material_chip('data');
-	boardObject.tags = JSON.stringify(chips);
+	boardObject.tags = JSON.stringify($('#q_tags').tagging("getTags"));
 	
 	$.ajax({
 		type	: 'POST',

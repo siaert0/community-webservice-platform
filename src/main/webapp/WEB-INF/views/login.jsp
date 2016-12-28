@@ -42,15 +42,16 @@
 		    </button>
         </div>
     </form>
+    <div class="col s12">
+    	<a class="btn light-blue darken-2 waves-effect waves-light" href="/connect/facebook">페이스북으로 회원가입</a>&nbsp;
+        		<a class="btn amber lignten-1 waves-effect waves-light" href="/connect/kakao">카카오톡으로 회원가입</a>
+    </div>
     </div>
   </div>
 	<div class="fixed-action-btn right-align" style="top:5;">
 		<a class="btn-floating btn-large white waves-effect" href="/">
 		<i class="material-icons black-text">close</i>
 		</a>
-		<br><br>
-		<a class="btn light-blue darken-2 waves-effect waves-light" href="/connect/facebook">페이스북으로 회원가입</a><br>
-        		<a class="btn amber lignten-1 waves-effect waves-light" href="/connect/kakao">카카오톡으로 회원가입</a>
 	</div>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
 <!-- Compiled and minified JavaScript -->

@@ -64,10 +64,10 @@
 				<div class="row">
 				<div dir-paginate="x in search_contents = (boardContents | filter:searchKeyword | orderBy:-index) | itemsPerPage:pagesize" pagination-id="boardpage" total-items="totalElements">
 					<div class="col s12">
-						<div class="card sticky-action hoverable hover" data-ng-click="move(x.id)" ng-class="{selectedBoard:x.selected != 0, commentedBoard:x.selected == 0 && x.comments.length > 0}">
-							<div class="card-image" style="padding:20px; padding-bottom:0;  padding-right:140px;">
-							    <span class="chip teal lighten-2 hover white-text" style="border-radius:0; position:absolute; top:0; right:0; margin-right:0; padding-left:0;">
-							    	<span class="chip lighten-2 hover white-text" data-ng-click="" style="border-radius:0; margin-right:10px;" ng-class="{blue:x.selected == 0 && x.comments.length > 0, red:x.selected == 0 && x.comments.length == 0, green:x.selected != 0}">답변 {{x.comments.length}}개</span>
+						<div class="card sticky-action hoverable hover" data-ng-click="move(x.id)">
+							<div class="card-image" style="padding:20px; padding-bottom:0;">
+							    <span class="chip red lighten-2 hover white-text" style="border-radius:0; position:absolute; top:0; right:0; margin-right:0; padding-left:0;">
+							    	<span class="chip blue lighten-2 hover white-text" data-ng-click="" style="border-radius:0; margin-right:10px;">답변 {{x.comments.length}}개</span>
 							    	{{x.category}}
 							    </span>
 								<span style="font-weight:700; font-size:18px;">{{x.title}}</span>
@@ -82,8 +82,8 @@
 							      <img style="height:100%;" ng-src="{{x.user.thumbnail}}">
 								   {{x.user.nickname}}
 								  </span>
-								  <span class="tags" ng-init="tags=parseJson(x.tags)">
-									<span ng-repeat="tag in tags"><span class="chip red lighten-2 hover white-text" style="">{{tag}} </span>
+								  <span class="tags" ng-init="chip=parseJson(x.tags)">
+									<span ng-repeat="t in chip"><span class="chip red lighten-2 hover white-text" style="">{{t.tag}} </span>
 								  </span>
 								</span>
 								<span class="chip grey darken-2 white-text">{{x.created | date:'yyyy년 MM월 dd일 h:mma'}}</span>
@@ -101,7 +101,7 @@
 						    direction-links="true"
 	   						boundary-links="true"
 						    pagination-id="boardpage"
-						    on-page-change=""
+						    on-page-change="pageChange(newPageNumber)"
 						    >
 						</dir-pagination-controls>
 					</div>
@@ -160,7 +160,7 @@
 				
 				$(document).ajaxSend(function(e, xhr, options) {
 					xhr.setRequestHeader(header, token);
-				});
+				});		
 			});
 		</script>
 	</body>

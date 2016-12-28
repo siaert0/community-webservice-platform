@@ -24,6 +24,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import com.kdev.app.domain.BoardDTO;
 import com.kdev.app.domain.BoardVO;
@@ -139,9 +140,9 @@ public class BoardController {
 		boardVO.setDescription(update.getDescription());
 		boardVO.setTitle(update.getTitle());
 		boardVO.setTags(update.getTags());
+		boardVO.setSelected(update.getSelected());
 
 		BoardVO updated = boardRepositoryService.update(boardVO);
-		updated.setCreated(boardVO.getCreated());
 		return new ResponseEntity<Object>(updated, HttpStatus.ACCEPTED);
 	}
 	

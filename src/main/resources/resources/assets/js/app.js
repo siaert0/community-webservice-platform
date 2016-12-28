@@ -58,9 +58,8 @@ app.controller('DetailController', function($scope, $http, $log){
 		$('#u_b_description').val($scope.boardContent.description);
 		$('#u_b_title').val($scope.boardContent.title);
 		var tags = JSON.parse($scope.boardContent.tags);
-		$('#u_b_tags').material_chip({
-			data:tags
-		});
+		$('#u_b_tags').tagging( "reset" );
+		$('#u_b_tags').tagging("add",tags);
 		Materialize.updateTextFields();
 		$("#updateBoardModal").modal('open');
 		$("#updateBoardBtn").attr('onclick', '').unbind('click'); 
@@ -68,7 +67,7 @@ app.controller('DetailController', function($scope, $http, $log){
 			updateBoard($scope.boardContent);
 		});
 	}
-	$scope.requestDelete = function(comment){
+	$scope.requestDeleteComment = function(comment){
 		$.ajax({
 			type	: 'DELETE',
 			url		: '/comment/'+comment.id,
@@ -86,13 +85,12 @@ app.controller('DetailController', function($scope, $http, $log){
 		});
 	}
 	
-	$scope.requestUpdate = function(comment, index){
+	$scope.requestUpdateComment = function(comment, index){
 		//모달로 변경합시다.
 		$('#u_c_description').val(comment.description);
 		var tags = JSON.parse(comment.tags);
-		$('#u_c_tags').material_chip({
-			data:tags
-		});
+		$('#u_c_tags').tagging( "reset" );
+		$('#u_c_tags').tagging("add",tags);
 		Materialize.updateTextFields();
 		$('#updateCommentModal').modal('open');
 		$("#updateCommentBtn").attr('onclick', '').unbind('click'); 
@@ -100,6 +98,33 @@ app.controller('DetailController', function($scope, $http, $log){
 			updateComment(comment, index);
 		});
 	}
+	$scope.selectedComment = function(comment, index){
+		var BoardObject = new Object();
+		BoardObject.title = $scope.boardContent.title;
+		BoardObject.description = $scope.boardContent.description;
+		BoardObject.tags = $scope.boardContent.tags;
+		BoardObject.id = $scope.boardContent.id;
+		BoardObject.category = $scope.boardContent.category;
+		BoardObject.selected = comment.id;
+
+		$.ajax({
+			type	: 'POST',
+			url		: '/board/'+$scope.boardContent.id,
+			data 	: JSON.stringify(BoardObject),
+			contentType: 'application/json',
+			dataType	: 'JSON',
+			success	: function(response){
+				Materialize.toast("정상적으로 선택되었습니다.", 3000);
+				$scope.boardContent = response;
+				$scope.$apply();
+			},
+			error	: function(response){
+				console.log(response);
+				alert("오류가 발생하였습니다.");
+			}
+		});
+	}
+	
 });
 
 function getInformation(value, page, size){
@@ -152,10 +177,9 @@ function getBoardDetail(value){
 
 function comment(board){
 	$('#preloader').show();
-	var chips = $('#c_tags').material_chip('data');
 	var CommentObject = new Object();
 	CommentObject.description = $('#c_description').val();
-	CommentObject.tags = JSON.stringify(chips);
+	CommentObject.tags = JSON.stringify($('#c_tags').tagging("getTags"));
 	CommentObject.boardid = board;
 	$.ajax({
 		type	: 'POST',
@@ -183,11 +207,10 @@ function comment(board){
 }
 function updateComment(comment, index){
 	$('#preloader').show();
-	var chips = $('#u_c_tags').material_chip('data');
 	var CommentObject = new Object();
 	
 	CommentObject.description = $('#u_c_description').val();
-	CommentObject.tags = JSON.stringify(chips);
+	CommentObject.tags = JSON.stringify($('#u_c_tags').tagging("getTags"));
 	CommentObject.id = comment.id;
 	CommentObject.boardid = comment.boardid;
 	$.ajax({
@@ -214,20 +237,18 @@ function updateComment(comment, index){
 }
 function resetUpdateCommentForm(){
 	$('#u_c_description').val('');
-	$('#u_c_tags').material_chip({
-		data:null
-	});
+	$('#u_c_tags').tagging( "reset" );
 	Materialize.updateTextFields();
 }
 function updateBoard(board){
 	$('#preloader').show();
-	var chips = $('#u_b_tags').material_chip('data');
 	var BoardObject = new Object();
 	BoardObject.title = $('#u_b_title').val();
 	BoardObject.description = $('#u_b_description').val();
-	BoardObject.tags = JSON.stringify(chips);
+	BoardObject.tags = JSON.stringify($('#u_b_tags').tagging("getTags"));
 	BoardObject.id = board.id;
 	BoardObject.category = board.category;
+	BoardObject.selected = board.selected;
 	$.ajax({
 		type	: 'POST',
 		url		: '/board/'+board.id,
@@ -235,12 +256,7 @@ function updateBoard(board){
 		contentType: 'application/json',
 		dataType	: 'JSON',
 		success	: function(response){
-			var scope = angular.element(document.getElementById("DetailController")).scope();
-			scope.$apply(function () {
-				scope.boardContent = response;
-				resetUpdateBoardForm();
-				$('#updateBoardModal').modal('close');
-			});
+			location.reload();
 		},
 		error : function(response){
 			console.log(response);
@@ -251,9 +267,7 @@ function updateBoard(board){
 }
 function resetUpdateBoardForm(){
 	$('#u_b_description').val('');
-	$('#u_b_tags').material_chip({
-		data:null
-	});
+	$('#u_b_tags').tagging( "reset" );
 	Materialize.updateTextFields();
 }
 
