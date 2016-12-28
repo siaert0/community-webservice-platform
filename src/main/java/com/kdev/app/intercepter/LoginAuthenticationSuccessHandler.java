@@ -32,9 +32,11 @@ public class LoginAuthenticationSuccessHandler extends SavedRequestAwareAuthenti
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, 
     	Authentication authentication) throws ServletException, IOException {
-    	
-    	UserDetailsVO userDetailsVO = (UserDetailsVO)authentication.getPrincipal();
-
+    	String redirect = (String)(request.getSession().getAttribute("redirect"));
+    	if(redirect != null){
+    		request.getSession().removeAttribute("redirect");
+    		response.sendRedirect(redirect);
+    	}
         super.onAuthenticationSuccess(request, response, authentication);
     }
 }

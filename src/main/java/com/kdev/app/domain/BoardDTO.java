@@ -3,6 +3,8 @@ package com.kdev.app.domain;
 import java.util.Collection;
 import java.util.Date;
 
+import org.hibernate.validator.constraints.Email;
+
 import lombok.Data;
 
 public class BoardDTO {

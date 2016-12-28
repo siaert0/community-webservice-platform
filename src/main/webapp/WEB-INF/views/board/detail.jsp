@@ -80,7 +80,7 @@
 		  <sec:authorize access="isAnonymous()">
 		  	<div class="collection">
 			<div class="collection-item center">
-				<a href="/login">로그인</a> 하셔야 답변을 다실 수 있습니다.
+				<a href="/login?redirect=board/{{boardContent.id}}">로그인</a> 하셔야 답변을 다실 수 있습니다.
 			</div>
 			</div>
 		  </sec:authorize>

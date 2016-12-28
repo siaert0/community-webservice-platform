@@ -29,7 +29,7 @@ app.controller('BoardController', function($scope, $http, $log){
 		getInformation('',page,$scope.pagesize);
 	}
 	
-	getInformation('',1,$scope.pagesize);
+	getInformation('',0,$scope.pagesize);
 });
 
 app.controller('DetailController', function($scope, $http, $log){
