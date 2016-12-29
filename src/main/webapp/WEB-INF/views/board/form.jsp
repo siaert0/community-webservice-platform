@@ -118,6 +118,8 @@
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.5/js/bootstrap.min.js" integrity="sha384-BLiI7JTZm+JWlgKa0M0kGRpJbF2J8q+qreVrKBC47e3K6BW78kGLrCkeRX6I9RoK" crossorigin="anonymous"></script>
 <script src="http://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.2/summernote.js"></script>
 <script src="/assets/js/tagging.js"></script>
+<script src="/assets/js/lib/src-noconflict/ace.js"></script>
+<script src="/assets/js/summernote-ace-plugin.js"></script>
 <script src="/assets/js/summernote-ko-KR.min.js"></script>
 <script type="text/javascript">
 var token = $("meta[name='_csrf']").attr("content");
@@ -136,7 +138,23 @@ $(function() {
 		"edit-on-delete":false
 	});
 	
-	$('#q_content').summernote({
+    var codeblockButton = function (context) {
+        var ui = $.summernote.ui;
+  
+        // create button
+        var button = ui.button({
+            contents: '코드',
+            tooltip: '코드',
+            click: function () {
+    
+                $('#q_content').summernote('code', '<p><pre><code class="html">Place your code here.</code></pre><p>');
+    }
+  });
+
+  return button.render();   // return button as jquery object 
+}
+	
+	$('#q_content').summernote({   
 		toolbar: [
 		          // [groupName, [list of button]]
 		          ['pre',['style']],
@@ -145,7 +163,7 @@ $(function() {
 		          ['color', ['color']],
 		          ['para', ['paragraph'],['height']],
 		          ['insert', ['link', 'picture', 'video']],
-		          ['misc',['codeview']]
+		          ['misc',['codeblock','codeview']]
 		        ],
 		fontNames: ['Noto Sans KR', 'Arial', 'Arial Black', 'Comic Sans MS', 'Courier New'],
 		fontNamesIgnoreCheck: ['Noto Sans KR'],
@@ -157,7 +175,10 @@ $(function() {
 		    onMediaDelete: function(target){
 		    	deleteImage(target[0].src);
 		    }
-		  }
+		  },
+		  buttons: {
+              codeblock: codeblockButton
+          }
 	});
 	$('select').material_select();
 	$('#preloader').hide();
