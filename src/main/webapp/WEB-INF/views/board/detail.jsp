@@ -292,6 +292,8 @@ $(function() {
 	    "no-duplicate-text": "태그 중복 방지 ->",
 	    "forbidden-chars-text": "금지 문자 ->",
 	    "forbidden-words-text":"금지 단어 ->",
+        "forbidden-chars":[],
+        "forbidden-words":[],
 		"no-spacebar":true,
 		"tags-limit":8,
 		"edit-on-delete":false

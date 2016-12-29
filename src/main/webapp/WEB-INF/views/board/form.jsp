@@ -147,7 +147,7 @@ $(function() {
             tooltip: '코드',
             click: function () {
     
-                $('#q_content').summernote('code', '<p><pre><code class="html">Place your code here.</code></pre><p>');
+                $('#q_content').summernote('code', '<p><br></p><p><pre><code>코드 붙여넣기</code></pre></p><p><br></p>');
     }
   });
 
