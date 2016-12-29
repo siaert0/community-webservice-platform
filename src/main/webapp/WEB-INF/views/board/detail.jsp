@@ -19,11 +19,17 @@
 <link href="http://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 <!-- Compiled and minified CSS -->
 <link rel="stylesheet"	href="https://cdnjs.cloudflare.com/ajax/libs/normalize/5.0.0/normalize.min.css">
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.5/css/bootstrap.min.css" integrity="sha384-AysaV+vQoT3kOAXZkl02PThvDr8HYKPZhNT5h/CXfBThSRXQ6jW5DO2ekP5ViFdi" crossorigin="anonymous">
+
 <link rel="stylesheet"	href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.8/css/materialize.min.css">
+<!-- include summernote css/js-->
+
+<link href="http://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.2/summernote.css" rel="stylesheet">
+<link rel="stylesheet"  href="/assets/css/tether.min.css">
 <link rel="stylesheet"  href="/assets/css/tag-basic-style.css">
 <link rel="stylesheet"	href="/assets/css/style.css">
 </head>
-<body id="DetailController" ng-controller="DetailController">
+<body id="DetailController" ng-controller="DetailController" ng-cloak>
 <header>
 		<div class="navbar-fixed">
 			<nav class="z-depth-0">
@@ -40,51 +46,43 @@
 		</div>
 		<c:import url="/sidenav" />
 	</header>
-	<article>
+	<article style="margin-top:0px;">
 	<!-- 게시물 컨트롤러 만들기 -->
-	<div class="container">
+	<div class="container-fluid">
 	<div class="card sticky-action" ng-if="boardContent != null">
-		<div class="card-image" style="padding:20px; padding-bottom:0; padding-right:140px;">
-		    <span class="chip teal lighten-2 hover white-text" style="border-radius:0; position:absolute; top:0; right:0; margin-right:0; padding-left:0;">
-		    	<span class="chip lighten-2 hover white-text" data-ng-click="" style="border-radius:0; margin-right:10px;" ng-class="{blue:boardContent.selected == 0 && boardContent.comments.length > 0, red:boardContent.selected == 0 && boardContent.comments.length == 0, green:boardContent.selected != 0}">답변 {{boardContent.comments.length}}개</span>
-		    	{{boardContent.category}}
-		    </span>
-			<span style="font-weight:700; font-size:18px;">{{boardContent.title}}</span>
-		</div>
-		<div class="card-content">
-			<div class="justify-align">
-				
-				{{boardContent.description}}
-			</div>
-		</div>
-		<div class="card-action right-align">
-								<span class="chip white left">
+		<div class="card-content" style="border-bottom:1px solid #EEE">
+		    								<span class="chip white left">
 			    <img style="height:100%;" ng-src="{{boardContent.user.thumbnail}}">
 			   {{boardContent.user.nickname}}
 			  </span>
-			  		<sec:authorize access="isAuthenticated()">
+			<span style="font-weight:700; font-size:18px;">{{boardContent.title}}</span>
+			<sec:authorize access="isAuthenticated()">
 			     <c:if test="${content.user.id == user.id}">
-			     
-			     <span class="chip white lighten-2 hover blue-text left" data-ng-click="requestBoardUpdate();" style="border-radius:0;">수정</span>
-			     <span class="chip white lighten-2 hover blue-text left" data-ng-click="requestBoardDelete();" style="border-radius:0;">삭제</span>
-			   </c:if>
+			     <span class="chip blue lighten-2 hover white-text border-flat right" data-ng-click="requestBoardDelete();">삭제</span>
+			     <span class="chip red lighten-2 hover white-text border-flat right" data-ng-click="requestBoardUpdate();">수정</span>
+			     </c:if>
 	    		</sec:authorize>
+			<span class="chip grey darken-2 white-text border-flat right">{{boardContent.created | date:'yyyy년 MM월 dd일 h:mma'}}</span>
+		</div>
+		<div class="card-content">
+			<div class="justify-align">
+				<div class="">
+					<p class="collection-title" ng-bind-html="trustHtml(boardContent.description)"></p>
+				</div>
+			</div>
+		</div>
+		<div class="card-action right-align">
+		 <span class="chip teal lighten-2 hover white-text border-flat left" >{{boardContent.category}}</span>
+		<span class="chip lighten-2 hover white-text border-flat left" ng-class="{blue:boardContent.selected == 0 && boardContent.comments.length > 0, red:boardContent.selected == 0 && boardContent.comments.length == 0, green:boardContent.selected != 0}">{{boardContent.comments.length}}</span>
 			 <span class="tags" ng-if="boardContent.tags != null" ng-init="tags=parseJson(boardContent.tags)">
-				<span ng-repeat="tag in tags"><span class="chip red lighten-2 hover white-text" style="">{{tag}} </span></span>
+				<span ng-repeat="tag in tags"><span class="chip red lighten-2 hover white-text border-flat" style="">{{tag}} </span></span>
 			</span>
-			
-			 
-		<span class="chip grey darken-2 white-text">{{boardContent.created | date:'yyyy년 MM월 dd일 h:mma'}}</span>
-
 		</div>
 	</div>
-					
 
 		  <sec:authorize access="isAuthenticated()">
 		  <!-- 게시물 업데이트 모달 박스 영역 -->
-			<div id="updateBoardModal" class="modal modal-fixed-footer white">
-				<div class="modal-content">
-					<div class="collection">
+					<div class="collection white" id="updateBoardModal" style="display:none; border:2px solid #81c784;">
 			<div class="collection-item">
 				<span class="chip transparent">
 					<img src="${user.thumbnail}" alt="Contact Person">
@@ -96,32 +94,28 @@
 							<label class="active" for="u_b_title">제목</label>
 						</div>
 						<div class="input-field col s12">
-							<textarea id="u_b_description" class="materialize-textarea"></textarea>
-							<label for="u_b_description">DESCRIPTION</label>
+						
+							<div id="u_b_description" class="materialize-textarea contentbox"></div>
+							
 						</div>
 						<div class="input-field col s12">
 								<div id="u_b_tags" class="tags" data-tags-input-name="tag"></div>
 						</div>					
 					</div>
-				</div>
-				</div>
-				</div>
-				
 				<div class="modal-footer white">
-					<a class="modal-action modal-close waves-effect waves-light btn-flat">닫기</a>
-					<a class="waves-effect waves-light btn-flat" id="updateBoardBtn">수정하기</a>
+				    <a class="waves-effect waves-light btn-flat" id="updateBoardBtn">수정하기</a>
+					<a class="modal-action modal-close waves-effect waves-light btn-flat" onclick="resetUpdateBoardForm();">닫기</a>
 				</div>
+				</div>			
 			</div>
-			
 		
 		<!-- 답변 업데이트 모달 박스 영역 -->
-			<div id="updateCommentModal" class="modal modal-fixed-footer white">
-				<div class="modal-content">
+			<div id="updateCommentModal" class="collection white" style="display:none; border:2px solid #81c784;">
+				<div class="collection-item">
 					<div class="row">
 						<div class="col s12">
 				<div class="input-field col s12">
-									<textarea id="u_c_description" class="materialize-textarea"></textarea>
-									<label for="u_c_description">DESCRIPTION</label>
+									<div id="u_c_description" class="materialize-textarea contentbox"></div>
 								</div>
 																<div class="input-field col s12">
 								<div id="u_c_tags" class="tags" data-tags-input-name="tag"></div>
@@ -131,11 +125,14 @@
 				</div>
 				
 				<div class="modal-footer white">
-					<a class="modal-action modal-close waves-effect waves-light btn-flat">닫기</a>
-					<a class="waves-effect waves-light btn-flat" id="updateCommentBtn">수정하기</a>
+				    <a class="waves-effect waves-light btn-flat" id="updateCommentBtn">수정하기</a>
+					<a class="modal-action modal-close waves-effect waves-light btn-flat" onclick="resetUpdateCommentForm()">닫기</a>
 				</div>
 			</div>
 		</sec:authorize>
+		
+		</div>
+		<div class="container-fluid">
 		
 		<!-- 게시물 답변 영역 -->
 		<div class="collection" ng-class="{selectedComment:boardContent.selected == comment.id}" dir-paginate="comment in search_contents = (boardContent.comments | filter:searchKeyword | orderBy:'-id') | itemsPerPage:5" pagination-id="commentpage">
@@ -156,14 +153,16 @@
 					    {{comment.user.nickname}}
 				</span>
 				<br>
-				<p class="collection-title">{{comment.description}}</p>
-				
-		    </div>
-		    <div class="collection-item" ng-if="comment.tags != '[]'">
+				<div class="">
+					<p class="collection-title" ng-bind-html="trustHtml(comment.description)"></p>
+				</div>
+						    <div class="" ng-if="comment.tags != '[]'">
 		    <span class="tags" ng-init="tags=parseJson(comment.tags)">
 								<span ng-repeat="tag in tags"><span class="chip red lighten-2 hover white-text" style="border-radius:0;">{{tag}} </span></span>
 				</span>
 		    </div>
+		    </div>
+
 		    </div>
 		    <!-- 게시물 답변 페이지네이션 영역 -->
 	  	<div class="center-align">
@@ -183,28 +182,31 @@
 			</div>
 			</div>
 		  </sec:authorize>
+		  
 		  <sec:authorize access="isAuthenticated()">
 		  <!-- 답변 박스 영역 -->	
-		<div class="collection col m4">
+		<div class="collection col m4 commentbox">
 			<div class="collection-item">
 		    	<span class="chip transparent">
 					<img src="${user.thumbnail}" alt="Contact Person">
 					    ${user.nickname}
 				</span>
 			<div class="input-field">
-				<textarea id="c_description" class="materialize-textarea"></textarea>
-				<label class="active" for="c_description">내용을 작성해주시기 바랍니다.</label>
+				<div id="c_tags" class="tags" data-tags-input-name="tag">태그를 작성하시기 바랍니다</div>
 			</div>
 			<div class="input-field">
-				<div id="c_tags" class="tags" data-tags-input-name="tag"></div>
+				<div id="c_description" class="materialize-textarea contentbox"></div>
 			</div>
-			<div class="right-align"><button id="comment_form_btn" class="btn teal lighten-2 white-text" onclick="comment(${content.id});">답변하기</button></div>
+			<div class="center-align">
+			<p></p>
+			<button id="comment_form_btn" class="btn teal lighten-2 white-text" onclick="comment(${content.id});">답변하기</button>
+			</div>
 		    </div>
 		</div>
 		</sec:authorize>
 		
 	  <div class="center">
-	  	<button class="btn red lighten-2" onclick="location.href='/';">이전으로</button>
+	  	<button class="btn red lighten-2" onclick="history.back();">이전으로</button>
 	  	<p></p>
 	  </div>
 	</div>
@@ -263,9 +265,15 @@
 <!-- Compiled and minified JavaScript -->
 <script	src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.8/js/materialize.min.js"></script>
-<script	src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.7/angular.min.js"></script>
-<script	src="/assets/js/dirPagination.js"></script>
+<script src="/assets/js/tether.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.5/js/bootstrap.min.js" integrity="sha384-BLiI7JTZm+JWlgKa0M0kGRpJbF2J8q+qreVrKBC47e3K6BW78kGLrCkeRX6I9RoK" crossorigin="anonymous"></script>
+<script src="http://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.2/summernote.js"></script>
 <script src="/assets/js/tagging.js"></script>
+<script src="/assets/js/summernote-ko-KR.min.js"></script>
+<script	src="https://code.angularjs.org/1.6.1/angular.min.js"></script>
+<script	src="https://code.angularjs.org/1.6.1/angular-loader.js"></script>
+<script	src="https://code.angularjs.org/1.6.1/angular-sanitize.js"></script>
+<script	src="/assets/js/dirPagination.js"></script>
 <script src="/assets/js/app.js"></script>
 <script type="text/javascript">
 var token = $("meta[name='_csrf']").attr("content");
@@ -275,7 +283,6 @@ $(function() {
 	$(document).ajaxSend(function(e, xhr, options) {
 		xhr.setRequestHeader(header, token);
 	});
-	$('.modal').modal();
 	$(".button-collapse").sideNav();
 	$('#preloader').hide();
 	$('.tags').tagging({
@@ -289,7 +296,8 @@ $(function() {
 		"tags-limit":8,
 		"edit-on-delete":false
 	});
-	getBoardDetail(${content.id});
+
+	getBoardDetail('${content.id}');
 });
 </script>
 </body>

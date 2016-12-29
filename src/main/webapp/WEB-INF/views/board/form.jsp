@@ -19,7 +19,13 @@
 <link href="http://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 <!-- Compiled and minified CSS -->
 <link rel="stylesheet"	href="https://cdnjs.cloudflare.com/ajax/libs/normalize/5.0.0/normalize.min.css">
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.5/css/bootstrap.min.css" integrity="sha384-AysaV+vQoT3kOAXZkl02PThvDr8HYKPZhNT5h/CXfBThSRXQ6jW5DO2ekP5ViFdi" crossorigin="anonymous">
+
 <link rel="stylesheet"	href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.8/css/materialize.min.css">
+<!-- include summernote css/js-->
+
+<link href="http://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.2/summernote.css" rel="stylesheet">
+<link rel="stylesheet"  href="/assets/css/tether.min.css">
 <link rel="stylesheet"  href="/assets/css/tag-basic-style.css">
 <link rel="stylesheet"	href="/assets/css/style.css">
 </head>
@@ -36,21 +42,19 @@
 					    ${user.nickname}
 				</span>
 			<div class="row">
-			<div class="input-field col s12">
-				<select id="q_category">
+			<div class="col s12">
+				<select id="q_category" class="browser-default">
 			      <option value="" disabled selected>카테고리를 선택해주세요</option>
 			      <option value="질문">질문</option>
 			      <option value="정보">정보</option>
-			      <option value="뉴스">뉴스</option>
 			    </select>
 			</div>
 			<div class="input-field col s12">
-				<input id="q_title" name="q_title" type="text" />
+				<input id="q_title" name="q_title" type="text" autofocus/>
 				<label class="active" for="q_title">제목</label>
 			</div>
 			<div class="input-field col s12">
 				<textarea id="q_content" name="q_content" class="materialize-textarea"></textarea>
-				<label for="q_content">내용</label>
 			</div>
 			<div class="input-field col s12">
 				<div data-tags-input-name="tag" id="q_tags" class="tags">지우고 태그를 작성하세요</div>
@@ -110,7 +114,11 @@
 	<!-- Compiled and minified JavaScript -->
 <script	src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.8/js/materialize.min.js"></script>
+<script src="/assets/js/tether.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.5/js/bootstrap.min.js" integrity="sha384-BLiI7JTZm+JWlgKa0M0kGRpJbF2J8q+qreVrKBC47e3K6BW78kGLrCkeRX6I9RoK" crossorigin="anonymous"></script>
+<script src="http://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.2/summernote.js"></script>
 <script src="/assets/js/tagging.js"></script>
+<script src="/assets/js/summernote-ko-KR.min.js"></script>
 <script type="text/javascript">
 var token = $("meta[name='_csrf']").attr("content");
 var header = $("meta[name='_csrf_header']").attr("content");
@@ -126,6 +134,30 @@ $(function() {
 		"no-spacebar":true,
 		"tags-limit":8,
 		"edit-on-delete":false
+	});
+	
+	$('#q_content').summernote({
+		toolbar: [
+		          // [groupName, [list of button]]
+		          ['pre',['style']],
+		          ['style', ['bold', 'italic', 'strikethrough', 'underline', 'clear']],
+		          ['font', ['fontname','fontsize']],
+		          ['color', ['color']],
+		          ['para', ['paragraph'],['height']],
+		          ['insert', ['link', 'picture', 'video']],
+		          ['misc',['codeview']]
+		        ],
+		fontNames: ['Noto Sans KR', 'Arial', 'Arial Black', 'Comic Sans MS', 'Courier New'],
+		fontNamesIgnoreCheck: ['Noto Sans KR'],
+		lang: 'ko-KR',
+		callbacks: {
+		    onImageUpload: function(files) {
+		    	sendImage(files[0],this);
+		      },
+		    onMediaDelete: function(target){
+		    	deleteImage(target[0].src);
+		    }
+		  }
 	});
 	$('select').material_select();
 	$('#preloader').hide();
@@ -145,17 +177,12 @@ function board_post(){
 		return;
 	}
 	
-	if($('#q_content').val() == "" || $('#q_content').val() == null){
-		alert("내용을 작성하셔야 합니다.");
-		return;
-	}
-	
 	$('#preloader').show();	
 	
 	var boardObject = new Object();
 	boardObject.category = $('#q_category').val();
 	boardObject.title = $('#q_title').val();
-	boardObject.description = $('#q_content').val();
+	boardObject.description = $('#q_content').summernote('code');
 	boardObject.tags = JSON.stringify($('#q_tags').tagging("getTags"));
 	
 	$.ajax({
@@ -176,6 +203,60 @@ function board_post(){
 	});
 	
 	$('#preloader').hide();
+}
+
+function validation(fileName){
+    var fileNameExtensionIndex = fileName.lastIndexOf('.') + 1; //.뒤부터 확장자
+    var fileNameExtension = fileName.toLowerCase().substring(fileNameExtensionIndex,fileName.length); //확장자 자르기
+     
+    if( !( (fileNameExtension=='jpg') || (fileNameExtension=='gif') || (fileNameExtension=='png') || (fileNameExtension=='bmp') ) ) {
+        alert('jpg, gif, png, bmp 확장자만 업로드 가능합니다.');
+        return true;
+    }
+    else{
+        return false;
+    }
+}
+
+function sendImage(file, summernote){
+	var data = new FormData();
+      data.append("Filedata",file);
+		$.ajax({
+          type: 'POST',
+          url: '/upload/image/',
+          data: data,
+        	contentType: false,
+     		processData: false,
+          dataType: 'JSON', //리턴되는 데이타 타입
+          beforeSubmit: function(){
+          },
+          success: function(fileInfo){ //fileInfo는 이미지 정보를 리턴하는 객체
+              if(fileInfo.result==-1){ //서버단에서 체크 후 수행됨
+                  alert('jpg, gif, png, bmp 확장자만 업로드 가능합니다.');
+                  return false;
+              }
+              else if(fileInfo.result==-2){ //서버단에서 체크 후 수행됨
+                  alert('파일이 5MB를 초과하였습니다.');
+                  return false;
+              }
+              else{
+            	  summernote.summernote('insertImage', fileInfo.imageurl, fileInfo.filename); 
+              }
+          }
+      });
+    }
+    
+function deleteImage(file){
+	$.ajax({
+      type: 'DELETE',
+      url: '/upload/image/?url='+file,
+      dataType: 'text', //리턴되는 데이타 타입
+      beforeSubmit: function(){
+      },
+      success: function(response){
+    	  Materialize.toast("정상적으로 삭제되었습니다.", 3000);
+      }
+  });
 }
 </script>
 </body>

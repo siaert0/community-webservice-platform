@@ -1,6 +1,6 @@
 @import url(http://fonts.googleapis.com/earlyaccess/notosanskr.css);
 body{
-	font-family: 'Noto Sans KR';
+	font-family: 'Noto Sans KR' !important;
 }
 .card-header{
 	border-bottom:1px solid #EEEEEE;
@@ -39,6 +39,7 @@ header, article, footer{
 .board-red{
 	border:1px solid #e57373;
 }
+
 .selectedComment{
 	border:2px solid #81c784;
 }
@@ -47,4 +48,213 @@ header, article, footer{
 }
 .commentedBoard{
 	border-left:2px solid #4fc3f7;
+}
+
+[ng\:cloak], [ng-cloak], [data-ng-cloak], [x-ng-cloak], .ng-cloak, .x-ng-cloak {
+  display: none !important;
+}
+
+.commentbox{
+	border:1px solid #BBBBBB;
+}
+
+.note-editor .btn{
+	display: inline-block;
+  font-weight: normal;
+  line-height: 1.25;
+  text-align: center;
+  white-space: nowrap;
+  vertical-align: middle;
+  cursor: pointer;
+  -webkit-user-select: none;
+     -moz-user-select: none;
+      -ms-user-select: none;
+          user-select: none;
+  border: 1px solid transparent;
+  padding: 0.5rem 1rem;
+  font-size: 1rem;
+  border-radius: 0.25rem;
+}
+.btn-default {
+  color: #373a3c;
+  background-color: #fff;
+  border-color: #ccc;
+  padding:0 1rem;
+  letter-spacing:0;
+}
+
+.btn-default:hover {
+  color: #373a3c;
+  background-color: #e6e6e6;
+  border-color: #adadad;
+}
+.note-editor .btn i, .note-editor .btn-large i,.note-editor .btn-floating i,.note-editor .btn-large i,.note-editor .btn-flat i{
+	font-size: 1rem;
+}
+.btn-default:focus, .btn-default.focus {
+  color: #373a3c;
+  background-color: #e6e6e6;
+  border-color: #adadad;
+}
+
+.btn-default:active, .btn-default.active,
+.open > .btn-default.dropdown-toggle {
+  color: #373a3c;
+  background-color: #e6e6e6;
+  border-color: #adadad;
+  background-image: none;
+}
+
+.btn-default:active:hover, .btn-default:active:focus, .btn-default:active.focus, .btn-default.active:hover, .btn-default.active:focus, .btn-default.active.focus,
+.open > .btn-default.dropdown-toggle:hover,
+.open > .btn-default.dropdown-toggle:focus,
+.open > .btn-default.dropdown-toggle.focus {
+  color: #373a3c;
+  background-color: #d4d4d4;
+  border-color: #8c8c8c;
+}
+
+.btn-default.disabled:focus, .btn-default.disabled.focus, .btn-default:disabled:focus, .btn-default:disabled.focus {
+  background-color: #fff;
+  border-color: #ccc;
+}
+
+.btn-default.disabled:hover, .btn-default:disabled:hover {
+  background-color: #fff;
+  border-color: #ccc;
+}
+.dropdown-menu h1{
+	font-size:36px !important;
+}
+.dropdown-style p, .dropdown-style blockquote, .dropdown-style pre{
+	margin:0;
+	margin-bottom:0.5rem;
+}
+h1, h2, h3, h4, h5, h6,
+.h1, .h2, .h3, .h4, .h5, .h6 {
+  margin:0;
+  margin-bottom: 0.5rem;
+  font-family: inherit;
+  font-weight: 500;
+  line-height: 1.1;
+  color: inherit;
+}
+
+h1, .h1 {
+  font-size: 2.5rem;
+}
+
+h2, .h2 {
+  font-size: 2rem;
+}
+
+h3, .h3 {
+  font-size: 1.75rem;
+}
+
+h4, .h4 {
+  font-size: 1.5rem;
+}
+
+h5, .h5 {
+  font-size: 1.25rem;
+}
+
+h6, .h6 {
+  font-size: 1rem;
+}
+.dropdown-style{
+	min-width: 120px !important;
+	padding:0.5rem;
+}
+.dropdown-fontname{
+	min-width: 180px !important;
+	padding:1rem;
+}
+.dropdown-fontsize, .dropdown-line-height{
+	min-width: 60px !important;
+	padding:1rem;
+}
+.tag {
+  display: inline-block;
+  padding: inherit;
+  font-size: 100%;
+  line-height:  inherit;
+  text-align: center;
+  white-space: inherit;
+  vertical-align: inherit;
+  border-radius: 0.25rem;
+  background: none repeat scroll 0 0 #e57373;
+  border-radius: 2px;
+  color: white;
+	cursor: default;
+	display: inline-block;
+	position: relative;
+	white-space: nowrap;
+	padding: 4px 20px 4px 8px;
+	margin: 5px 10px 0 0;
+}
+code {
+  padding: 0.2rem 0.4rem;
+  font-size: 90%;
+  color: #bd4147;
+  background-color: #f7f7f9;
+  border-radius: 0.25rem;
+}
+.note-editor .modal{
+	background:transparent;
+	box-shadow : none;
+}
+.note-editor .modal .modal-footer{
+	background:#fff;
+}
+.form-group label, .checkbox label{
+	position: inherit !important;
+}
+.form-group label.active{
+	transform:none;
+}
+.dropdown-menu a{
+	color:#000;
+}
+.dropdown-toggle::after{
+	content:none;
+}
+.note-toolbar{
+	background-color:#fff;
+}
+pre {
+  display: block;
+  margin-top: 0;
+  margin-bottom: 1rem;
+  font-size: 90%;
+  color: #373a3c;
+}
+.note-popover.popover.in.note-link-popover.bottom,
+.note-popover.popover.in.note-image-popover.bottom{
+	display: none;
+}
+.modal-open .modal{
+	overflow-y:hidden;
+}
+.collection{
+	overflow:auto;
+}
+.link-dialog .checkbox{
+	display:none;
+}
+.select-wrapper.open .select-dropdown{
+	display:block;
+	opacity:1;
+	position: inherit;
+}
+.note-editor .btn{
+	border:1px solid #999;
+	box-shadow:none;
+}
+.note-editor.note-frame.fullscreen{
+	background-color:#fff;
+}
+.border-flat{
+	border-radius:0;
 }

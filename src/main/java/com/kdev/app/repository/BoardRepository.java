@@ -9,4 +9,5 @@ import com.kdev.app.domain.UserVO;
 
 public interface BoardRepository extends JpaRepository<BoardVO, Integer> {
 	public Page<BoardVO> findAllByUser(UserVO userVO, Pageable pageable);
+	public Page<BoardVO> findAllByCategory(String category, Pageable pageable);
 }

@@ -105,8 +105,13 @@ public class BoardController {
 	 * @description	: 게시물 가져오기 & 페이징
 	 */
 	@RequestMapping(value="/board", method=RequestMethod.GET, produces=MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<Object> findBoard(@PageableDefault(sort = { "id" }, direction = Direction.DESC, size = 5) Pageable pageable){
-		Page<BoardVO> page = boardRepositoryService.findByAll(pageable);
+	public ResponseEntity<Object> findBoard(@RequestParam(value="category", required=false, defaultValue="") String category, @PageableDefault(sort = { "id" }, direction = Direction.DESC, size = 5) Pageable pageable){
+		Page<BoardVO> page = null;
+		
+		if(category.equals(""))
+			page= boardRepositoryService.findByAll(pageable);
+		else
+			page = boardRepositoryService.findAllByCategory(category, pageable);
 		return new ResponseEntity<Object>(page, HttpStatus.ACCEPTED);
 	}
 	

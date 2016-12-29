@@ -1,4 +1,4 @@
-var app = angular.module('myApp', ['angularUtils.directives.dirPagination']);
+var app = angular.module('myApp', ['ngSanitize','angularUtils.directives.dirPagination']);
 
 app.directive('krInput', [ '$parse', function($parse) {
     return {
@@ -12,7 +12,7 @@ app.directive('krInput', [ '$parse', function($parse) {
     };
 } ]);
 
-app.controller('BoardController', function($scope, $http, $log){
+app.controller('BoardController', function($scope, $http, $log, $sce){
 	$scope.pagesize = 5;
 	$scope.totalElements = 0;
 	
@@ -26,19 +26,25 @@ app.controller('BoardController', function($scope, $http, $log){
 		location.href="/board/"+value;
 	}
 	$scope.pageChange = function(page){
-		getInformation('',page,$scope.pagesize);
+		getInformation(category,page,$scope.pagesize);
+	}
+	$scope.trustHtml = function(html){
+		return $sce.trustAsHtml(html);
 	}
 	
-	getInformation('',0,$scope.pagesize);
+	getInformation(category,0,$scope.pagesize);
 });
 
-app.controller('DetailController', function($scope, $http, $log){
+app.controller('DetailController', function($scope, $http, $log, $sce){
 	$scope.updateModel = function (data){
 		$scope.boardContent = data;
 	}
 	$scope.parseJson = function (json) {
         return JSON.parse(json);
     }
+	$scope.trustHtml = function(html){
+		return $sce.trustAsHtml(html);
+	}
 	$scope.requestBoardDelete = function (){
 		$.ajax({
 			type	: 'DELETE',
@@ -49,23 +55,22 @@ app.controller('DetailController', function($scope, $http, $log){
 				location.href="/";
 			},
 			error	: function(response){
-				console.log(response);
-				alert("오류가 발생하였습니다.", 3000);
+				Materialize.toast("삭제하지 못했습니다", 3000);
 			}
 		});
 	}
 	$scope.requestBoardUpdate = function(){
-		$('#u_b_description').val($scope.boardContent.description);
+		$('#u_b_description').summernote('code', $scope.boardContent.description);
 		$('#u_b_title').val($scope.boardContent.title);
 		var tags = JSON.parse($scope.boardContent.tags);
 		$('#u_b_tags').tagging( "reset" );
 		$('#u_b_tags').tagging("add",tags);
 		Materialize.updateTextFields();
-		$("#updateBoardModal").modal('open');
 		$("#updateBoardBtn").attr('onclick', '').unbind('click'); 
 		$("#updateBoardBtn").attr('onclick', '').click(function(){
 			updateBoard($scope.boardContent);
 		});
+		$('#updateBoardModal').show();
 	}
 	$scope.requestDeleteComment = function(comment){
 		$.ajax({
@@ -79,25 +84,25 @@ app.controller('DetailController', function($scope, $http, $log){
 				$scope.$apply();
 			},
 			error	: function(response){
-				console.log(response);
-				alert("오류가 발생하였습니다.");
+				Materialize.toast("삭제하지 못했네요", 3000);
 			}
 		});
 	}
 	
 	$scope.requestUpdateComment = function(comment, index){
 		//모달로 변경합시다.
-		$('#u_c_description').val(comment.description);
+		$('#u_c_description').summernote('code',comment.description);
 		var tags = JSON.parse(comment.tags);
 		$('#u_c_tags').tagging( "reset" );
 		$('#u_c_tags').tagging("add",tags);
 		Materialize.updateTextFields();
-		$('#updateCommentModal').modal('open');
 		$("#updateCommentBtn").attr('onclick', '').unbind('click'); 
 		$("#updateCommentBtn").attr('onclick', '').click(function(){
 			updateComment(comment, index);
 		});
+		$('#updateCommentModal').show();
 	}
+	
 	$scope.selectedComment = function(comment, index){
 		var BoardObject = new Object();
 		BoardObject.title = $scope.boardContent.title;
@@ -119,8 +124,7 @@ app.controller('DetailController', function($scope, $http, $log){
 				$scope.$apply();
 			},
 			error	: function(response){
-				console.log(response);
-				alert("오류가 발생하였습니다.");
+				Materialize.toast("처리되지 못했네요", 3000);
 			}
 		});
 	}
@@ -141,7 +145,6 @@ function getInformation(value, page, size){
 		data	: dataObject,
 		dataType	: 'JSON',
 		success	: function(response){
-			console.log(response);
 			if(response != "" && response != null){
 				scope.$apply(function () {
 					scope.totalElements = response.totalElements;
@@ -150,7 +153,7 @@ function getInformation(value, page, size){
 			}
 		},
 		error	: function(response){
-			alert("오류");
+			Materialize.toast("정보를 가져오지 못했네요", 3000);
 		}
 	});
 }
@@ -162,7 +165,6 @@ function getBoardDetail(value){
 		url		: '/board/'+value,
 		dataType	: 'JSON',
 		success	: function(response){
-			console.log(response);
 			if(response != "" && response != null){
 				scope.$apply(function () {
 					scope.updateModel(response);
@@ -170,7 +172,7 @@ function getBoardDetail(value){
 			}
 		},
 		error	: function(response){
-			alert("오류");
+			Materialize.toast("정보를 가져오지 못했네요", 3000);
 		}
 	});
 }
@@ -178,7 +180,7 @@ function getBoardDetail(value){
 function comment(board){
 	$('#preloader').show();
 	var CommentObject = new Object();
-	CommentObject.description = $('#c_description').val();
+	CommentObject.description = $('#c_description').summernote('code');
 	CommentObject.tags = JSON.stringify($('#c_tags').tagging("getTags"));
 	CommentObject.boardid = board;
 	$.ajax({
@@ -188,19 +190,17 @@ function comment(board){
 		contentType: 'application/json',
 		dataType	: 'JSON',
 		success	: function(response){
-			$('#c_description').val("");
-			$('#c_tags').material_chip({
-				data:null
-			});
+			$('#c_description').summernote('code','');
+			$('#c_tags').tagging( "reset" );
 			Materialize.updateTextFields();
 			var scope = angular.element(document.getElementById("DetailController")).scope();
 			scope.$apply(function () {
 				scope.boardContent.comments.push(response);
 			});
+			Materialize.toast("정상적으로 등록되었습니다.", 3000);
 		},
 		error : function(response){
-			console.log(response);
-			alert("오류");
+			Materialize.toast("수정할 수 없었습니다.", 3000);
     		}
     	});
 	$('#preloader').hide();
@@ -209,7 +209,7 @@ function updateComment(comment, index){
 	$('#preloader').show();
 	var CommentObject = new Object();
 	
-	CommentObject.description = $('#u_c_description').val();
+	CommentObject.description = $('#u_c_description').summernote('code');
 	CommentObject.tags = JSON.stringify($('#u_c_tags').tagging("getTags"));
 	CommentObject.id = comment.id;
 	CommentObject.boardid = comment.boardid;
@@ -225,20 +225,21 @@ function updateComment(comment, index){
 			scope.$apply(function () {
 				scope.boardContent.comments[index] = response;
 				resetUpdateCommentForm();
-				$('#updateCommentModal').modal('close');
+				$('#updateCommentModal').modal('hide');
 			});
+			Materialize.toast("정상적으로 수정되었습니다.", 3000);
 		},
 		error : function(response){
-			console.log(response);
-			alert("오류");
+			Materialize.toast("수정할 수 없었습니다.", 3000);
     		}
     	});
 	$('#preloader').hide();
 }
 function resetUpdateCommentForm(){
-	$('#u_c_description').val('');
+	$('#u_c_description').summernote('code','');
 	$('#u_c_tags').tagging( "reset" );
 	Materialize.updateTextFields();
+	$('#updateCommentModal').hide();
 }
 function updateBoard(board){
 	$('#preloader').show();
@@ -259,15 +260,96 @@ function updateBoard(board){
 			location.reload();
 		},
 		error : function(response){
-			console.log(response);
-			alert("오류");
+			Materialize.toast("수정할 수 없었습니다.", 3000);
     		}
     	});
 	$('#preloader').hide();
 }
 function resetUpdateBoardForm(){
-	$('#u_b_description').val('');
+	$('#u_b_description').summernote('code','');
 	$('#u_b_tags').tagging( "reset" );
 	Materialize.updateTextFields();
+	$('#updateBoardModal').hide();
 }
 
+function validation(fileName){
+    var fileNameExtensionIndex = fileName.lastIndexOf('.') + 1; //.뒤부터 확장자
+    var fileNameExtension = fileName.toLowerCase().substring(fileNameExtensionIndex,fileName.length); //확장자 자르기
+     
+    if( !( (fileNameExtension=='jpg') || (fileNameExtension=='gif') || (fileNameExtension=='png') || (fileNameExtension=='bmp') ) ) {
+        alert('jpg, gif, png, bmp 확장자만 업로드 가능합니다.');
+        return true;
+    }
+    else{
+        return false;
+    }
+}
+
+function sendImage(file, summernote){
+	var data = new FormData();
+      data.append("Filedata",file);
+		$.ajax({
+          type: 'POST',
+          url: '/upload/image/',
+          data: data,
+        	contentType: false,
+     		processData: false,
+          dataType: 'JSON', //리턴되는 데이타 타입
+          beforeSubmit: function(){
+          },
+          success: function(fileInfo){
+        	  if(fileInfo.result == 1)
+        		  $(summernote).summernote('insertImage', fileInfo.imageurl, fileInfo.filename); 
+        	  Materialize.toast("정상적으로 업로드되었습니다.", 3000);
+          },
+          error: function(fileInfo){
+        	  if(fileInfo.result==-1){ //서버단에서 체크 후 수행됨
+                  alert('jpg, gif, png, bmp 확장자만 업로드 가능합니다.');
+                  return false;
+              }
+              else if(fileInfo.result==-2){ //서버단에서 체크 후 수행됨
+                  alert('파일이 5MB를 초과하였습니다.');
+                  return false;
+              }
+          }
+      });
+    }
+function deleteImage(file){
+		$.ajax({
+          type: 'DELETE',
+          url: '/upload/image/?url='+file,
+          dataType: 'text', //리턴되는 데이타 타입
+          beforeSubmit: function(){
+          },
+          success: function(response){
+        	  Materialize.toast("정상적으로 삭제되었습니다.", 3000);
+          }
+      });
+    }
+$(function() {
+// 로딩 후 호출됨
+
+	$('.contentbox').summernote({
+		toolbar: [
+		          // [groupName, [list of button]]
+		          ['pre',['style']],
+		          ['style', ['bold', 'italic', 'strikethrough', 'underline', 'clear']],
+		          ['font', ['fontname','fontsize']],
+		          ['color', ['color']],
+		          ['para', ['paragraph'],['height']],
+		          ['insert', ['link', 'picture', 'video']],
+		          ['misc',['codeview']]
+		        ],
+		fontNames: ['Noto Sans KR', 'Arial', 'Arial Black', 'Comic Sans MS', 'Courier New'],
+		fontNamesIgnoreCheck: ['Noto Sans KR'],
+		lang: 'ko-KR',
+		callbacks: {
+		    onImageUpload: function(files) {
+		    	sendImage(files[0], $(this));
+		      },
+		    onMediaDelete: function(target){
+		    	deleteImage(target[0].src);
+		    }
+		  }
+	});
+});

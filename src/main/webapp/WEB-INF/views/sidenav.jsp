@@ -21,6 +21,11 @@
       </sec:authorize>
     </div></li>
     <li><a href="/"><i class="material-icons">home</i>홈</a></li>
+    <li><a href="/board"><i class="material-icons">create</i>글쓰기</a></li>
+    <li><div class="divider"></div></li>
+    <li><a class="subheader">게시판</a></li>
+    <li><a href="/board/category/질문"><i class="material-icons">folder</i>질문 게시판</a></li>
+    <li><a href="/board/category/정보"><i class="material-icons">folder</i>정보 게시판</a></li>
     <li><div class="divider"></div></li>
     <li><a class="subheader">IT 관련 사이트</a></li>
     <li><a href="http://kdevkr.tistory.com/" target="_blank"><i class="material-icons">link</i>개발자 블로그</a></li>

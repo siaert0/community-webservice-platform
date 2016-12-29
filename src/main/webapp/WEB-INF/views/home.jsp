@@ -3,7 +3,7 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags"%>
 <sec:authentication var="user" property="principal"/>
-<html ng-app="myApp" ng-clock>
+<html ng-app="myApp">
 	<head>
 		<meta http-equiv="X-UA-Compatible" content="IE=edge" charset="utf-8">
 		<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
@@ -21,7 +21,7 @@
 		<link rel="stylesheet"	href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.8/css/materialize.min.css">
 		<link rel="stylesheet" href="/assets/css/style.css">
 	</head>
-	<body id="BoardController" ng-controller="BoardController">
+	<body id="BoardController" ng-controller="BoardController" ng-cloak>
 	<!-- 헤더 영역 -->
 		<header>
 			<div class="navbar-fixed">
@@ -51,8 +51,8 @@
 						<span class="chip grey darken-2 hover white-text" style="border-radius:0;">${userCount}명</span>
 					</div>
 					<div class="col s12 m4 l4">
-						<span class="chip red lighten-2 hover white-text" style="border-radius:0;">전체 게시물수</span>
-						<span class="chip grey darken-2 hover white-text" style="border-radius:0;">${boardCount}개</span></div>
+						<span class="chip red lighten-2 hover white-text" style="border-radius:0;">${category} 게시물수</span>
+						<span class="chip grey darken-2 hover white-text" style="border-radius:0;">{{totalElements}}개</span></div>
 					<div class="col s12 m4 l4">
 						<span class="chip red lighten-2 hover white-text" style="border-radius:0;">현재 메모리 사용량</span>
 						<span class="chip grey darken-2 hover white-text" style="border-radius:0;">${systemMemory}MB</span>
@@ -64,29 +64,22 @@
 				<div class="row">
 				<div dir-paginate="x in search_contents = (boardContents | filter:searchKeyword | orderBy:-index) | itemsPerPage:pagesize" pagination-id="boardpage" total-items="totalElements">
 					<div class="col s12">
-						<div class="card sticky-action hoverable hover" data-ng-click="move(x.id)" ng-class="{selectedBoard:x.selected != 0, commentedBoard:x.selected == 0 && x.comments.length > 0}">
-							<div class="card-image" style="padding:20px; padding-bottom:0;  padding-right:140px;">
-							    <span class="chip teal lighten-2 hover white-text" style="border-radius:0; position:absolute; top:0; right:0; margin-right:0; padding-left:0;">
-							    	<span class="chip lighten-2 hover white-text" data-ng-click="" style="border-radius:0; margin-right:10px;" ng-class="{blue:x.selected == 0 && x.comments.length > 0, red:x.selected == 0 && x.comments.length == 0, green:x.selected != 0}">답변 {{x.comments.length}}개</span>
-							    	{{x.category}}
-							    </span>
-								<span style="font-weight:700; font-size:18px;">{{x.title}}</span>
-							</div>
+						<div class="card sticky-action hoverable hover border-flat" data-ng-click="move(x.id)" ng-class="{selectedBoard:x.selected != 0, commentedBoard:x.selected == 0 && x.comments.length > 0}">
 							<div class="card-content">
-								<div class="justify-align">
-									{{x.description}}
-								</div>
-							</div>
-							<div class="card-action right-align">
 								<span class="chip white left">
 							      <img style="height:100%;" ng-src="{{x.user.thumbnail}}">
 								   {{x.user.nickname}}
 								  </span>
+								<span style="font-weight:700; font-size:18px;">{{x.title}}</span>
+							</div>
+							<div class="card-action right-align">
+								<span class="chip teal lighten-2 hover white-text border-flat left">	{{x.category}}</span>
+							<span class="chip lighten-2 hover white-text border-flat left" ng-class="{blue:x.selected == 0 && x.comments.length > 0, grey:x.selected == 0 && x.comments.length == 0, green:x.selected != 0}">{{x.comments.length}}</span>
 								  <span class="tags" ng-init="tags=parseJson(x.tags)">
-									<span ng-repeat="tag in tags"><span class="chip red lighten-2 hover white-text" style="">{{tag}} </span>
+									<span ng-repeat="tag in tags"><span class="chip red lighten-2 hover white-text border-flat" style="">{{tag}} </span>
 								  </span>
 								</span>
-								<span class="chip grey darken-2 white-text">{{x.created | date:'yyyy년 MM월 dd일 h:mma'}}</span>
+								<span class="chip grey darken-2 white-text border-flat">{{x.created | date:'yyyy년 MM월 dd일 h:mma'}}</span>
 							</div>
 						</div>
 					</div>
@@ -142,10 +135,13 @@
 		<!-- Compiled and minified JavaScript -->
 		<script	src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
 		<script	src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.8/js/materialize.min.js"></script>
+		
 		<script	src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.7/angular.min.js"></script>
+		<script	src="https://code.angularjs.org/1.5.7/angular-sanitize.js"></script>
 		<script	src="/assets/js/dirPagination.js"></script>
 		<script src="/assets/js/app.js"></script>
 		<script type="text/javascript">
+			var category = "${category}";
 			var token = $("meta[name='_csrf']").attr("content");
 			var header = $("meta[name='_csrf_header']").attr("content");
 			$(function() {

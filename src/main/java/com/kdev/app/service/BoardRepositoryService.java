@@ -44,6 +44,10 @@ public class BoardRepositoryService {
 		 return boardRepository.findAll(pageable);
 	}
 	
+	public Page<BoardVO> findAllByCategory(String category, Pageable pageable){
+		return boardRepository.findAllByCategory(category, pageable);
+	}
+	
 	public Page<BoardVO> findAllByUser(UserVO userVO, Pageable pageable){
 		return boardRepository.findAllByUser(userVO, pageable);
 	}
