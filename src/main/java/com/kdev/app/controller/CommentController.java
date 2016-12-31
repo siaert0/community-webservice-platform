@@ -25,8 +25,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import com.kdev.app.domain.Comment;
 import com.kdev.app.domain.CommentDTO;
-import com.kdev.app.domain.CommentVO;
 import com.kdev.app.domain.UserVO;
 import com.kdev.app.service.CommentRepositoryService;
 import com.kdev.app.service.UserRepositoryService;
@@ -57,7 +57,7 @@ public class CommentController {
 		}
 		UserVO userVO = userRepositroyService.findUserByEmail(principal.getName());
 		createComment.setUser(userVO);
-		CommentVO createdComment = commentRepositoryService.create(createComment);
+		Comment createdComment = commentRepositoryService.create(createComment);
 		createdComment = commentRepositoryService.findOne(createdComment.getId());
 		createdComment.setCreated(new Date());
 		return new ResponseEntity<Object>(createdComment, HttpStatus.CREATED);
@@ -70,7 +70,7 @@ public class CommentController {
 	 */
 	@RequestMapping(value="/comment", method=RequestMethod.GET, produces=MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Object> findComment(@PageableDefault(sort = { "id" }, direction = Direction.DESC, size = 1000) Pageable pageable, @RequestParam int board_id){
-		Page<CommentVO> page = commentRepositoryService.findAll(pageable, board_id);
+		Page<Comment> page = commentRepositoryService.findAll(pageable, board_id);
 		return new ResponseEntity<Object>(page, HttpStatus.ACCEPTED);
 	}
 	
@@ -83,13 +83,13 @@ public class CommentController {
 	@RequestMapping(value="/comment/{id}", method=RequestMethod.POST, produces=MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Object> updateComment(@PathVariable int id, @RequestBody CommentDTO.Update update, Principal principal){
 		UserVO userVO = userRepositroyService.findUserByEmail(principal.getName());
-		CommentVO commentVO = commentRepositoryService.findOne(id);
+		Comment commentVO = commentRepositoryService.findOne(id);
 		
 		if(!(commentVO.getUser().getId().equals(userVO.getId())))
 			return new ResponseEntity<Object>(null, HttpStatus.FORBIDDEN);
 		commentVO.setDescription(update.getDescription());
 		commentVO.setTags(update.getTags());
-		CommentVO updated = commentRepositoryService.update(commentVO);
+		Comment updated = commentRepositoryService.update(commentVO);
 		return new ResponseEntity<Object>(updated, HttpStatus.ACCEPTED);
 	}
 	
@@ -103,7 +103,7 @@ public class CommentController {
 	public ResponseEntity<Object> deleteComment(@PathVariable int id, Principal principal){
 		
 		UserVO userVO = userRepositroyService.findUserByEmail(principal.getName());
-		CommentVO commentVO = commentRepositoryService.findOne(id);
+		Comment commentVO = commentRepositoryService.findOne(id);
 		
 		if(!(commentVO.getUser().getId().equals(userVO.getId())))
 			return new ResponseEntity<Object>(commentVO, HttpStatus.FORBIDDEN);

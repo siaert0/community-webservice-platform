@@ -21,7 +21,7 @@ import lombok.Setter;
 @Table(name = "comments")
 @Getter
 @Setter
-public class CommentVO {
+public class Comment {
 	
 	@Id
 	@GeneratedValue(strategy=GenerationType.AUTO)

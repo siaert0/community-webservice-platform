@@ -49,24 +49,27 @@
 	<article style="margin-top:0px;">
 	<!-- 게시물 컨트롤러 만들기 -->
 	<div class="container-fluid">
+	<div class="row">
+	<div class="col s12 m8">
 	<div class="card sticky-action" ng-if="boardContent != null">
-		<div class="card-content" style="border-bottom:1px solid #EEE">
+		<div class="card-content right-align" style="border-bottom:1px solid #EEE">
 		    								<span class="chip white left">
 			    <img style="height:100%;" ng-src="{{boardContent.user.thumbnail}}">
 			   {{boardContent.user.nickname}}
 			  </span>
-			<span style="font-weight:700; font-size:18px;">{{boardContent.title}}</span>
+			
 			<sec:authorize access="isAuthenticated()">
 			     <c:if test="${content.user.id == user.id}">
-			     <span class="chip blue lighten-2 hover white-text border-flat right" data-ng-click="requestBoardDelete();">삭제</span>
-			     <span class="chip red lighten-2 hover white-text border-flat right" data-ng-click="requestBoardUpdate();">수정</span>
+			     <span class="chip blue lighten-2 hover white-text border-flat" data-ng-click="requestBoardDelete();">삭제</span>
+			     <span class="chip red lighten-2 hover white-text border-flat" data-ng-click="requestBoardUpdate();">수정</span>
 			     </c:if>
 	    		</sec:authorize>
-			<span class="chip grey darken-2 white-text border-flat right">{{boardContent.created | date:'yyyy년 MM월 dd일 h:mma'}}</span>
+			<span class="chip grey darken-2 white-text border-flat">{{boardContent.created | date:'yyyy년 MM월 dd일 h:mma'}}</span>
 		</div>
 		<div class="card-content">
 			<div class="justify-align">
 				<div class="">
+				<p class="" style="font-weight:700; font-size:18px;">{{boardContent.title}}</p>
 					<p class="collection-title" ng-bind-html="trustHtml(boardContent.description)"></p>
 				</div>
 			</div>
@@ -78,6 +81,32 @@
 				<span ng-repeat="tag in tags"><span class="chip red lighten-2 hover white-text border-flat" style="">{{tag}} </span></span>
 			</span>
 		</div>
+	</div>
+	</div>
+	<!-- 실시간 구독 영역 -->
+	<div class="col s12 m4">
+		<div class="collection">
+			<div class="collection-item center-align">
+				실시간으로 물어보세요
+			</div>
+			<div id="messagebox" class="collection-item" style="min-height:255px; max-height:255px; overflow:auto; padding-left:10px; padding-right:10px; overflow-wrap:break-word;">
+				<p class="" ng-repeat="message in messages">
+					
+			   <span style="border-right:2px solid red; padding-right:10px;">{{message.user.nickname}}</span>
+			  &nbsp;
+			  {{message.message}}
+				</p>
+			</div>
+			<div class="collection-item" style="padding:0.5rem;">
+			<sec:authorize access="isAnonymous()">
+				<div class="center-align"><a href="/login">로그인</a> 하고 대화에 참여하기</div>
+			</sec:authorize>
+			<sec:authorize access="isAuthenticated()">
+				<input id="message" type="text" class="" style="margin:0;" placeholder="메시지 입력" onkeypress="if(event.keyCode==13) {sendMessage(this); return false;}"/>
+			</sec:authorize>
+			</div>
+		</div>
+	</div>
 	</div>
 
 		  <sec:authorize access="isAuthenticated()">
@@ -178,7 +207,7 @@
 		  <sec:authorize access="isAnonymous()">
 		  	<div class="collection">
 			<div class="collection-item center">
-				<a href="/login?redirect=board/{{boardContent.id}}">로그인</a> 하셔야 답변을 다실 수 있습니다.
+				<a href="/login">로그인</a> 하셔야 답변을 다실 수 있습니다.
 			</div>
 			</div>
 		  </sec:authorize>
@@ -192,7 +221,7 @@
 					    ${user.nickname}
 				</span>
 			<div class="input-field">
-				<div id="c_tags" class="tags" data-tags-input-name="tag">태그를 작성하시기 바랍니다</div>
+				<div id="c_tags" class="tags" data-tags-input-name="tag"></div>
 			</div>
 			<div class="input-field">
 				<div id="c_description" class="materialize-textarea contentbox"></div>

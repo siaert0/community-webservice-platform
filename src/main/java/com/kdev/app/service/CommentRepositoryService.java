@@ -8,8 +8,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import com.kdev.app.domain.Comment;
 import com.kdev.app.domain.CommentDTO;
-import com.kdev.app.domain.CommentVO;
 import com.kdev.app.domain.UserVO;
 import com.kdev.app.exception.UserNotFoundException;
 import com.kdev.app.repository.CommentRepository;
@@ -23,11 +23,11 @@ public class CommentRepositoryService {
 	@Autowired
 	ModelMapper modelMapper;
 	
-	public CommentVO create(CommentDTO.Create create){
+	public Comment create(CommentDTO.Create create){
 		UserVO userVO = create.getUser();
 		if(userVO == null)
 			throw new UserNotFoundException("Can't Found User");
-		CommentVO created = commentRepository.save(modelMapper.map(create, CommentVO.class));
+		Comment created = commentRepository.save(modelMapper.map(create, Comment.class));
 		
 		if(created == null)
 			throw new UserNotFoundException("Can't Found User");
@@ -35,7 +35,7 @@ public class CommentRepositoryService {
 		return created;
 	}
 	
-	public CommentVO update(CommentVO update){
+	public Comment update(Comment update){
 		return commentRepository.saveAndFlush(update);
 	}
 	
@@ -47,13 +47,13 @@ public class CommentRepositoryService {
 		commentRepository.deleteByboardid(boardid);
 	}
 	
-	public CommentVO findOne(int id){
+	public Comment findOne(int id){
 		return commentRepository.findOne(id);
 	}
 	
-	public Page<CommentVO> findAll(Pageable pageable, int board_id)
+	public Page<Comment> findAll(Pageable pageable, int board_id)
 	{
-		Page<CommentVO> page = commentRepository.findByboardid(pageable, board_id);
+		Page<Comment> page = commentRepository.findByboardid(pageable, board_id);
 		return page;
 	}
 	

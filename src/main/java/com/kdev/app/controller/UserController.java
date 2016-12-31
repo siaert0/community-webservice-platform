@@ -63,7 +63,7 @@ public class UserController {
 	ModelMapper modelMapper;
 	
 	@RequestMapping(value="/user/facebook", method= RequestMethod.GET)
-	public String FacebookUserView(Model model){
+	public String FacebookUserView(Model model, HttpSession session){
 		Connection<Facebook> connection = connectionRepository.findPrimaryConnection(Facebook.class);
 		if (connection == null) {
 			return "redirect:/connect/facebook";
@@ -80,7 +80,11 @@ public class UserController {
 				UserDetailsVO userDetailsVO = new UserDetailsVO(isUser);
 				Authentication authentication = new UsernamePasswordAuthenticationToken(userDetailsVO, null, userDetailsVO.getAuthorities());
 				SecurityContextHolder.getContext().setAuthentication(authentication);
-				return "redirect:/";
+		    	String redirect = (String)(session.getAttribute("redirect"));
+		    	if(redirect != null){
+		    		session.removeAttribute("redirect");
+		    	}
+				return "redirect:"+redirect;
 			}
 		}
 		
@@ -95,12 +99,12 @@ public class UserController {
 		return "register/form";
 	}
 	@RequestMapping(value="/user/kakao", method= RequestMethod.GET)
-	public String KakaoUserView(Model model){
+	public String KakaoUserView(Model model, HttpSession session){
 		Connection<Kakao> connection = connectionRepository.findPrimaryConnection(Kakao.class);
 		if (connection == null) {
 			return "redirect:/connect/kakao";
 		}
-		kakao = connection.getApi();
+		
 		KakaoProfile KakaoUser = kakao.userOperation().getUserProfile();
 		
 		//가입 여부 확인
@@ -112,7 +116,11 @@ public class UserController {
 				UserDetailsVO userDetailsVO = new UserDetailsVO(isUser);
 				Authentication authentication = new UsernamePasswordAuthenticationToken(userDetailsVO, null, userDetailsVO.getAuthorities());
 				SecurityContextHolder.getContext().setAuthentication(authentication);
-				return "redirect:/";
+		    	String redirect = (String)(session.getAttribute("redirect"));
+		    	if(redirect != null){
+		    		session.removeAttribute("redirect");
+		    	}
+				return "redirect:"+redirect;
 			}
 		}		
 		

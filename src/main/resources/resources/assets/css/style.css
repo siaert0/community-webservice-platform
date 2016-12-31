@@ -40,13 +40,11 @@ body {
 header, article, footer {
 	padding-left: 300px;
 }
-
-@media only screen and (max-width: 992px) {
+@media only screen and (max-width: 992px){
 	header, article, footer {
-		padding-left: 0;
+		padding-left: 0px;
 	}
 }
-
 .board-red {
 	border: 1px solid #e57373;
 }
@@ -326,3 +324,21 @@ code {
 	white-space: -o-pre-wrap;
 	background: #faf8f0;
 }
+.side-nav, #messagebox{
+	-ms-overflow-style: none; 
+}
+.side-nav::-webkit-scrollbar, #messagebox::-webkit-scrollbar {
+	display:none;
+}
+@media only screen and (max-width: 992px){
+	.side-nav .userView{
+		padding:32px 32px 0;
+	}
+	.side-nav a{
+		padding:0 32px;
+	}
+	html{
+		font-size: 14.5px;
+	}
+}
+

@@ -7,8 +7,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.kdev.app.domain.Board;
 import com.kdev.app.domain.BoardDTO;
-import com.kdev.app.domain.BoardVO;
 import com.kdev.app.domain.UserVO;
 import com.kdev.app.exception.NotCreatedException;
 import com.kdev.app.exception.UserNotFoundException;
@@ -27,12 +27,12 @@ public class BoardRepositoryService {
 	@Autowired 
 	ModelMapper modelMapper;
 	
-	public BoardVO create(BoardDTO.Create createBoard){
+	public Board create(BoardDTO.Create createBoard){
 		UserVO userVO = createBoard.getUser();
 		if(userVO == null)
 			throw new UserNotFoundException("Can't Found User");
 		
-		BoardVO createdBoard = boardRepository.save(modelMapper.map(createBoard, BoardVO.class));
+		Board createdBoard = boardRepository.save(modelMapper.map(createBoard, Board.class));
 		
 		if(createdBoard == null)
 			throw new NotCreatedException("Board Not Created");
@@ -40,19 +40,19 @@ public class BoardRepositoryService {
 		return createdBoard;
 	}
 	
-	public Page<BoardVO> findByAll(Pageable pageable){
+	public Page<Board> findByAll(Pageable pageable){
 		 return boardRepository.findAll(pageable);
 	}
 	
-	public Page<BoardVO> findAllByCategory(String category, Pageable pageable){
+	public Page<Board> findAllByCategory(String category, Pageable pageable){
 		return boardRepository.findAllByCategory(category, pageable);
 	}
 	
-	public Page<BoardVO> findAllByUser(UserVO userVO, Pageable pageable){
+	public Page<Board> findAllByUser(UserVO userVO, Pageable pageable){
 		return boardRepository.findAllByUser(userVO, pageable);
 	}
 	
-	public BoardVO update(BoardVO update){
+	public Board update(Board update){
 		return boardRepository.saveAndFlush(update);
 	}
 	
@@ -61,7 +61,7 @@ public class BoardRepositoryService {
 		boardRepository.delete(id);
 	}
 	
-	public BoardVO findOne(int id){
+	public Board findOne(int id){
 		return boardRepository.findOne(id);
 	}
 }

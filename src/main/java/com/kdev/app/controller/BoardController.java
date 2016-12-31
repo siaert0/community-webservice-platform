@@ -26,11 +26,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import com.kdev.app.domain.Board;
 import com.kdev.app.domain.BoardDTO;
-import com.kdev.app.domain.BoardVO;
 import com.kdev.app.domain.UserVO;
-import com.kdev.app.exception.BoardNotFoundException;
 import com.kdev.app.exception.ExceptionResponse;
+import com.kdev.app.exception.NotFoundException;
 import com.kdev.app.exception.ValidException;
 import com.kdev.app.service.BoardRepositoryService;
 import com.kdev.app.service.UserRepositoryService;
@@ -56,9 +56,9 @@ public class BoardController {
 	
 	@RequestMapping(value="/board/{id}", method=RequestMethod.GET)
 	public String findBoardOne(@PathVariable int id, Model model){
-		BoardVO boardVO = boardRepositoryService.findOne(id);	
+		Board boardVO = boardRepositoryService.findOne(id);	
 		if(boardVO == null)
-			throw new BoardNotFoundException("게시물을 찾을 수 없습니다.");
+			throw new NotFoundException("게시물을 찾을 수 없습니다.");
 		model.addAttribute("content", boardVO);
 		return "board/detail";
 	}
@@ -66,7 +66,7 @@ public class BoardController {
 	@RequestMapping(value="/board/{id}", method=RequestMethod.GET, produces=MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Object> findBoardOneREST(@PathVariable int id){
 		
-		BoardVO boardVO = boardRepositoryService.findOne(id);
+		Board boardVO = boardRepositoryService.findOne(id);
 		
 		/**
 		 * 에러 처리 방법 1
@@ -95,7 +95,7 @@ public class BoardController {
 		}
 		UserVO userVO = userRepositroyService.findUserByEmail(principal.getName());
 		createBoard.setUser(userVO);
-		BoardVO createdBoard = boardRepositoryService.create(createBoard);
+		Board createdBoard = boardRepositoryService.create(createBoard);
 		return new ResponseEntity<Object>(createdBoard, HttpStatus.CREATED);
 	}
 		
@@ -106,7 +106,7 @@ public class BoardController {
 	 */
 	@RequestMapping(value="/board", method=RequestMethod.GET, produces=MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Object> findBoard(@RequestParam(value="category", required=false, defaultValue="") String category, @PageableDefault(sort = { "id" }, direction = Direction.DESC, size = 5) Pageable pageable){
-		Page<BoardVO> page = null;
+		Page<Board> page = null;
 		
 		if(category.equals(""))
 			page= boardRepositoryService.findByAll(pageable);
@@ -122,8 +122,8 @@ public class BoardController {
 	 */
 	@RequestMapping(value="/board/me/{userid}", method=RequestMethod.GET, produces=MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Object> findBoardByUser(@PathVariable String userid,@PageableDefault(sort = { "id" }, direction = Direction.DESC, size = 1000) Pageable pageable){
-		Page<BoardVO> page = boardRepositoryService.findAllByUser(userRepositroyService.findUserById(userid), pageable);
-		List<BoardVO> list = page.getContent();
+		Page<Board> page = boardRepositoryService.findAllByUser(userRepositroyService.findUserById(userid), pageable);
+		List<Board> list = page.getContent();
 		return new ResponseEntity<Object>(list, HttpStatus.ACCEPTED);
 	}
 	
@@ -136,7 +136,7 @@ public class BoardController {
 	@RequestMapping(value="/board/{id}", method=RequestMethod.POST, produces=MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Object> updateBoard(@PathVariable int id, @RequestBody BoardDTO.Update update, Principal principal){
 		UserVO userVO = userRepositroyService.findUserByEmail(principal.getName());
-		BoardVO boardVO = boardRepositoryService.findOne(id);
+		Board boardVO = boardRepositoryService.findOne(id);
 		
 		if(!(boardVO.getUser().getId().equals(userVO.getId())))
 			return new ResponseEntity<Object>(update, HttpStatus.FORBIDDEN);
@@ -147,7 +147,7 @@ public class BoardController {
 		boardVO.setTags(update.getTags());
 		boardVO.setSelected(update.getSelected());
 
-		BoardVO updated = boardRepositoryService.update(boardVO);
+		Board updated = boardRepositoryService.update(boardVO);
 		return new ResponseEntity<Object>(updated, HttpStatus.ACCEPTED);
 	}
 	
@@ -161,7 +161,7 @@ public class BoardController {
 	public ResponseEntity<Object> deleteBoard(@PathVariable int id, Principal principal){
 		
 		UserVO userVO = userRepositroyService.findUserByEmail(principal.getName());
-		BoardVO boardVO = boardRepositoryService.findOne(id);
+		Board boardVO = boardRepositoryService.findOne(id);
 		
 		if(!(boardVO.getUser().getId().equals(userVO.getId())))
 			return new ResponseEntity<Object>(boardVO, HttpStatus.FORBIDDEN);

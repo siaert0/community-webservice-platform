@@ -36,6 +36,8 @@ app.controller('BoardController', function($scope, $http, $log, $sce){
 });
 
 app.controller('DetailController', function($scope, $http, $log, $sce){
+	$scope.messages = new Array();
+	
 	$scope.updateModel = function (data){
 		$scope.boardContent = data;
 	}
@@ -257,6 +259,7 @@ function updateBoard(board){
 		contentType: 'application/json',
 		dataType	: 'JSON',
 		success	: function(response){
+			
 			location.reload();
 		},
 		error : function(response){
@@ -326,47 +329,80 @@ function deleteImage(file){
           }
       });
     }
+
+/**
+ * 단순 메시지 전송을 위함.
+ */
+var stompClient = null;
+
+function sendMessage(message){
+	var scope = angular.element(document.getElementById("DetailController")).scope();
+	
+	if(stompClient != null)
+		stompClient.send("/message/notify/"+scope.boardContent.id, {}, JSON.stringify({'message':$(message).val()}));
+	
+	$(message).val('');
+}
+
 $(function() {
-// 로딩 후 호출됨
+	if(document.getElementById("DetailController") != null){
+		var scope = angular.element(document.getElementById("DetailController")).scope();
+		var socket = new SockJS("/websocket");
+		stompClient = Stomp.over(socket);
+		stompClient.debug = null;
+		stompClient.connect({}, function(frame) {
+			stompClient.subscribe('/board/'+scope.boardContent.id, function(response){
+				var json = JSON.parse(response.body);
+				scope.$apply(function(){
+					scope.messages.push(json);
+				});
+				$("#messagebox").scrollTop($("#messagebox")[0].scrollHeight);
+				
+			});
+		}, function(message){
+			$('#message').attr("placeholder","서버와 연결이 끊어짐");
+			$('#message').attr("readonly",true);
+		});
+	}
+
     var codeblockButton = function (context) {
         var ui = $.summernote.ui;
-  
         // create button
         var button = ui.button({
             contents: '코드',
             tooltip: '코드',
             click: function () {
-    
-                $('#q_content').summernote('code', '<p><br></p><p><pre><code>코드 붙여넣기</code></pre></p><p><br></p>');
+            	$('.contentbox').summernote('code', '<p><br></p><p><pre><code>코드 붙여넣기</code></pre></p><p><br></p>');
+            }
+	  });
+	  return button.render(); 
+	}
+    //undefined 체크방법
+    if(typeof(category) == 'undefined'){
+		$('.contentbox').summernote({
+			toolbar: [
+			          ['pre',['style']],
+			          ['style', ['bold', 'italic', 'strikethrough', 'underline', 'clear']],
+			          ['font', ['fontname','fontsize']],
+			          ['color', ['color']],
+			          ['para', ['paragraph'],['height']],
+			          ['insert', ['link', 'picture', 'video']],
+			          ['misc',['codeblock', 'codeview']]
+			        ],
+			fontNames: ['Noto Sans KR', 'Arial', 'Arial Black', 'Comic Sans MS', 'Courier New'],
+			fontNamesIgnoreCheck: ['Noto Sans KR'],
+			lang: 'ko-KR',
+			callbacks: {
+			    onImageUpload: function(files) {
+			    	sendImage(files[0], $(this));
+			      },
+			    onMediaDelete: function(target){
+			    	deleteImage(target[0].src);
+			    }
+			  },
+			  buttons: {
+	              codeblock: codeblockButton
+	          }
+		});
     }
-  });
-
-  return button.render();   // return button as jquery object 
-}
-	$('.contentbox').summernote({
-		toolbar: [
-		          // [groupName, [list of button]]
-		          ['pre',['style']],
-		          ['style', ['bold', 'italic', 'strikethrough', 'underline', 'clear']],
-		          ['font', ['fontname','fontsize']],
-		          ['color', ['color']],
-		          ['para', ['paragraph'],['height']],
-		          ['insert', ['link', 'picture', 'video']],
-		          ['misc',['codeblock', 'codeview']]
-		        ],
-		fontNames: ['Noto Sans KR', 'Arial', 'Arial Black', 'Comic Sans MS', 'Courier New'],
-		fontNamesIgnoreCheck: ['Noto Sans KR'],
-		lang: 'ko-KR',
-		callbacks: {
-		    onImageUpload: function(files) {
-		    	sendImage(files[0], $(this));
-		      },
-		    onMediaDelete: function(target){
-		    	deleteImage(target[0].src);
-		    }
-		  },
-		  buttons: {
-              codeblock: codeblockButton
-          }
-	});
 });

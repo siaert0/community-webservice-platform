@@ -24,7 +24,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.kdev.app.domain.FileVO;
 import com.kdev.app.domain.UserVO;
 import com.kdev.app.service.UserRepositoryService;
 

@@ -25,7 +25,7 @@ import lombok.Setter;
 @Table(name = "boards")
 @Getter
 @Setter
-public class BoardVO {
+public class Board {
 	
 	@Id
 	@GeneratedValue(strategy=GenerationType.AUTO)
@@ -48,5 +48,5 @@ public class BoardVO {
 	
 	@OneToMany(fetch=FetchType.EAGER)
 	@JoinColumn(name = "boardid")
-	private Collection<CommentVO> comments;
+	private Collection<Comment> comments;
 }

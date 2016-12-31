@@ -57,7 +57,7 @@
 				<textarea id="q_content" name="q_content" class="materialize-textarea"></textarea>
 			</div>
 			<div class="input-field col s12">
-				<div data-tags-input-name="tag" id="q_tags" class="tags">지우고 태그를 작성하세요</div>
+				<div data-tags-input-name="tag" id="q_tags" class="tags"></div>
 			</div>
 			<div class="input-field col s12 right-align">
 				<a class="waves-effect waves-light btn btn-flat" onclick="history.back();">뒤로가기</a>

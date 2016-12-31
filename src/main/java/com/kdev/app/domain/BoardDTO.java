@@ -27,7 +27,7 @@ public class BoardDTO {
 		private UserVO user;
 		private int selected;
 		private Date created;
-		private Collection<CommentVO> comments;
+		private Collection<Comment> comments;
 	}
 	
 }
