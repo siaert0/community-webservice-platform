@@ -7,8 +7,10 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.SavedRequestAwareAuthenticationSuccessHandler;
+import org.springframework.social.connect.ConnectionRepository;
 
 /**
  * @package		: com.kdev.app
@@ -18,6 +20,7 @@ import org.springframework.security.web.authentication.SavedRequestAwareAuthenti
  * @description	: 스프링 시큐리티 로그인 성공시 호출
  */
 public class LoginAuthenticationSuccessHandler extends SavedRequestAwareAuthenticationSuccessHandler {
+	
 	private static final Logger logger = LoggerFactory.getLogger(LoginAuthenticationSuccessHandler.class);
 	public LoginAuthenticationSuccessHandler(String defaultTargetUrl) {
         setDefaultTargetUrl(defaultTargetUrl);
@@ -26,9 +29,11 @@ public class LoginAuthenticationSuccessHandler extends SavedRequestAwareAuthenti
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, 
     	Authentication authentication) throws ServletException, IOException {
-    	String redirect = (String)(request.getSession().getAttribute("redirect"));
+    	    	
+    	String redirect = (String)(request.getSession().getAttribute("redirectUrl"));
     	if(redirect != null){
-    		request.getSession().removeAttribute("redirect");
+    		logger.info("{}",redirect);
+    		request.getSession().removeAttribute("redirectUrl");
     		response.sendRedirect(redirect);
     	}
         super.onAuthenticationSuccess(request, response, authentication);

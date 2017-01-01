@@ -14,6 +14,8 @@ import com.kdev.app.exception.NotCreatedException;
 import com.kdev.app.exception.UserNotFoundException;
 import com.kdev.app.repository.BoardRepository;
 import com.kdev.app.repository.CommentRepository;
+import com.kdev.app.repository.ScrapRepository;
+import com.kdev.app.repository.ThumbRepository;
 
 @Service
 @Transactional
@@ -23,6 +25,12 @@ public class BoardRepositoryService {
 	
 	@Autowired
 	private CommentRepository commentRepository;
+	
+	@Autowired
+	private ScrapRepository scrapRepository;
+	
+	@Autowired
+	private ThumbRepository thumbRepository;
 	
 	@Autowired 
 	ModelMapper modelMapper;
@@ -57,7 +65,6 @@ public class BoardRepositoryService {
 	}
 	
 	public void delete(int id){
-		commentRepository.deleteByBoard(id);
 		boardRepository.delete(id);
 	}
 	

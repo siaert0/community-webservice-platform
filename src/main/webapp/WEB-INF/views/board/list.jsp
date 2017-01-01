@@ -67,7 +67,8 @@
 							</div>
 							<div class="card-action right-align">
 								<span class="chip teal lighten-2 hover white-text border-flat left">	{{x.category}}</span>
-							<span class="chip lighten-2 hover white-text border-flat left" ng-class="{blue:x.selected == 0 && x.comments.length > 0, grey:x.selected == 0 && x.comments.length == 0, green:x.selected != 0}">{{x.comments.length}}</span>
+							<span class="chip lighten-2 hover white-text border-flat left" ng-class="{blue:x.selected == 0 && x.comments.length > 0, red:x.selected == 0 && x.comments.length == 0, green:x.selected != 0}">댓글 {{x.comments.length}}</span>
+								  <span class="chip lighten-2 hover white-text border-flat left" ng-class="{red:checkThumb({{x}})==0, green:checkThumb({{x}})==1, blue:checkThumb({{x}})==2}">추천 {{x.thumbs.length}}</span>
 								  <span class="tags" ng-init="tags=parseJson(x.tags)">
 									<span ng-repeat="tag in tags"><span class="chip red lighten-2 hover white-text border-flat" style="">{{tag}} </span>
 								  </span>
@@ -148,7 +149,18 @@
 				$(document).ajaxSend(function(e, xhr, options) {
 					xhr.setRequestHeader(header, token);
 				});
+				
 			});
 		</script>
+		<sec:authorize access="isAuthenticated()">
+		<script>
+		$(function() {
+			var scope = angular.element(document.getElementById("BoardController")).scope();
+			scope.apply(function(){
+				scope.USERID = '${user.id}';
+			});
+		});
+		</script>
+		</sec:authorize>
 	</body>
 </html>

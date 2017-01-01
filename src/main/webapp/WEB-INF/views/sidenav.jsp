@@ -22,6 +22,7 @@
     </div></li>
     <li><a href="/"><i class="material-icons">home</i>홈</a></li>
     <sec:authorize access="isAuthenticated()">
+    <li><a href="#회원탈퇴" onclick="withdraw(${user.id});"><i class="material-icons">account_box</i>회원탈퇴</a></li>
     <li><a href="/board/scrap"><i class="material-icons">share</i>스크랩</a></li>
     <li><a href="/board"><i class="material-icons">create</i>글쓰기</a></li>
     </sec:authorize>
@@ -39,3 +40,22 @@
 <script	src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
 <script src="/assets/js/sockjs-0.3.4.min.js"></script>
 <script src="/assets/js/stomp.min.js"></script>
+<script>
+function withdraw(id){
+	if(!confirm("정말로 탈퇴하시겠습니까?"))
+		return;
+	
+	$.ajax({
+		type	: 'DELETE',
+		url		: '/user/'+id,
+		success	: function(response){
+			Materialize.toast("정상적으로 탈퇴되었습니다.", 3000);
+			location.href="/";
+		},
+		error	: function(response){
+			console.log(response);
+			Materialize.toast("탈퇴하지 못했습니다", 3000);
+		}
+	});
+}
+</script>

@@ -15,11 +15,15 @@ import org.springframework.stereotype.Service;
 import com.kdev.app.domain.dto.UserDTO;
 import com.kdev.app.domain.vo.UserDetailsVO;
 import com.kdev.app.domain.vo.UserVO;
+import com.kdev.app.repository.BoardRepository;
 import com.kdev.app.repository.UserRepository;
 
 @Service
 @Transactional
 public class UserRepositoryService implements UserDetailsService {
+	
+	@Autowired
+	BoardRepository boardRepository;
 	
 	@Autowired
 	UserRepository userRepository;
@@ -71,7 +75,7 @@ public class UserRepositoryService implements UserDetailsService {
 	
 	public void delete(String id){
 		UserVO userVO = userRepository.findById(id);
-		userVO.setEmail(null);
-		userRepository.save(userVO);
+		boardRepository.deleteByUser(userVO);
+		userRepository.delete(userVO);
 	}
 }

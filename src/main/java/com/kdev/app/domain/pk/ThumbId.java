@@ -35,4 +35,16 @@ public class ThumbId implements Serializable {
 		// TODO Auto-generated method stub
 		return super.hashCode();
 	}
+	public int getBoardid() {
+		return boardid;
+	}
+	public void setBoardid(int boardid) {
+		this.boardid = boardid;
+	}
+	public String getUserid() {
+		return userid;
+	}
+	public void setUserid(String userid) {
+		this.userid = userid;
+	}
 }

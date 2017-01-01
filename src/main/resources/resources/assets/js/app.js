@@ -35,9 +35,29 @@ app.controller('BoardController', function($scope, $http, $log, $sce){
 	$scope.trustHtml = function(html){
 		return $sce.trustAsHtml(html);
 	}
+	$scope.checkThumb = function(boardContent){
+		if(boardContent.thumbs.length > 0){
+			var is = false;
+			if($scope.USERID == null){
+				return 1;
+			}
+			for(var i=0; i < boardContent.thumbs.length; i++){
+				if(boardContent.thumbs[i].thumbId.userid == $scope.USERID){
+					is = true
+					break;
+				}
+			}
+			if(is)
+				return 2;
+			else
+				return 1;
+		}
+		return 0;	
+	}
 	
 	getInformation(category,0,$scope.pagesize);
 });
+
 app.controller('ScrapController', function($scope, $http){
 	$scope.pagesize = 5;
 	$scope.totalElements = 0;
@@ -72,6 +92,44 @@ app.controller('DetailController', function($scope, $http, $log, $sce){
 	$scope.scrap = function(id){
 		var scope = angular.element(document.getElementById("DetailController")).scope();
 		check_scrap(id, null, scope);
+	}
+	$scope.checkThumb = function(){
+		if($scope.boardContent.thumbs.length > 0){
+			var is = false;
+			if($scope.USERID == null){
+				return 1;
+			}
+			for(var i=0; i < $scope.boardContent.thumbs.length; i++){
+				if($scope.boardContent.thumbs[i].thumbId.userid == $scope.USERID){
+					is = true
+					break;
+				}
+			}
+			if(is)
+				return 2;
+			else
+				return 1;
+		}
+		return 0;	
+	}
+	$scope.toggleThumb = function(){
+		var dataObject = new Object();
+		dataObject.boardid = $scope.boardContent.id;
+		$.ajax({
+			type	: 'POST',
+			url		: '/board/thumb',		
+			data	: JSON.stringify(dataObject),
+			contentType: 'application/json',
+			dataType	: 'JSON',
+			success	: function(response){
+				$scope.$apply(function(){
+					$scope.boardContent.thumbs = response;
+				});
+			},
+			error	: function(response){
+				Materialize.toast("통신 오류", 3000);
+			}
+		});
 	}
 	$scope.requestBoardDelete = function (){
 		$.ajax({
@@ -175,7 +233,6 @@ function getInformation(value, page, size){
 		data	: dataObject,
 		dataType	: 'JSON',
 		success	: function(response){
-			console.log(response);
 			if(response != "" && response != null){
 				scope.$apply(function () {
 					scope.totalElements = response.totalElements;
@@ -460,18 +517,18 @@ $(function() {
 });
 
 function initSummernote(){
-	var codeblockButton = function (context) {
+/*	var codeblockButton = function (context) {
         var ui = $.summernote.ui;
         // create button
         var button = ui.button({
             contents: '코드',
             tooltip: '코드',
             click: function () {
-            	$('.contentbox').summernote('code', '<p><br></p><p><pre><code>코드 붙여넣기</code></pre></p><p><br></p>');
+            	$('.contentbox').summernote('pasteHTML', '<p><pre><code>코드 붙여넣기</code></pre></p>');
             }
 	  });
 	  return button.render(); 
-	}
+	}*/
 	$('.contentbox').summernote({
 		toolbar: [
 		          ['pre',['style']],
@@ -480,7 +537,7 @@ function initSummernote(){
 		          ['color', ['color']],
 		          ['para', ['paragraph'],['height']],
 		          ['insert', ['link', 'picture', 'video']],
-		          ['misc',['codeblock', 'codeview']]
+		          ['misc',['codeview']]
 		        ],
 		fontNames: ['Noto Sans KR', 'Arial', 'Arial Black', 'Comic Sans MS', 'Courier New'],
 		fontNamesIgnoreCheck: ['Noto Sans KR'],
@@ -492,9 +549,6 @@ function initSummernote(){
 		    onMediaDelete: function(target){
 		    	deleteImage(target[0].src);
 		    }
-		  },
-		  buttons: {
-              codeblock: codeblockButton
-          }
+		  }
 	});
 }

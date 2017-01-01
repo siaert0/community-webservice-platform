@@ -26,8 +26,10 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import com.kdev.app.domain.dto.BoardDTO;
 import com.kdev.app.domain.pk.ScrapId;
+import com.kdev.app.domain.pk.ThumbId;
 import com.kdev.app.domain.vo.Board;
 import com.kdev.app.domain.vo.Scrap;
+import com.kdev.app.domain.vo.Thumb;
 import com.kdev.app.domain.vo.UserDetailsVO;
 import com.kdev.app.domain.vo.UserVO;
 import com.kdev.app.exception.ExceptionResponse;
@@ -35,6 +37,7 @@ import com.kdev.app.exception.NotFoundException;
 import com.kdev.app.exception.ValidException;
 import com.kdev.app.service.BoardRepositoryService;
 import com.kdev.app.service.ScrapRepositoryService;
+import com.kdev.app.service.ThumbRepositoryService;
 
 @Controller
 public class BoardController {
@@ -44,6 +47,9 @@ public class BoardController {
 	
 	@Autowired
 	private ScrapRepositoryService scrapRepositroyService;
+	
+	@Autowired
+	private ThumbRepositoryService thumbRepositoryService;
 	
 	@Autowired 
 	ModelMapper modelMapper;
@@ -71,6 +77,17 @@ public class BoardController {
 		scrapId.setUserid(userVO.getId());
 		scrapRepositroyService.checkScrap(scrapId);
 		return new ResponseEntity<Object>("스크랩 완료", HttpStatus.ACCEPTED);
+	}
+	@Secured("ROLE_USER")
+	@RequestMapping(value="/board/thumb", method=RequestMethod.POST, produces=MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<Object> checkThumb(@RequestBody ThumbId thumbId, Authentication authentication){
+		UserDetailsVO userDetails = (UserDetailsVO)authentication.getPrincipal();
+
+		UserVO userVO = modelMapper.map(userDetails, UserVO.class);
+		thumbId.setUserid(userVO.getId());
+		Thumb thumb = thumbRepositoryService.checkThumb(thumbId);
+		List<Thumb> thumbs = thumbRepositoryService.findByBoard(thumbId.getBoardid());
+		return new ResponseEntity<Object>(thumbs, HttpStatus.ACCEPTED);
 	}
 	
 	@Secured("ROLE_USER")

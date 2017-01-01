@@ -52,12 +52,12 @@
 					<div class="collection">
 						<div class="collection-item">
 							<p>Spring Boot 1.4.3</p>
-							<p>Spring Security [적용완료]</p>
-							<p>Spring Social [페이스북, 카카오 로그인]</p>
-							<p>Spring Data JPA & Hibernate : 객체로 연관관계 엔터티 표현</p>
-							<p>Spring Websocket - Sockjs - Stomp : 게시물별 채팅공간?</p>
+							<p>Spring Security</p>
+							<p>Spring Social Faceboo, Kakao : <span class="red-text lighten-2-text"> 오류발생... 원인모름...</span></p>
+							<p>Spring Data JPA & Hibernate : <span class="red-text lighten-2-text"> 블로그 정리필요...</span></p>
+							<p>Spring Websocket - Sockjs - Stomp : <span class="red-text lighten-2-text"> 구독자수 표현방법?...</span></p>
 							<p>Lombok : Getter Setter</p>
-							<p>ModelMapper : VO - DTO간 변환</p>
+							<p>ModelMapper</p>
 						</div>
 					</div>
 				</div>

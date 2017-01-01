@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.servlet.ModelAndView;
 
-@ControllerAdvice
+//@ControllerAdvice
 public class GlobalExceptionHandler {
 	private static final Logger logger = LoggerFactory.getLogger(GlobalExceptionHandler.class);
 	private static final String DEFAULT_VIEW = "error";

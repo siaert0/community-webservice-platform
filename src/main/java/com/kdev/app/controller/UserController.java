@@ -1,9 +1,12 @@
 package com.kdev.app.controller;
 
+import java.io.IOException;
 import java.security.Principal;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 
@@ -14,11 +17,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.social.connect.Connection;
-import org.springframework.social.connect.ConnectionKey;
 import org.springframework.social.connect.ConnectionRepository;
 import org.springframework.social.facebook.api.Facebook;
 import org.springframework.social.kakao.api.Kakao;
@@ -37,6 +40,7 @@ import org.springframework.web.bind.annotation.SessionAttributes;
 import com.kdev.app.domain.dto.UserDTO;
 import com.kdev.app.domain.vo.UserDetailsVO;
 import com.kdev.app.domain.vo.UserVO;
+import com.kdev.app.intercepter.LoginAuthenticationSuccessHandler;
 import com.kdev.app.service.UserRepositoryService;
 
 /**
@@ -63,34 +67,26 @@ public class UserController {
 	ModelMapper modelMapper;
 	
 	@RequestMapping(value="/user/facebook", method= RequestMethod.GET)
-	public String FacebookUserView(Model model, HttpSession session){
+	public String FacebookUserView(HttpServletRequest request, HttpServletResponse response, Model model, HttpSession session) throws Exception{
 		Connection<Facebook> connection = connectionRepository.findPrimaryConnection(Facebook.class);
 		if (connection == null) {
 			return "redirect:/connect/facebook";
 		}
-		if (connection.hasExpired()) {
-			connectionRepository.removeConnection(connection.getKey());
-			return "redirect:/connect/facebook";
-		}
+		connection.sync();
 		String [] fields = { "id","name","birthday","email","location","hometown","gender","first_name","last_name"};
 		org.springframework.social.facebook.api.User facebookUser = facebook.fetchObject("me", org.springframework.social.facebook.api.User.class, fields);
 		UserDTO.Create user = new UserDTO.Create();
 		
+		connectionRepository.removeConnection(connection.getKey());
 		//가입 여부 확인
-		UserVO isUser = userRepositroyService.findUserById(facebookUser.getId());
-		if(isUser != null){
-			if(!isUser.getEmail().equals("")){
-				//가입 되있을 경우 로그인 처리
-				UserDetailsVO userDetailsVO = new UserDetailsVO(isUser);
-				Authentication authentication = new UsernamePasswordAuthenticationToken(userDetailsVO, null, userDetailsVO.getAuthorities());
-				SecurityContextHolder.getContext().setAuthentication(authentication);
-		    	String redirect = (String)(session.getAttribute("redirect"));
-		    	if(redirect != null){
-		    		session.removeAttribute("redirect");
-		    	}
-		    	connectionRepository.removeConnection(new ConnectionKey("facebook", user.getId()));
-				return "redirect:"+redirect;
-			}
+		UserVO userVO = userRepositroyService.findUserById(facebookUser.getId());
+		if(userVO != null){
+			//가입 되었으니까...
+			UserDetailsVO userDetailsVO = new UserDetailsVO(userVO);
+			Authentication authentication = new UsernamePasswordAuthenticationToken(userDetailsVO, null, userDetailsVO.getAuthorities());
+			SecurityContextHolder.getContext().setAuthentication(authentication);
+			LoginAuthenticationSuccessHandler handler = new LoginAuthenticationSuccessHandler("/");
+			handler.onAuthenticationSuccess(request, response, authentication);
 		}
 		
 		user.setId(facebookUser.getId());
@@ -100,41 +96,31 @@ public class UserController {
 		user.setRole("ROLE_USER");
 		
 		model.addAttribute("userProfile", user);
-		connectionRepository.removeConnection(new ConnectionKey("facebook", user.getId()));
 		return "register/form";
 	}
+	
 	@RequestMapping(value="/user/kakao", method= RequestMethod.GET)
-	public String KakaoUserView(Model model, HttpSession session){
+	public String KakaoUserView(HttpServletRequest request, HttpServletResponse response, Model model, HttpSession session) throws Exception{
 		Connection<Kakao> connection = connectionRepository.findPrimaryConnection(Kakao.class);
 		
 		if (connection == null) {
 			return "redirect:/connect/kakao";
 		}
-		if (connection.hasExpired()) {
-			connectionRepository.removeConnection(connection.getKey());
-			return "redirect:/connect/kakao";
-		}
 			
 		KakaoProfile KakaoUser = kakao.userOperation().getUserProfile();
-		
+		connectionRepository.removeConnection(connection.getKey());
 		//가입 여부 확인
-		UserVO isUser = userRepositroyService.findUserById(String.valueOf(KakaoUser.getId()));
-		UserDTO.Create user = new UserDTO.Create();
-		if(isUser != null){
-			if(!isUser.getEmail().equals(null)){
-				//가입 되있을 경우 로그인 처리
-				UserDetailsVO userDetailsVO = new UserDetailsVO(isUser);
-				Authentication authentication = new UsernamePasswordAuthenticationToken(userDetailsVO, null, userDetailsVO.getAuthorities());
-				SecurityContextHolder.getContext().setAuthentication(authentication);
-		    	String redirect = (String)(session.getAttribute("redirect"));
-		    	if(redirect != null){
-		    		session.removeAttribute("redirect");
-		    	}
-		    	connectionRepository.removeConnection(new ConnectionKey("kakao", String.valueOf(user.getId())));
-				return "redirect:"+redirect;
-			}
-		}		
+		UserVO userVO = userRepositroyService.findUserById(String.valueOf(KakaoUser.getId()));
 		
+		if(userVO != null){
+			//가입 되었으니까...
+			UserDetailsVO userDetailsVO = new UserDetailsVO(userVO);
+			Authentication authentication = new UsernamePasswordAuthenticationToken(userDetailsVO, null, userDetailsVO.getAuthorities());
+			SecurityContextHolder.getContext().setAuthentication(authentication);
+			LoginAuthenticationSuccessHandler handler = new LoginAuthenticationSuccessHandler("/");
+			handler.onAuthenticationSuccess(request, response, authentication);
+		}	
+		UserDTO.Create user = new UserDTO.Create();
 		user.setId(String.valueOf(KakaoUser.getId()));
 		user.setNickname(KakaoUser.getProperties().getNickname());
 		user.setThumbnail(KakaoUser.getProperties().getThumbnail_image());
@@ -143,10 +129,11 @@ public class UserController {
 		
 		kakao.userOperation().logout();
 		model.addAttribute("userProfile", user);
-		connectionRepository.removeConnection(new ConnectionKey("kakao", String.valueOf(user.getId())));
+
 		return "register/form";
 	}
 	
+	// 회원정보 생성
 	@RequestMapping(value="/user", method= RequestMethod.POST, produces=MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Object> createUser(@ModelAttribute("userProfile") @Valid UserDTO.Create user, BindingResult result){
 		Map<String, Object> map = new HashMap<String, Object>();
@@ -158,6 +145,7 @@ public class UserController {
 		return new ResponseEntity<Object>(newUser, HttpStatus.CREATED);
 	}
 	
+	//이메일 중복체크
 	@RequestMapping(value = "/check/email", method = RequestMethod.GET, produces=MediaType.APPLICATION_JSON_VALUE)
 	public @ResponseBody ResponseEntity<Object> checkByEmail(
 			@RequestParam(value = "email", required = true) String email) {
@@ -170,15 +158,15 @@ public class UserController {
 		map.put("responseMessage", "해당 이메일은 사용가능 합니다.");
 		return new ResponseEntity<Object>(map,HttpStatus.OK);
 	}
-	
+	@Secured("ROLE_USER")
 	@RequestMapping(value="/user/{id}", method = RequestMethod.DELETE, produces=MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<Object> delete(@PathVariable String id, Principal principal, HttpSession session){
-		UserDetailsVO userDetailsVO = (UserDetailsVO)principal;
+	public ResponseEntity<Object> delete(@PathVariable String id, Authentication authentication, HttpSession session){
+		UserDetailsVO userDetailsVO = (UserDetailsVO)authentication.getPrincipal();
 		if(!userDetailsVO.getId().equals(id)){
 			return new ResponseEntity<Object>(HttpStatus.FORBIDDEN);
 		}
 		userRepositroyService.delete(id);
-		session.invalidate();
+		SecurityContextHolder.getContext().setAuthentication(null);
 		return new ResponseEntity<Object>(HttpStatus.OK);
 	}
 	

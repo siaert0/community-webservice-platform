@@ -42,7 +42,7 @@ public class HomeController {
 	
 	@RequestMapping(value = "/login", method = RequestMethod.GET)
 	public String login(HttpSession session, HttpServletRequest request, Model model) {
-		session.setAttribute("redirect", request.getHeader("referer"));
+		session.setAttribute("redirectUrl", request.getHeader("referer"));
 		return "login";
 	}
 

@@ -29,7 +29,7 @@
 <link rel="stylesheet"  href="/assets/css/tag-basic-style.css">
 <link rel="stylesheet"	href="/assets/css/style.css">
 </head>
-<body id="DetailController" ng-controller="DetailController" ng-cloak>
+<body id="DetailController" ng-controller="DetailController" ng-cloak ng-init="USERID=${user.id}">
 <header>
 		<div class="navbar-fixed">
 			<nav class="z-depth-0">
@@ -75,11 +75,14 @@
 				</div>
 			</div>
 		</div>
-		<div class="card-action right-align">
-		 <span class="chip teal lighten-2 hover white-text border-flat left" >{{boardContent.category}}</span>
-		<span class="chip lighten-2 hover white-text border-flat left" ng-class="{blue:boardContent.selected == 0 && boardContent.comments.length > 0, red:boardContent.selected == 0 && boardContent.comments.length == 0, green:boardContent.selected != 0}">{{boardContent.comments.length}}</span>
-			 <span class="chip lighten-2 hover white-text border-flat left" ng-class="{red:boardContent.thumbs.length > 0}" ng-data-click="toggleThumb();">{{boardContent.thumbs.length}}</span>
-			 <span class="tags" ng-if="boardContent.tags != null" ng-init="tags=parseJson(boardContent.tags)">
+		<div class="card-action left-align">
+		 <span class="chip teal lighten-2 hover white-text border-flat" >{{boardContent.category}}</span>
+		<span class="chip lighten-2 hover white-text border-flat" ng-class="{blue:boardContent.selected == 0 && boardContent.comments.length > 0, red:boardContent.selected == 0 && boardContent.comments.length == 0, green:boardContent.selected != 0}">댓글 {{boardContent.comments.length}}</span>
+			 
+			 
+			 <span class="chip lighten-2 hover white-text border-flat" ng-class="{red:checkThumb()==0, green:checkThumb()==1, blue:checkThumb(${user.id})==2}" data-ng-click="toggleThumb();">추천 {{boardContent.thumbs.length}}</span>
+			
+			 <span class="tags right" ng-if="boardContent.tags != null" ng-init="tags=parseJson(boardContent.tags)">
 				<span ng-repeat="tag in tags"><span class="chip red lighten-2 hover white-text border-flat" style="">{{tag}} </span></span>
 			</span>
 		</div>

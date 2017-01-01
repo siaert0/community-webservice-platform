@@ -138,22 +138,6 @@ $(function() {
 		"edit-on-delete":false
 	});
 	
-    var codeblockButton = function (context) {
-        var ui = $.summernote.ui;
-  
-        // create button
-        var button = ui.button({
-            contents: '코드',
-            tooltip: '코드',
-            click: function () {
-    
-                $('#q_content').summernote('code', '<p><br></p><p><pre><code>코드 붙여넣기</code></pre></p><p><br></p>');
-    }
-  });
-
-  return button.render();   // return button as jquery object 
-}
-	
 	$('#q_content').summernote({   
 		toolbar: [
 		          // [groupName, [list of button]]
@@ -163,7 +147,7 @@ $(function() {
 		          ['color', ['color']],
 		          ['para', ['paragraph'],['height']],
 		          ['insert', ['link', 'picture', 'video']],
-		          ['misc',['codeblock','codeview']]
+		          ['misc',['codeview']]
 		        ],
 		fontNames: ['Noto Sans KR', 'Arial', 'Arial Black', 'Comic Sans MS', 'Courier New'],
 		fontNamesIgnoreCheck: ['Noto Sans KR'],
@@ -175,10 +159,7 @@ $(function() {
 		    onMediaDelete: function(target){
 		    	deleteImage(target[0].src);
 		    }
-		  },
-		  buttons: {
-              codeblock: codeblockButton
-          }
+		  }
 	});
 	$('select').material_select();
 	$('#preloader').hide();

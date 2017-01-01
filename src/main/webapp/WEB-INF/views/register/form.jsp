@@ -13,6 +13,7 @@
 <!-- Compiled and minified CSS -->
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/5.0.0/normalize.min.css">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.8/css/materialize.min.css">
+<link rel="stylesheet"  href="/assets/css/tag-basic-style.css">
 <link rel="stylesheet" href="/assets/css/style.css">
 <style>
 header, article, footer {
@@ -55,7 +56,7 @@ header, article, footer {
           <label for="password">비밀번호</label>
         </div>
         <div class="input-field col s12">
-			<div id="tag" class="chips chips-placeholder"></div>
+			<div id="tag" class="tags" data-tags-input-name="tag"></div>
 		</div>
      </div>
          <div class="row right-align">
@@ -68,6 +69,7 @@ header, article, footer {
     <!-- Compiled and minified JavaScript -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.8/js/materialize.min.js"></script>
+<script src="/assets/js/tagging.js"></script>
 <script type="text/javascript">
 	var token = $("meta[name='_csrf']").attr("content");
 	var header = $("meta[name='_csrf_header']").attr("content");
@@ -75,10 +77,19 @@ header, article, footer {
 		$(document).ajaxSend(function(e, xhr, options) {
 			xhr.setRequestHeader(header, token);
 		});
-		$('.chips-placeholder').material_chip({
-			secondaryPlaceholder : '+ 관심있는 분야'
+		$('.tags').tagging({
+			"no-backspace": true,
+			"no-duplicate": true,
+		    "no-duplicate-callback": window.alert,
+		    "no-duplicate-text": "태그 중복 방지 ->",
+		    "forbidden-chars":[],
+		    "forbidden-words":[],
+			"no-spacebar":true,
+			"tags-limit":8,
+			"edit-on-delete":false
 		});
 	});
+	var isEmail = false;
 	function checkByEmail(){
 
 		if($('#email').val() == "" || $('#email').val() == null){
@@ -122,11 +133,10 @@ header, article, footer {
 			return;
 		}
 		
-		var chips = $('#tag').material_chip('data');
 		var AuthObject = new Object(); 
 		AuthObject.email = $('#email').val();
 		AuthObject.password = $('#password').val();
-		AuthObject.tags = JSON.stringify(chips);
+		AuthObject.tags = JSON.stringify($('#tag').tagging("getTags"));
 		
 		$.ajax({
 			type	: 'POST',
@@ -139,7 +149,7 @@ header, article, footer {
 			},
 			error : function(response){
 				console.log(response);
-				
+				alert("이메일 형식과 비밀번호 4자리 이상 입력해주세요");
 	    		}
 	    	});
 		

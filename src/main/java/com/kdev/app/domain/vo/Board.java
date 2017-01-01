@@ -3,6 +3,7 @@ package com.kdev.app.domain.vo;
 import java.util.Collection;
 import java.util.Date;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -43,15 +44,15 @@ public class Board {
 	@PrimaryKeyJoinColumn(name = "userid", referencedColumnName = "id")
     private UserVO user;
 	
-	@OneToMany(mappedBy="board", fetch=FetchType.LAZY)
+	@OneToMany(mappedBy="board", fetch=FetchType.LAZY, cascade=CascadeType.REMOVE)
 	private Collection<Comment> comments;
 	
 	// http://stackoverflow.com/questions/29952386/embedded-id-and-repeated-column-in-mapping-for-entity-exception
-	@OneToMany(mappedBy="board", fetch=FetchType.LAZY)
+	@OneToMany(mappedBy="board", fetch=FetchType.LAZY, cascade=CascadeType.REMOVE)
 	private Collection<Thumb> thumbs;
 	
     @JsonBackReference
-	@OneToMany(mappedBy="board", fetch=FetchType.LAZY)
+	@OneToMany(mappedBy="board", fetch=FetchType.LAZY, cascade=CascadeType.REMOVE)
 	private Collection<Scrap> scraps;
 	
 }
