@@ -2,6 +2,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %> 
 <sec:authentication var="user" property="principal"/>
 <html ng-app="myApp">
 	<head>
@@ -21,22 +22,9 @@
 		<link rel="stylesheet"	href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.8/css/materialize.min.css">
 		<link rel="stylesheet" href="/assets/css/style.css">
 	</head>
-	<body id="BoardController" ng-controller="BoardController" ng-cloak>
+	<body id="ScrapController" ng-controller="ScrapController" ng-cloak>
 	<!-- 헤더 영역 -->
 		<header>
-			<div class="navbar-fixed">
-				<nav class="z-depth-0">
-					<div class="nav-wrapper blue lighten-1">
-						<form class="" style="margin-bottom: 0;" autocomplete="off">
-							<div class="input-field">
-								<input id="search" type="search" placeholder="키워드로 검색해보세요 ^ㅡ^" required ng-model="searchKeyword" kr-input>
-								<label for="search"><i class="material-icons">search</i></label>
-								<i class="material-icons">close</i>
-							</div>
-						</form>
-					</div>
-				</nav>
-			</div>
 			<c:import url="/sidenav" />
 		</header>
 		<!-- 아티클 영역 -->
@@ -46,33 +34,31 @@
 				<div class="row left-align">
 				<p></p>
 				<blockquote>
-					<div class="col s12 m4 l4">
-						<span class="chip red lighten-2 hover white-text" style="border-radius:0;">${category} 게시물수</span>
+					<div class="col s12">
+						<span class="chip red lighten-2 hover white-text" style="border-radius:0;">스크랩 수</span>
 						<span class="chip grey darken-2 hover white-text" style="border-radius:0;">{{totalElements}}개</span>
 						</div>
 				</blockquote>
 				</div>
 				
 				<!-- 게시물 영역 -->
-				<div class="row">
-				<div dir-paginate="x in search_contents = (boardContents | filter:searchKeyword | orderBy:-index) | itemsPerPage:pagesize" pagination-id="boardpage" total-items="totalElements">
+				<div class="row">		
+				<div dir-paginate="x in search_contents = (scraps | filter:searchKeyword | orderBy:-index) | itemsPerPage:pagesize" pagination-id="scrappage" total-items="totalElements">
 					<div class="col s12">
-						<div class="card sticky-action hoverable hover border-flat" data-ng-click="move(x.id)" ng-class="{selectedBoard:x.selected != 0, commentedBoard:x.selected == 0 && x.comments.length > 0}">
+						<div class="card sticky-action hoverable border-flat" ng-class="{selectedBoard:x.board.selected != 0, commentedBoard:x.board.selected == 0 && x.board.comments.length > 0}">
 							<div class="card-content">
 								<span class="chip white left">
-							      <img style="height:100%;" ng-src="{{x.user.thumbnail}}">
-								   {{x.user.nickname}}
+							      <img style="height:100%;" ng-src="{{x.board.user.thumbnail}}">
+								   {{x.board.user.nickname}}
 								  </span>
-								<span style="font-weight:700; font-size:18px;">{{x.title}}</span>
+								<span style="font-weight:700; font-size:18px;">{{x.board.title}}</span>
 							</div>
 							<div class="card-action right-align">
-								<span class="chip teal lighten-2 hover white-text border-flat left">	{{x.category}}</span>
-							<span class="chip lighten-2 hover white-text border-flat left" ng-class="{blue:x.selected == 0 && x.comments.length > 0, grey:x.selected == 0 && x.comments.length == 0, green:x.selected != 0}">{{x.comments.length}}</span>
-								  <span class="tags" ng-init="tags=parseJson(x.tags)">
-									<span ng-repeat="tag in tags"><span class="chip red lighten-2 hover white-text border-flat" style="">{{tag}} </span>
-								  </span>
-								</span>
-								<span class="chip grey darken-2 white-text border-flat">{{x.created | date:'yyyy년 MM월 dd일 h:mma'}}</span>
+								<span class="chip teal lighten-2 hover white-text border-flat left">{{x.board.category}}</span>
+							<span class="chip lighten-2 hover white-text border-flat left" ng-class="{blue:x.board.selected == 0 && x.board.comments.length > 0, grey:x.board.selected == 0 && x.board.comments.length == 0, green:x.board.selected != 0}">{{x.board.comments.length}}</span>
+								<span class="chip green lighten-2 hover white-text border-flat" data-ng-click="move(x.board.id)">이동</span>
+								<span class="chip red lighten-2 hover white-text border-flat" data-ng-click="scrap(x.board.id, $index)">스크랩 취소</span>
+								
 							</div>
 						</div>
 					</div>
@@ -86,7 +72,7 @@
 						    template-url="/assets/html/dirPagination.tpl.html"
 						    direction-links="true"
 	   						boundary-links="true"
-						    pagination-id="boardpage"
+						    pagination-id="scrappage"
 						    on-page-change=""
 						    >
 						</dir-pagination-controls>
@@ -140,7 +126,7 @@
 		<script	src="/assets/js/dirPagination.js"></script>
 		<script src="/assets/js/app.js"></script>
 		<script type="text/javascript">
-			var category = "${category}";
+		    var scrapUser = '${scrapUser}';
 			var token = $("meta[name='_csrf']").attr("content");
 			var header = $("meta[name='_csrf_header']").attr("content");
 			$(function() {

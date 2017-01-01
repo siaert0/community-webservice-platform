@@ -21,6 +21,7 @@ public class Thumb {
     @Column(name = "BOARD_ID", insertable=false, updatable=false)
     private int board;
     
-    @Column(name = "USER_ID", insertable=false, updatable=false)
-    private String user;
+    @ManyToOne
+    @JoinColumn(name = "USER_ID", insertable=false, updatable=false)
+    private UserVO user;
 }

@@ -10,7 +10,7 @@ public class CommentDTO {
 		private String description;
 		private String tags;
 		private UserVO user;
-		private int boardid;
+		private int board;
 	}
 	
 	@Data
@@ -18,7 +18,7 @@ public class CommentDTO {
 		private int id;
 		private String description;
 		private String tags;
-		private int boardid;
+		private int board;
 		private UserVO user;
 	}
 }

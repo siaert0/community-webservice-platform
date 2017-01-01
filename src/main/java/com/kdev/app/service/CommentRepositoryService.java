@@ -44,7 +44,7 @@ public class CommentRepositoryService {
 	}
 	
 	public void deleteAll(int boardid){
-		commentRepository.deleteByBoardid(boardid);
+		commentRepository.deleteByBoard(boardid);
 	}
 	
 	public Comment findOne(int id){
@@ -53,7 +53,7 @@ public class CommentRepositoryService {
 	
 	public Page<Comment> findAll(Pageable pageable, int board_id)
 	{
-		Page<Comment> page = commentRepository.findByBoardid(pageable, board_id);
+		Page<Comment> page = commentRepository.findByBoard(pageable, board_id);
 		return page;
 	}
 	

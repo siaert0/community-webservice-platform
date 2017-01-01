@@ -21,7 +21,10 @@
       </sec:authorize>
     </div></li>
     <li><a href="/"><i class="material-icons">home</i>홈</a></li>
+    <sec:authorize access="isAuthenticated()">
+    <li><a href="/board/scrap"><i class="material-icons">share</i>스크랩</a></li>
     <li><a href="/board"><i class="material-icons">create</i>글쓰기</a></li>
+    </sec:authorize>
     <li><div class="divider"></div></li>
     <li><a class="subheader">게시판</a></li>
     <li><a href="/board/category/질문"><i class="material-icons">folder</i>질문</a></li>

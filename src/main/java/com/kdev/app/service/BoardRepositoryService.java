@@ -57,7 +57,7 @@ public class BoardRepositoryService {
 	}
 	
 	public void delete(int id){
-		commentRepository.deleteByBoardid(id);
+		commentRepository.deleteByBoard(id);
 		boardRepository.delete(id);
 	}
 	

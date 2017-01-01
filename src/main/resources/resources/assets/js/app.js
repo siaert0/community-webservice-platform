@@ -11,6 +11,10 @@ app.directive('krInput', [ '$parse', function($parse) {
         },
     };
 } ]);
+app.controller('HomeController', function($scope){
+	
+});
+
 
 app.controller('BoardController', function($scope, $http, $log, $sce){
 	$scope.pagesize = 5;
@@ -34,6 +38,24 @@ app.controller('BoardController', function($scope, $http, $log, $sce){
 	
 	getInformation(category,0,$scope.pagesize);
 });
+app.controller('ScrapController', function($scope, $http){
+	$scope.pagesize = 5;
+	$scope.totalElements = 0;
+	$scope.updateModel = function (data){
+		$scope.scraps = data;
+	}
+	$scope.scrap = function(id, index){
+		var scope = angular.element(document.getElementById("ScrapController")).scope();
+		delete_scrap(id, index, scope);
+	}
+	$scope.parseJson = function (json) {
+        return JSON.parse(json);
+    }
+	$scope.move = function (value){
+		location.href="/board/"+value;
+	}
+	getScrap(scrapUser,0,$scope.pagesize);
+});
 
 app.controller('DetailController', function($scope, $http, $log, $sce){
 	$scope.messages = new Array();
@@ -46,6 +68,10 @@ app.controller('DetailController', function($scope, $http, $log, $sce){
     }
 	$scope.trustHtml = function(html){
 		return $sce.trustAsHtml(html);
+	}
+	$scope.scrap = function(id){
+		var scope = angular.element(document.getElementById("DetailController")).scope();
+		check_scrap(id, null, scope);
 	}
 	$scope.requestBoardDelete = function (){
 		$.ajax({
@@ -83,7 +109,9 @@ app.controller('DetailController', function($scope, $http, $log, $sce){
 				Materialize.toast("정상적으로 삭제되었습니다.", 3000);
 				var index = $scope.boardContent.comments.indexOf(comment);
 				$scope.boardContent.comments.splice(index, 1);
-				$scope.$apply();
+				$scope.$apply(function(){
+					
+				});
 			},
 			error	: function(response){
 				Materialize.toast("삭제하지 못했네요", 3000);
@@ -147,6 +175,33 @@ function getInformation(value, page, size){
 		data	: dataObject,
 		dataType	: 'JSON',
 		success	: function(response){
+			console.log(response);
+			if(response != "" && response != null){
+				scope.$apply(function () {
+					scope.totalElements = response.totalElements;
+					scope.updateModel(response.content);
+				});
+			}
+		},
+		error	: function(response){
+			Materialize.toast("정보를 가져오지 못했네요", 3000);
+		}
+	});
+}
+
+function getScrap(value, page, size){
+	var scope = angular.element(document.getElementById("ScrapController")).scope();
+	var dataObject = {
+		page : page,
+		size : size,
+	};
+	
+	$.ajax({
+		type	: 'GET',
+		url		: '/board/scrap/'+value,
+		data	: dataObject,
+		dataType	: 'JSON',
+		success	: function(response){
 			if(response != "" && response != null){
 				scope.$apply(function () {
 					scope.totalElements = response.totalElements;
@@ -167,7 +222,6 @@ function getBoardDetail(value){
 		url		: '/board/'+value,
 		dataType	: 'JSON',
 		success	: function(response){
-			console.log(response);
 			if(response != "" && response != null){
 				scope.$apply(function () {
 					scope.updateModel(response);
@@ -185,7 +239,7 @@ function comment(board){
 	var CommentObject = new Object();
 	CommentObject.description = $('#c_description').summernote('code');
 	CommentObject.tags = JSON.stringify($('#c_tags').tagging("getTags"));
-	CommentObject.boardid = board;
+	CommentObject.board = board;
 	$.ajax({
 		type	: 'POST',
 		url		: '/comment',
@@ -215,7 +269,7 @@ function updateComment(comment, index){
 	CommentObject.description = $('#u_c_description').summernote('code');
 	CommentObject.tags = JSON.stringify($('#u_c_tags').tagging("getTags"));
 	CommentObject.id = comment.id;
-	CommentObject.boardid = comment.boardid;
+	CommentObject.board = comment.board;
 	$.ajax({
 		type	: 'POST',
 		url		: '/comment/'+comment.id,
@@ -331,6 +385,44 @@ function deleteImage(file){
       });
     }
 
+function delete_scrap(id, index, scope){
+	var dataObject = new Object();
+	dataObject.boardid = id;
+	$.ajax({
+        type: 'DELETE',
+        url: '/board/scrap',
+        contentType: 'application/json',
+        data: JSON.stringify(dataObject),
+        dataType: 'TEXT', //리턴되는 데이타 타입
+        success: function(response){
+        	scope.$apply(function(){
+        		scope.scraps.splice(index, 1);
+        	});
+        	Materialize.toast("스크랩 취소 완료.", 3000);
+        	
+        },error: function(response){
+        	Materialize.toast("통신 오류.", 3000);
+        }
+    });
+}
+function check_scrap(id, index, scope){
+	var dataObject = new Object();
+	dataObject.boardid = id;
+	$.ajax({
+        type: 'POST',
+        url: '/board/scrap',
+        contentType: 'application/json',
+        data: JSON.stringify(dataObject),
+        dataType: 'TEXT', //리턴되는 데이타 타입
+        success: function(response){
+        	Materialize.toast("스크랩 완료.", 3000);
+        	
+        },error: function(response){
+        	Materialize.toast("통신 오류.", 3000);
+        }
+    });
+}
+
 /**
  * 단순 메시지 전송을 위함.
  */
@@ -365,8 +457,10 @@ $(function() {
 			$('#message').attr("readonly",true);
 		});
 	}
+});
 
-    var codeblockButton = function (context) {
+function initSummernote(){
+	var codeblockButton = function (context) {
         var ui = $.summernote.ui;
         // create button
         var button = ui.button({
@@ -378,32 +472,29 @@ $(function() {
 	  });
 	  return button.render(); 
 	}
-    //undefined 체크방법
-    if(typeof(category) == 'undefined'){
-		$('.contentbox').summernote({
-			toolbar: [
-			          ['pre',['style']],
-			          ['style', ['bold', 'italic', 'strikethrough', 'underline', 'clear']],
-			          ['font', ['fontname','fontsize']],
-			          ['color', ['color']],
-			          ['para', ['paragraph'],['height']],
-			          ['insert', ['link', 'picture', 'video']],
-			          ['misc',['codeblock', 'codeview']]
-			        ],
-			fontNames: ['Noto Sans KR', 'Arial', 'Arial Black', 'Comic Sans MS', 'Courier New'],
-			fontNamesIgnoreCheck: ['Noto Sans KR'],
-			lang: 'ko-KR',
-			callbacks: {
-			    onImageUpload: function(files) {
-			    	sendImage(files[0], $(this));
-			      },
-			    onMediaDelete: function(target){
-			    	deleteImage(target[0].src);
-			    }
-			  },
-			  buttons: {
-	              codeblock: codeblockButton
-	          }
-		});
-    }
-});
+	$('.contentbox').summernote({
+		toolbar: [
+		          ['pre',['style']],
+		          ['style', ['bold', 'italic', 'strikethrough', 'underline', 'clear']],
+		          ['font', ['fontname','fontsize']],
+		          ['color', ['color']],
+		          ['para', ['paragraph'],['height']],
+		          ['insert', ['link', 'picture', 'video']],
+		          ['misc',['codeblock', 'codeview']]
+		        ],
+		fontNames: ['Noto Sans KR', 'Arial', 'Arial Black', 'Comic Sans MS', 'Courier New'],
+		fontNamesIgnoreCheck: ['Noto Sans KR'],
+		lang: 'ko-KR',
+		callbacks: {
+		    onImageUpload: function(files) {
+		    	sendImage(files[0], $(this));
+		      },
+		    onMediaDelete: function(target){
+		    	deleteImage(target[0].src);
+		    }
+		  },
+		  buttons: {
+              codeblock: codeblockButton
+          }
+	});
+}

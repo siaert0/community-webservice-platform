@@ -18,6 +18,13 @@ public class ThumbId implements Serializable {
 	private String userid;
 	
 
+	public ThumbId() {
+		
+	}
+	public ThumbId(int boardid, String userid) {
+		this.boardid = boardid;
+		this.userid = userid;
+	}
 	@Override
 	public boolean equals(Object obj) {
 		// TODO Auto-generated method stub

@@ -1,13 +1,10 @@
 package com.kdev.app.controller;
 
-import java.security.Principal;
 import java.util.Date;
 
 import javax.validation.Valid;
 
 import org.modelmapper.ModelMapper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -17,6 +14,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -27,19 +25,15 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import com.kdev.app.domain.dto.CommentDTO;
 import com.kdev.app.domain.vo.Comment;
+import com.kdev.app.domain.vo.UserDetailsVO;
 import com.kdev.app.domain.vo.UserVO;
 import com.kdev.app.service.CommentRepositoryService;
-import com.kdev.app.service.UserRepositoryService;
 
 @Controller
 public class CommentController {
-	private static Logger logger = LoggerFactory.getLogger(CommentController.class);
 	
 	@Autowired
 	private CommentRepositoryService commentRepositoryService;
-	
-	@Autowired
-	private UserRepositoryService userRepositroyService;
 	
 	@Autowired 
 	ModelMapper modelMapper;
@@ -51,11 +45,12 @@ public class CommentController {
 	 */
 	@Secured(value="ROLE_USER")
 	@RequestMapping(value="/comment", method=RequestMethod.POST, produces=MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<Object> createComment(@RequestBody @Valid CommentDTO.Create createComment, BindingResult result, Principal principal){
+	public ResponseEntity<Object> createComment(@RequestBody @Valid CommentDTO.Create createComment, BindingResult result, Authentication authentication){
 		if(result.hasErrors()){
 			return new ResponseEntity<Object>(result.getAllErrors().toString(), HttpStatus.BAD_REQUEST);
 		}
-		UserVO userVO = userRepositroyService.findUserByEmail(principal.getName());
+		UserDetailsVO userDetails = (UserDetailsVO)authentication.getPrincipal();
+		UserVO userVO = modelMapper.map(userDetails, UserVO.class);
 		createComment.setUser(userVO);
 		Comment createdComment = commentRepositoryService.create(createComment);
 		createdComment = commentRepositoryService.findOne(createdComment.getId());
@@ -81,8 +76,9 @@ public class CommentController {
 	 */
 	@Secured(value="ROLE_USER")
 	@RequestMapping(value="/comment/{id}", method=RequestMethod.POST, produces=MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<Object> updateComment(@PathVariable int id, @RequestBody CommentDTO.Update update, Principal principal){
-		UserVO userVO = userRepositroyService.findUserByEmail(principal.getName());
+	public ResponseEntity<Object> updateComment(@PathVariable int id, @RequestBody CommentDTO.Update update, Authentication authentication){
+		UserDetailsVO userDetails = (UserDetailsVO)authentication.getPrincipal();
+		UserVO userVO = modelMapper.map(userDetails, UserVO.class);
 		Comment commentVO = commentRepositoryService.findOne(id);
 		
 		if(!(commentVO.getUser().getId().equals(userVO.getId())))
@@ -100,9 +96,9 @@ public class CommentController {
 	 */
 	@Secured(value="ROLE_USER")
 	@RequestMapping(value="/comment/{id}", method=RequestMethod.DELETE, produces=MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<Object> deleteComment(@PathVariable int id, Principal principal){
-		
-		UserVO userVO = userRepositroyService.findUserByEmail(principal.getName());
+	public ResponseEntity<Object> deleteComment(@PathVariable int id, Authentication authentication){
+		UserDetailsVO userDetails = (UserDetailsVO)authentication.getPrincipal();
+		UserVO userVO = modelMapper.map(userDetails, UserVO.class);
 		Comment commentVO = commentRepositoryService.findOne(id);
 		
 		if(!(commentVO.getUser().getId().equals(userVO.getId())))

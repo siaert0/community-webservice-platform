@@ -1,8 +1,9 @@
 package com.kdev.app.domain.vo;
 
-import javax.persistence.Column;
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 import com.kdev.app.domain.pk.ScrapId;
@@ -16,9 +17,11 @@ public class Scrap {
     @EmbeddedId
 	private ScrapId scrapId;
     
-    @Column(name = "BOARD_ID", insertable=false, updatable=false)
-    private int board;
+    @ManyToOne
+    @JoinColumn(name = "BOARD_ID", insertable=false, updatable=false)
+    private Board board;
     
-    @Column(name = "USER_ID", insertable=false, updatable=false)
-    private String user;
+    @ManyToOne
+    @JoinColumn(name = "USER_ID", insertable=false, updatable=false)
+    private UserVO user;
 }

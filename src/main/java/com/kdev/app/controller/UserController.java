@@ -68,7 +68,10 @@ public class UserController {
 		if (connection == null) {
 			return "redirect:/connect/facebook";
 		}
-		
+		if (connection.hasExpired()) {
+			connectionRepository.removeConnection(connection.getKey());
+			return "redirect:/connect/facebook";
+		}
 		String [] fields = { "id","name","birthday","email","location","hometown","gender","first_name","last_name"};
 		org.springframework.social.facebook.api.User facebookUser = facebook.fetchObject("me", org.springframework.social.facebook.api.User.class, fields);
 		UserDTO.Create user = new UserDTO.Create();
@@ -107,7 +110,11 @@ public class UserController {
 		if (connection == null) {
 			return "redirect:/connect/kakao";
 		}
-		
+		if (connection.hasExpired()) {
+			connectionRepository.removeConnection(connection.getKey());
+			return "redirect:/connect/kakao";
+		}
+			
 		KakaoProfile KakaoUser = kakao.userOperation().getUserProfile();
 		
 		//가입 여부 확인

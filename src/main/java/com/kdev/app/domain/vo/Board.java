@@ -9,15 +9,14 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.MapsId;
 import javax.persistence.OneToMany;
 import javax.persistence.PrimaryKeyJoinColumn;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import lombok.Data;
 
 @Entity
@@ -44,15 +43,15 @@ public class Board {
 	@PrimaryKeyJoinColumn(name = "userid", referencedColumnName = "id")
     private UserVO user;
 	
-	@OneToMany
-	@JoinColumn(name = "boardid")
+	@OneToMany(mappedBy="board", fetch=FetchType.LAZY)
 	private Collection<Comment> comments;
 	
 	// http://stackoverflow.com/questions/29952386/embedded-id-and-repeated-column-in-mapping-for-entity-exception
-	@OneToMany(mappedBy="board")
+	@OneToMany(mappedBy="board", fetch=FetchType.LAZY)
 	private Collection<Thumb> thumbs;
 	
-	@OneToMany(mappedBy="board")
+    @JsonBackReference
+	@OneToMany(mappedBy="board", fetch=FetchType.LAZY)
 	private Collection<Scrap> scraps;
 	
 }

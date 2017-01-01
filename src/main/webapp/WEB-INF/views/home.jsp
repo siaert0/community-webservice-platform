@@ -53,11 +53,11 @@
 						<div class="collection-item">
 							<p>Spring Boot 1.4.3</p>
 							<p>Spring Security [적용완료]</p>
-							<p>Spring Social [페이스북, 카카오]</p>
-							<p>Spring Data JPA & Hibernate</p>
-							<p>Spring Websocket - Sockjs - Stomp</p>
-							<p>Lombok - 유튜브 백기선님 동영상 참고</p>
-							<p>ModelMapper - 유튜브 백기선님 동영상 참고</p>
+							<p>Spring Social [페이스북, 카카오 로그인]</p>
+							<p>Spring Data JPA & Hibernate : 객체로 연관관계 엔터티 표현</p>
+							<p>Spring Websocket - Sockjs - Stomp : 게시물별 채팅공간?</p>
+							<p>Lombok : Getter Setter</p>
+							<p>ModelMapper : VO - DTO간 변환</p>
 						</div>
 					</div>
 				</div>
@@ -111,7 +111,6 @@
 		<script	src="/assets/js/dirPagination.js"></script>
 		<script src="/assets/js/app.js"></script>
 		<script type="text/javascript">
-			var category = "${category}";
 			$(".button-collapse").sideNav();
 			
 			var token = $("meta[name='_csrf']").attr("content");

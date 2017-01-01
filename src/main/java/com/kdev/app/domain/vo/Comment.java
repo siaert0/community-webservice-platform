@@ -12,8 +12,6 @@ import javax.persistence.PrimaryKeyJoinColumn;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
-import javax.validation.constraints.NotNull;
-
 import lombok.Getter;
 import lombok.Setter;
 
@@ -39,6 +37,6 @@ public class Comment {
 	@PrimaryKeyJoinColumn(name = "userid", referencedColumnName = "id")
     private UserVO user;
 	
-	@Column(name = "boardid")
-	private int boardid;
+	@Column(name = "BOARD_ID")
+	private int board;
 }

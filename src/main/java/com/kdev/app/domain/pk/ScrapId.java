@@ -14,10 +14,16 @@ public class ScrapId implements Serializable {
 	
 	@Column(name = "BOARD_ID")
 	private int boardid;
+
 	@Column(name = "USER_ID")
 	private String userid;
-	
 
+	public ScrapId() {
+	}
+	public ScrapId(int boardid, String userid) {
+		this.boardid = boardid;
+		this.userid = userid;
+	}
 	@Override
 	public boolean equals(Object obj) {
 		// TODO Auto-generated method stub
@@ -27,5 +33,18 @@ public class ScrapId implements Serializable {
 	public int hashCode() {
 		// TODO Auto-generated method stub
 		return super.hashCode();
+	}
+	
+	public int getBoardid() {
+		return boardid;
+	}
+	public void setBoardid(int boardid) {
+		this.boardid = boardid;
+	}
+	public String getUserid() {
+		return userid;
+	}
+	public void setUserid(String userid) {
+		this.userid = userid;
 	}
 }

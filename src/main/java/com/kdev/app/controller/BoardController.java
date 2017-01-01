@@ -1,13 +1,10 @@
 package com.kdev.app.controller;
 
-import java.security.Principal;
 import java.util.List;
 
 import javax.validation.Valid;
 
 import org.modelmapper.ModelMapper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -17,6 +14,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -27,23 +25,25 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import com.kdev.app.domain.dto.BoardDTO;
+import com.kdev.app.domain.pk.ScrapId;
 import com.kdev.app.domain.vo.Board;
+import com.kdev.app.domain.vo.Scrap;
+import com.kdev.app.domain.vo.UserDetailsVO;
 import com.kdev.app.domain.vo.UserVO;
 import com.kdev.app.exception.ExceptionResponse;
 import com.kdev.app.exception.NotFoundException;
 import com.kdev.app.exception.ValidException;
 import com.kdev.app.service.BoardRepositoryService;
-import com.kdev.app.service.UserRepositoryService;
+import com.kdev.app.service.ScrapRepositoryService;
 
 @Controller
 public class BoardController {
-	private static Logger logger = LoggerFactory.getLogger(BoardController.class);
 	
 	@Autowired
 	private BoardRepositoryService boardRepositoryService;
 	
 	@Autowired
-	private UserRepositoryService userRepositroyService;
+	private ScrapRepositoryService scrapRepositroyService;
 	
 	@Autowired 
 	ModelMapper modelMapper;
@@ -61,6 +61,54 @@ public class BoardController {
 			throw new NotFoundException("게시물을 찾을 수 없습니다.");
 		model.addAttribute("content", boardVO);
 		return "board/detail";
+	}
+	@Secured("ROLE_USER")
+	@RequestMapping(value="/board/scrap", method=RequestMethod.POST, produces=MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<Object> checkScrap(@RequestBody ScrapId scrapId, Authentication authentication){
+		UserDetailsVO userDetails = (UserDetailsVO)authentication.getPrincipal();
+
+		UserVO userVO = modelMapper.map(userDetails, UserVO.class);
+		scrapId.setUserid(userVO.getId());
+		scrapRepositroyService.checkScrap(scrapId);
+		return new ResponseEntity<Object>("스크랩 완료", HttpStatus.ACCEPTED);
+	}
+	
+	@Secured("ROLE_USER")
+	@RequestMapping(value="/board/scrap", method=RequestMethod.DELETE, produces=MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<Object> deleteScrap(@RequestBody ScrapId scrapId, Authentication authentication){
+		UserDetailsVO userDetails = (UserDetailsVO)authentication.getPrincipal();
+		UserVO userVO = modelMapper.map(userDetails, UserVO.class);
+		scrapId.setUserid(userVO.getId());
+		scrapRepositroyService.deleteScrap(scrapId);
+		return new ResponseEntity<Object>("스크랩 취소", HttpStatus.ACCEPTED);
+	}
+	
+	@Secured("ROLE_USER")
+	@RequestMapping(value="/board/scrap", method=RequestMethod.GET)
+	public String findScrapUser(Model model, Authentication authentication){
+		UserDetailsVO userDetails = (UserDetailsVO)authentication.getPrincipal();
+		UserVO userVO = modelMapper.map(userDetails, UserVO.class);
+		model.addAttribute("scrapUser", userVO.getId());
+		return "board/scrap";
+	}
+	/**
+	 * @author		: K
+	 * @method		: findBoard
+	 * @description	: 스크랩 게시물 가져오기 & 페이징
+	 */
+	@Secured("ROLE_USER")
+	@RequestMapping(value="/board/scrap/{user}", method=RequestMethod.GET, produces=MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<Object> findScrap(@PathVariable String user, @PageableDefault(sort = { "board" }, direction = Direction.DESC, size = 5) Pageable pageable, Authentication authentication){
+		Page<Scrap> page = null;
+		UserDetailsVO userDetails = (UserDetailsVO)authentication.getPrincipal();
+		UserVO userVO = modelMapper.map(userDetails, UserVO.class);
+		
+		if(user.equals(""))
+			return new ResponseEntity<Object>(page, HttpStatus.NOT_ACCEPTABLE);
+		else
+			page = scrapRepositroyService.findByUser(userVO, pageable);
+		
+		return new ResponseEntity<Object>(page, HttpStatus.ACCEPTED);
 	}
 	
 	@RequestMapping(value="/board/{id}", method=RequestMethod.GET, produces=MediaType.APPLICATION_JSON_VALUE)
@@ -88,14 +136,19 @@ public class BoardController {
 	 */
 	@Secured(value="ROLE_USER")
 	@RequestMapping(value="/board", method=RequestMethod.POST, produces=MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<Object> createBoard(@RequestBody @Valid BoardDTO.Create createBoard, BindingResult result, Principal principal){
+	public ResponseEntity<Object> createBoard(@RequestBody @Valid BoardDTO.Create createBoard, BindingResult result, Authentication authentication){
 		
 		if(result.hasErrors()){
 			throw new ValidException();
 		}
-		UserVO userVO = userRepositroyService.findUserByEmail(principal.getName());
+		UserDetailsVO userDetails = (UserDetailsVO)authentication.getPrincipal();
+		UserVO userVO = modelMapper.map(userDetails, UserVO.class);
 		createBoard.setUser(userVO);
 		Board createdBoard = boardRepositoryService.create(createBoard);
+		ScrapId scrapId = new ScrapId();
+		scrapId.setBoardid(createdBoard.getId());
+		scrapId.setUserid(userVO.getId());
+		scrapRepositroyService.checkScrap(scrapId);
 		return new ResponseEntity<Object>(createdBoard, HttpStatus.CREATED);
 	}
 		
@@ -112,6 +165,7 @@ public class BoardController {
 			page= boardRepositoryService.findByAll(pageable);
 		else
 			page = boardRepositoryService.findAllByCategory(category, pageable);
+		
 		return new ResponseEntity<Object>(page, HttpStatus.ACCEPTED);
 	}
 	
@@ -120,9 +174,11 @@ public class BoardController {
 	 * @method		: findBoardByUser
 	 * @description	: 사용자가 작성한 게시물 가져오기 & 페이징
 	 */
-	@RequestMapping(value="/board/me/{userid}", method=RequestMethod.GET, produces=MediaType.APPLICATION_JSON_VALUE)
+	@RequestMapping(value="/board/user/{userid}", method=RequestMethod.GET, produces=MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Object> findBoardByUser(@PathVariable String userid,@PageableDefault(sort = { "id" }, direction = Direction.DESC, size = 1000) Pageable pageable){
-		Page<Board> page = boardRepositoryService.findAllByUser(userRepositroyService.findUserById(userid), pageable);
+		UserVO userVO = new UserVO();
+		userVO.setId(userid);
+		Page<Board> page = boardRepositoryService.findAllByUser(userVO, pageable);
 		List<Board> list = page.getContent();
 		return new ResponseEntity<Object>(list, HttpStatus.ACCEPTED);
 	}
@@ -134,8 +190,11 @@ public class BoardController {
 	 */
 	@Secured(value="ROLE_USER")
 	@RequestMapping(value="/board/{id}", method=RequestMethod.POST, produces=MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<Object> updateBoard(@PathVariable int id, @RequestBody BoardDTO.Update update, Principal principal){
-		UserVO userVO = userRepositroyService.findUserByEmail(principal.getName());
+	public ResponseEntity<Object> updateBoard(@PathVariable int id, @RequestBody BoardDTO.Update update, Authentication authentication){
+		
+		UserDetailsVO userDetails = (UserDetailsVO)authentication.getPrincipal();
+		UserVO userVO = modelMapper.map(userDetails, UserVO.class);
+		
 		Board boardVO = boardRepositoryService.findOne(id);
 		
 		if(!(boardVO.getUser().getId().equals(userVO.getId())))
@@ -158,9 +217,10 @@ public class BoardController {
 	 */
 	@Secured(value="ROLE_USER")
 	@RequestMapping(value="/board/{id}", method=RequestMethod.DELETE, produces=MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<Object> deleteBoard(@PathVariable int id, Principal principal){
+	public ResponseEntity<Object> deleteBoard(@PathVariable int id, Authentication authentication){
 		
-		UserVO userVO = userRepositroyService.findUserByEmail(principal.getName());
+		UserDetailsVO userDetails = (UserDetailsVO)authentication.getPrincipal();
+		UserVO userVO = modelMapper.map(userDetails, UserVO.class);
 		Board boardVO = boardRepositoryService.findOne(id);
 		
 		if(!(boardVO.getUser().getId().equals(userVO.getId())))

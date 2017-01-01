@@ -6,7 +6,6 @@ import static org.springframework.security.test.web.servlet.request.SecurityMock
 import static org.springframework.security.test.web.servlet.response.SecurityMockMvcResultMatchers.authenticated;
 import static org.springframework.security.test.web.servlet.response.SecurityMockMvcResultMatchers.unauthenticated;
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -35,9 +34,7 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.kdev.app.domain.dto.BoardDTO;
 import com.kdev.app.domain.dto.UserDTO;
-import com.kdev.app.domain.vo.UserVO;
 import com.kdev.app.repository.BoardRepository;
 import com.kdev.app.repository.UserRepository;
 import com.kdev.app.service.UserRepositoryService;
@@ -133,105 +130,6 @@ public class ApplicationTests {
 		result.andExpect(authenticated());
 	}
 	
-	
-	// TODO: 게시물 만들고 반환되는 정보 확인. 
-	@Test
-	public void Step4_boardCreateTest() throws Exception{
-		BoardDTO.Create createBoard = new BoardDTO.Create();
-		createBoard.setTitle("제목");
-		createBoard.setCategory("카테고리");
-		createBoard.setDescription("내용");
-		createBoard.setTags("태그");
-		UserVO user = new UserVO();
-		user.setId("230032464093191");
-		user.setEmail("kdevkr@gmail.com");
-		user.setNickname("Kr Kdev");
-		createBoard.setUser(user);
-		
-		ResultActions result = mockMvc.perform(
-				post("/board").with(csrf())
-				.contentType(MediaType.APPLICATION_JSON)
-				.content(objectMapper.writeValueAsString(createBoard))
-			);
-		
-		result.andDo(print());
-		result.andExpect(status().isCreated());
-		
-		createBoard.setTitle("제목2");
-		createBoard.setCategory("카테고리2");
-		createBoard.setDescription("내용2");
-		createBoard.setTags("태그2");
-		
-		user = new UserVO();
-		user.setId("230032464093191");
-		user.setEmail("kdevkr@gmail.com");
-		user.setNickname("Kr Kdev");
-		createBoard.setUser(user);
-		
-		result = mockMvc.perform(
-				post("/board").with(csrf())
-				.contentType(MediaType.APPLICATION_JSON)
-				.content(objectMapper.writeValueAsString(createBoard))
-			);
-		
-		result.andDo(print());
-		result.andExpect(status().isCreated());
-	}
-	
-	@Test
-	public void Step5_boardUpdateTest() throws Exception{
-		BoardDTO.Update updateBoard = new BoardDTO.Update();
-		updateBoard.setTitle("제목3");
-		updateBoard.setCategory("카테고리3");
-		updateBoard.setDescription("내용3");
-		updateBoard.setTags("태그3");
-		
-		ResultActions result = mockMvc.perform(
-				post("/board/1").with(csrf())
-				.contentType(MediaType.APPLICATION_JSON)
-				.content(objectMapper.writeValueAsString(updateBoard))
-			);
-		
-		result.andDo(print());
-		result.andExpect(status().isAccepted());
-	}
-	
-	@Test
-	public void Step6_boardDeleteTest() throws Exception{
-		
-		ResultActions result = mockMvc.perform(
-				delete("/board/1").with(csrf())
-				.contentType(MediaType.APPLICATION_JSON)
-				
-			);
-		
-		result.andDo(print());
-		result.andExpect(status().isAccepted());
-	}
-	
-	@Test
-	public void Step5_boardFindTest() throws Exception{		
-		ResultActions result = mockMvc.perform(
-				get("/board")
-				.contentType(MediaType.APPLICATION_JSON)
-			);
-		
-		result.andDo(print());
-		result.andExpect(status().isAccepted());
-	}
-	
-	@Test
-	public void Step5_boardFindUserVOTest() throws Exception{		
-		ResultActions result = mockMvc.perform(
-				get("/board/me/"+"230032464093191")
-				.param("page", "0")
-				.param("size", "5")
-				.contentType(MediaType.APPLICATION_JSON)
-			);
-		
-		result.andDo(print());
-		result.andExpect(status().isAccepted());
-	}
 	
 	/**
 	 * @author		: K

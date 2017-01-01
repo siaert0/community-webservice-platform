@@ -7,6 +7,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import com.kdev.app.domain.vo.Comment;
 
 public interface CommentRepository extends JpaRepository<Comment, Integer> {
-	public void deleteByBoardid(int boardid);
-	public Page<Comment> findByBoardid(Pageable pageable, int boardid);
+	public void deleteByBoard(int boardid);
+	public Page<Comment> findByBoard(Pageable pageable, int boardid);
 }

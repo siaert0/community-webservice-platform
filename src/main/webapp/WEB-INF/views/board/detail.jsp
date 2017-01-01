@@ -58,13 +58,14 @@
 			   {{boardContent.user.nickname}}
 			  </span>
 			
-			<sec:authorize access="isAuthenticated()">
-			     <c:if test="${content.user.id == user.id}">
-			     <span class="chip blue lighten-2 hover white-text border-flat" data-ng-click="requestBoardDelete();">삭제</span>
-			     <span class="chip red lighten-2 hover white-text border-flat" data-ng-click="requestBoardUpdate();">수정</span>
-			     </c:if>
-	    		</sec:authorize>
 			<span class="chip grey darken-2 white-text border-flat">{{boardContent.created | date:'yyyy년 MM월 dd일 h:mma'}}</span>
+						<sec:authorize access="isAuthenticated()">
+			     <c:if test="${content.user.id == user.id}">
+			     <span class="chip red lighten-2 hover white-text border-flat" data-ng-click="requestBoardUpdate();">수정</span>
+			     <span class="chip blue lighten-2 hover white-text border-flat" data-ng-click="requestBoardDelete();">삭제</span>
+			     </c:if>
+			     <span class="chip green lighten-2 hover white-text border-flat" data-ng-click="scrap(boardContent.id)">스크랩</span>
+	    		</sec:authorize>
 		</div>
 		<div class="card-content">
 			<div class="justify-align">
@@ -77,6 +78,7 @@
 		<div class="card-action right-align">
 		 <span class="chip teal lighten-2 hover white-text border-flat left" >{{boardContent.category}}</span>
 		<span class="chip lighten-2 hover white-text border-flat left" ng-class="{blue:boardContent.selected == 0 && boardContent.comments.length > 0, red:boardContent.selected == 0 && boardContent.comments.length == 0, green:boardContent.selected != 0}">{{boardContent.comments.length}}</span>
+			 <span class="chip lighten-2 hover white-text border-flat left" ng-class="{red:boardContent.thumbs.length > 0}" ng-data-click="toggleThumb();">{{boardContent.thumbs.length}}</span>
 			 <span class="tags" ng-if="boardContent.tags != null" ng-init="tags=parseJson(boardContent.tags)">
 				<span ng-repeat="tag in tags"><span class="chip red lighten-2 hover white-text border-flat" style="">{{tag}} </span></span>
 			</span>
@@ -220,16 +222,18 @@
 					<img src="${user.thumbnail}" alt="Contact Person">
 					    ${user.nickname}
 				</span>
-			<div class="input-field">
+				<div class="row">
+			<div class="input-field col s12">
 				<div id="c_tags" class="tags" data-tags-input-name="tag"></div>
 			</div>
-			<div class="input-field">
+			<div class="input-field col s12">
 				<div id="c_description" class="materialize-textarea contentbox"></div>
 			</div>
 			<div class="center-align">
 			<p></p>
 			<button id="comment_form_btn" class="btn teal lighten-2 white-text" onclick="comment(${content.id});">답변하기</button>
 			</div>
+		    </div>
 		    </div>
 		</div>
 		</sec:authorize>
@@ -327,7 +331,7 @@ $(function() {
 		"tags-limit":8,
 		"edit-on-delete":false
 	});
-
+	initSummernote();
 	getBoardDetail('${content.id}');
 });
 </script>
