@@ -1,4 +1,6 @@
-package com.kdev.app.domain;
+package com.kdev.app.domain.dto;
+
+import com.kdev.app.domain.vo.UserVO;
 
 import lombok.Data;
 

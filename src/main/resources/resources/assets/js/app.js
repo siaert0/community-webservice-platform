@@ -167,6 +167,7 @@ function getBoardDetail(value){
 		url		: '/board/'+value,
 		dataType	: 'JSON',
 		success	: function(response){
+			console.log(response);
 			if(response != "" && response != null){
 				scope.$apply(function () {
 					scope.updateModel(response);
@@ -202,7 +203,7 @@ function comment(board){
 			Materialize.toast("정상적으로 등록되었습니다.", 3000);
 		},
 		error : function(response){
-			Materialize.toast("수정할 수 없었습니다.", 3000);
+			Materialize.toast("등록할 수 없었습니다.", 3000);
     		}
     	});
 	$('#preloader').hide();

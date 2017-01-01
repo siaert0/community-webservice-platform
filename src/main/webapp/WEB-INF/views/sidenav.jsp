@@ -28,11 +28,10 @@
     <li><a href="/board/category/정보"><i class="material-icons">folder</i>정보</a></li>
     <li><div class="divider"></div></li>
     <li><a class="subheader">IT 관련 사이트</a></li>
-    <li><a href="http://kdevkr.tistory.com/" target="_blank"><i class="material-icons">link</i>개발자 블로그</a></li>
     <li><a href="http://stackoverflow.com/" target="_blank"><i class="material-icons">link</i>스택 오버플로우</a></li>
     <li><a href="http://okky.kr/" target="_blank"><i class="material-icons">link</i>OKKY</a></li>
-    <li><a class="subheader">채팅방</a></li>
-    <li><a href="#"><i class="material-icons">room</i>자유토론방</a></li>
+    <li><a class="subheader">개발 기록</a></li>
+    <li><a href="http://kdevkr.tistory.com/" target="_blank"><i class="material-icons">room</i>개발자 블로그</a></li>
 </ul>
 <script	src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
 <script src="/assets/js/sockjs-0.3.4.min.js"></script>

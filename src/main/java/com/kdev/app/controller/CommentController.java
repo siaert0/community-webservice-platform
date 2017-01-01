@@ -25,9 +25,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import com.kdev.app.domain.Comment;
-import com.kdev.app.domain.CommentDTO;
-import com.kdev.app.domain.UserVO;
+import com.kdev.app.domain.dto.CommentDTO;
+import com.kdev.app.domain.vo.Comment;
+import com.kdev.app.domain.vo.UserVO;
 import com.kdev.app.service.CommentRepositoryService;
 import com.kdev.app.service.UserRepositoryService;
 

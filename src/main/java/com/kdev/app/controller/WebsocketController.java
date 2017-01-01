@@ -10,9 +10,9 @@ import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Controller;
 
-import com.kdev.app.domain.MessageVO;
-import com.kdev.app.domain.UserDTO;
-import com.kdev.app.domain.UserVO;
+import com.kdev.app.domain.dto.UserDTO;
+import com.kdev.app.domain.vo.MessageVO;
+import com.kdev.app.domain.vo.UserVO;
 import com.kdev.app.service.UserRepositoryService;
 
 @Controller

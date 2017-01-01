@@ -3,6 +3,8 @@ package com.kdev.app.controller;
 import org.springframework.social.connect.ConnectionFactoryLocator;
 import org.springframework.social.connect.ConnectionRepository;
 import org.springframework.social.connect.web.ConnectController;
+import org.springframework.web.context.request.NativeWebRequest;
+import org.springframework.web.servlet.view.RedirectView;
 
 /**
  * @package		: com.kdev.app.controller
@@ -30,5 +32,13 @@ public class SocialConnectController extends ConnectController {
 		else if(providerId.equals("kakao"))
 			return "redirect:/user/kakao";
 		return super.connectedView(providerId);
+	}
+
+	@Override
+	public RedirectView oauth2ErrorCallback(String providerId, String error, String errorDescription, String errorUri,
+			NativeWebRequest request) {
+		// TODO Auto-generated method stub
+		
+		return super.oauth2ErrorCallback(providerId, error, errorDescription, errorUri, request);
 	}
 }

@@ -34,9 +34,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.SessionAttributes;
 
-import com.kdev.app.domain.UserDTO;
-import com.kdev.app.domain.UserDetailsVO;
-import com.kdev.app.domain.UserVO;
+import com.kdev.app.domain.dto.UserDTO;
+import com.kdev.app.domain.vo.UserDetailsVO;
+import com.kdev.app.domain.vo.UserVO;
 import com.kdev.app.service.UserRepositoryService;
 
 /**
@@ -68,6 +68,7 @@ public class UserController {
 		if (connection == null) {
 			return "redirect:/connect/facebook";
 		}
+		
 		String [] fields = { "id","name","birthday","email","location","hometown","gender","first_name","last_name"};
 		org.springframework.social.facebook.api.User facebookUser = facebook.fetchObject("me", org.springframework.social.facebook.api.User.class, fields);
 		UserDTO.Create user = new UserDTO.Create();
@@ -84,6 +85,7 @@ public class UserController {
 		    	if(redirect != null){
 		    		session.removeAttribute("redirect");
 		    	}
+		    	connectionRepository.removeConnection(new ConnectionKey("facebook", user.getId()));
 				return "redirect:"+redirect;
 			}
 		}
@@ -101,6 +103,7 @@ public class UserController {
 	@RequestMapping(value="/user/kakao", method= RequestMethod.GET)
 	public String KakaoUserView(Model model, HttpSession session){
 		Connection<Kakao> connection = connectionRepository.findPrimaryConnection(Kakao.class);
+		
 		if (connection == null) {
 			return "redirect:/connect/kakao";
 		}
@@ -120,6 +123,7 @@ public class UserController {
 		    	if(redirect != null){
 		    		session.removeAttribute("redirect");
 		    	}
+		    	connectionRepository.removeConnection(new ConnectionKey("kakao", String.valueOf(user.getId())));
 				return "redirect:"+redirect;
 			}
 		}		

@@ -24,19 +24,6 @@
 	<body id="HomeController" ng-controller="HomeController" ng-cloak>
 	<!-- 헤더 영역 -->
 		<header>
-			<div class="navbar-fixed">
-				<nav class="z-depth-0">
-					<div class="nav-wrapper blue lighten-1">
-						<form class="" style="margin-bottom: 0;" autocomplete="off">
-							<div class="input-field">
-								<input id="search" type="search" placeholder="키워드로 검색해보세요 ^ㅡ^" required ng-model="searchKeyword" kr-input>
-								<label for="search"><i class="material-icons">search</i></label>
-								<i class="material-icons">close</i>
-							</div>
-						</form>
-					</div>
-				</nav>
-			</div>
 			<c:import url="/sidenav" />
 		</header>
 		<!-- 아티클 영역 -->
@@ -61,8 +48,18 @@
 				</div>
 				
 				<!-- 게시물 영역 -->
-				<div class="row">
-				
+				<div class="container">
+					<div class="collection">
+						<div class="collection-item">
+							<p>Spring Boot 1.4.3</p>
+							<p>Spring Security [적용완료]</p>
+							<p>Spring Social [페이스북, 카카오]</p>
+							<p>Spring Data JPA & Hibernate</p>
+							<p>Spring Websocket - Sockjs - Stomp</p>
+							<p>Lombok - 유튜브 백기선님 동영상 참고</p>
+							<p>ModelMapper - 유튜브 백기선님 동영상 참고</p>
+						</div>
+					</div>
 				</div>
 			</div>
 			<!-- 인증되지 않은 사용자의 메뉴 영역 -->

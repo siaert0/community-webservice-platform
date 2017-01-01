@@ -12,9 +12,9 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import com.kdev.app.domain.UserDTO;
-import com.kdev.app.domain.UserDetailsVO;
-import com.kdev.app.domain.UserVO;
+import com.kdev.app.domain.dto.UserDTO;
+import com.kdev.app.domain.vo.UserDetailsVO;
+import com.kdev.app.domain.vo.UserVO;
 import com.kdev.app.repository.UserRepository;
 
 @Service

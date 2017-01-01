@@ -8,9 +8,9 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import com.kdev.app.domain.Comment;
-import com.kdev.app.domain.CommentDTO;
-import com.kdev.app.domain.UserVO;
+import com.kdev.app.domain.dto.CommentDTO;
+import com.kdev.app.domain.vo.Comment;
+import com.kdev.app.domain.vo.UserVO;
 import com.kdev.app.exception.UserNotFoundException;
 import com.kdev.app.repository.CommentRepository;
 
@@ -44,7 +44,7 @@ public class CommentRepositoryService {
 	}
 	
 	public void deleteAll(int boardid){
-		commentRepository.deleteByboardid(boardid);
+		commentRepository.deleteByBoardid(boardid);
 	}
 	
 	public Comment findOne(int id){
@@ -53,7 +53,7 @@ public class CommentRepositoryService {
 	
 	public Page<Comment> findAll(Pageable pageable, int board_id)
 	{
-		Page<Comment> page = commentRepository.findByboardid(pageable, board_id);
+		Page<Comment> page = commentRepository.findByBoardid(pageable, board_id);
 		return page;
 	}
 	

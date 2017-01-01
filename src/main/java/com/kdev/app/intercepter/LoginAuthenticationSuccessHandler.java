@@ -14,7 +14,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.web.authentication.SavedRequestAwareAuthenticationSuccessHandler;
 
-import com.kdev.app.domain.UserDetailsVO;
+import com.kdev.app.domain.vo.UserDetailsVO;
 
 /**
  * @package		: com.kdev.app

@@ -1,9 +1,8 @@
-package com.kdev.app.domain;
+package com.kdev.app.domain.vo;
 
 import java.util.Collection;
 import java.util.Date;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -12,19 +11,18 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.MapsId;
 import javax.persistence.OneToMany;
 import javax.persistence.PrimaryKeyJoinColumn;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
-import lombok.Getter;
-import lombok.Setter;
+import lombok.Data;
 
 @Entity
 @Table(name = "boards")
-@Getter
-@Setter
+@Data
 public class Board {
 	
 	@Id
@@ -46,7 +44,15 @@ public class Board {
 	@PrimaryKeyJoinColumn(name = "userid", referencedColumnName = "id")
     private UserVO user;
 	
-	@OneToMany(fetch=FetchType.EAGER)
+	@OneToMany
 	@JoinColumn(name = "boardid")
 	private Collection<Comment> comments;
+	
+	// http://stackoverflow.com/questions/29952386/embedded-id-and-repeated-column-in-mapping-for-entity-exception
+	@OneToMany(mappedBy="board")
+	private Collection<Thumb> thumbs;
+	
+	@OneToMany(mappedBy="board")
+	private Collection<Scrap> scraps;
+	
 }

@@ -1,4 +1,4 @@
-package com.kdev.app.domain;
+package com.kdev.app.domain.dto;
 
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;

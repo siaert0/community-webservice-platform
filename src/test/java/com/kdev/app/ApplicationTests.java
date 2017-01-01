@@ -35,9 +35,9 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.kdev.app.domain.BoardDTO;
-import com.kdev.app.domain.UserDTO;
-import com.kdev.app.domain.UserVO;
+import com.kdev.app.domain.dto.BoardDTO;
+import com.kdev.app.domain.dto.UserDTO;
+import com.kdev.app.domain.vo.UserVO;
 import com.kdev.app.repository.BoardRepository;
 import com.kdev.app.repository.UserRepository;
 import com.kdev.app.service.UserRepositoryService;

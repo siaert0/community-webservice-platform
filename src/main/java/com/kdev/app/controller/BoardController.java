@@ -26,9 +26,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import com.kdev.app.domain.Board;
-import com.kdev.app.domain.BoardDTO;
-import com.kdev.app.domain.UserVO;
+import com.kdev.app.domain.dto.BoardDTO;
+import com.kdev.app.domain.vo.Board;
+import com.kdev.app.domain.vo.UserVO;
 import com.kdev.app.exception.ExceptionResponse;
 import com.kdev.app.exception.NotFoundException;
 import com.kdev.app.exception.ValidException;

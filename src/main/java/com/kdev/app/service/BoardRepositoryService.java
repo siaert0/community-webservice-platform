@@ -7,9 +7,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.kdev.app.domain.Board;
-import com.kdev.app.domain.BoardDTO;
-import com.kdev.app.domain.UserVO;
+import com.kdev.app.domain.dto.BoardDTO;
+import com.kdev.app.domain.vo.Board;
+import com.kdev.app.domain.vo.UserVO;
 import com.kdev.app.exception.NotCreatedException;
 import com.kdev.app.exception.UserNotFoundException;
 import com.kdev.app.repository.BoardRepository;
@@ -57,7 +57,7 @@ public class BoardRepositoryService {
 	}
 	
 	public void delete(int id){
-		commentRepository.deleteByboardid(id);
+		commentRepository.deleteByBoardid(id);
 		boardRepository.delete(id);
 	}
 	

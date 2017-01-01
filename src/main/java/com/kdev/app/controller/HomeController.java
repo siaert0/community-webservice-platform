@@ -47,9 +47,5 @@ public class HomeController {
 		session.setAttribute("redirect", request.getHeader("referer"));
 		return "login";
 	}
-	
-	@RequestMapping(value = "/board_view", method = RequestMethod.GET)
-	public String board_view(Model model) {
-		return "board/detail";
-	}
+
 }

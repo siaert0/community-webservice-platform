@@ -1,9 +1,12 @@
-package com.kdev.app.domain;
+package com.kdev.app.domain.dto;
 
 import java.util.Collection;
 import java.util.Date;
 
 import org.hibernate.validator.constraints.Email;
+
+import com.kdev.app.domain.vo.Comment;
+import com.kdev.app.domain.vo.UserVO;
 
 import lombok.Data;
 

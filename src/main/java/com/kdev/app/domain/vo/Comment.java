@@ -1,4 +1,4 @@
-package com.kdev.app.domain;
+package com.kdev.app.domain.vo;
 
 import java.util.Date;
 
