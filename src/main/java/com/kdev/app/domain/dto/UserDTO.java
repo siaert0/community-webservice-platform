@@ -5,6 +5,8 @@ import javax.validation.constraints.Size;
 
 import org.hibernate.validator.constraints.Email;
 
+import com.kdev.app.enums.SocialProvider;
+
 import lombok.Data;
 
 public class UserDTO {
@@ -12,7 +14,7 @@ public class UserDTO {
 	public static class Create{
 		@NotNull
 		private String id;
-		@Size(min=4)
+		@Size(min=8)
 		private String password;
 		@Email
 		private String email;
@@ -20,7 +22,7 @@ public class UserDTO {
 		private String thumbnail;
 		private String tags;
 		private String role;
-		private String socialSignInProvider;
+		private SocialProvider socialSignInProvider;
 	}
 
 	@Data

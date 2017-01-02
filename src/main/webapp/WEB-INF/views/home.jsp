@@ -51,6 +51,7 @@
 				<div class="container">
 					<div class="collection">
 						<div class="collection-item">
+							<p><b>구현 및 적용</b></p>
 							<p>Spring Boot 1.4.3</p>
 							<p>Spring Security</p>
 							<p>Spring Social Faceboo, Kakao : <span class="red-text lighten-2-text"> 오류발생... 원인모름...</span></p>
@@ -58,6 +59,12 @@
 							<p>Spring Websocket - Sockjs - Stomp : <span class="red-text lighten-2-text"> 구독자수 표현방법?...</span></p>
 							<p>Lombok : Getter Setter</p>
 							<p>ModelMapper</p>
+							<hr>
+							<p><b>추가 요구사항</b></p>
+							<p>1. 회원의 비밀번호를 찾을 수 가 없다.....</p>
+							<p>2. 회원의 정보를 수정할 수 없다.....</p>
+							<p>3. 회원탈퇴 시 게시물을 남길 지 삭제할 지 여부.....</p>
+							<p>4. 스크랩된 게시물이 업데이트되면 알림되는 기능..... -> 스튜어드 프로시저??</p>
 						</div>
 					</div>
 				</div>

@@ -6,5 +6,4 @@ import com.kdev.app.domain.vo.UserVO;
 
 public interface UserRepository extends JpaRepository<UserVO, String> {
 	public UserVO findByEmail(String email);
-	public UserVO findById(String id);
 }

@@ -54,7 +54,7 @@ public class UserRepositoryService implements UserDetailsService {
 	}
 	
 	public UserVO findUserById(String id){
-		UserVO findUser = userRepository.findById(id);
+		UserVO findUser = userRepository.findOne(id);
 		return findUser;
 	}
 	
@@ -74,7 +74,7 @@ public class UserRepositoryService implements UserDetailsService {
 	}
 	
 	public void delete(String id){
-		UserVO userVO = userRepository.findById(id);
+		UserVO userVO = userRepository.findOne(id);
 		boardRepository.deleteByUser(userVO);
 		userRepository.delete(userVO);
 	}

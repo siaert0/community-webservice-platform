@@ -47,7 +47,6 @@ public class Board {
 	@OneToMany(mappedBy="board", fetch=FetchType.LAZY, cascade=CascadeType.REMOVE)
 	private Collection<Comment> comments;
 	
-	// http://stackoverflow.com/questions/29952386/embedded-id-and-repeated-column-in-mapping-for-entity-exception
 	@OneToMany(mappedBy="board", fetch=FetchType.LAZY, cascade=CascadeType.REMOVE)
 	private Collection<Thumb> thumbs;
 	

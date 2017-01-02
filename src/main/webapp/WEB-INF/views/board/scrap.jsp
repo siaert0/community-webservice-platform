@@ -55,7 +55,8 @@
 							</div>
 							<div class="card-action right-align">
 								<span class="chip teal lighten-2 hover white-text border-flat left">{{x.board.category}}</span>
-							<span class="chip lighten-2 hover white-text border-flat left" ng-class="{blue:x.board.selected == 0 && x.board.comments.length > 0, grey:x.board.selected == 0 && x.board.comments.length == 0, green:x.board.selected != 0}">{{x.board.comments.length}}</span>
+							<span class="chip lighten-2 hover white-text border-flat left" ng-class="{blue:x.board.selected == 0 && x.board.comments.length > 0, grey:x.board.selected == 0 && x.board.comments.length == 0, green:x.board.selected != 0}">댓글 {{x.board.comments.length}}</span>
+								<span class="chip lighten-2 hover white-text border-flat left" ng-class="{red:checkThumb({{x.board}})==0, green:checkThumb({{x.board}})==1, blue:checkThumb({{x.board}})==2}">추천 {{x.board.thumbs.length}}</span>
 								<span class="chip green lighten-2 hover white-text border-flat" data-ng-click="move(x.board.id)">이동</span>
 								<span class="chip red lighten-2 hover white-text border-flat" data-ng-click="scrap(x.board.id, $index)">스크랩 취소</span>
 								
@@ -125,6 +126,16 @@
 		<script	src="https://code.angularjs.org/1.5.7/angular-sanitize.js"></script>
 		<script	src="/assets/js/dirPagination.js"></script>
 		<script src="/assets/js/app.js"></script>
+		<sec:authorize access="isAuthenticated()">
+		<script>
+		$(function() {
+			var scope = angular.element(document.getElementById("ScrapController")).scope();
+			scope.$apply(function(){
+				scope.USERID = '${user.id}';
+			});
+		});
+		</script>
+		</sec:authorize>
 		<script type="text/javascript">
 		    var scrapUser = '${scrapUser}';
 			var token = $("meta[name='_csrf']").attr("content");

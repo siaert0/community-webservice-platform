@@ -29,7 +29,7 @@
 <link rel="stylesheet"  href="/assets/css/tag-basic-style.css">
 <link rel="stylesheet"	href="/assets/css/style.css">
 </head>
-<body id="DetailController" ng-controller="DetailController" ng-cloak ng-init="USERID=${user.id}">
+<body id="DetailController" ng-controller="DetailController" ng-cloak>
 <header>
 		<div class="navbar-fixed">
 			<nav class="z-depth-0">
@@ -80,7 +80,7 @@
 		<span class="chip lighten-2 hover white-text border-flat" ng-class="{blue:boardContent.selected == 0 && boardContent.comments.length > 0, red:boardContent.selected == 0 && boardContent.comments.length == 0, green:boardContent.selected != 0}">댓글 {{boardContent.comments.length}}</span>
 			 
 			 
-			 <span class="chip lighten-2 hover white-text border-flat" ng-class="{red:checkThumb()==0, green:checkThumb()==1, blue:checkThumb(${user.id})==2}" data-ng-click="toggleThumb();">추천 {{boardContent.thumbs.length}}</span>
+			 <span class="chip lighten-2 hover white-text border-flat" ng-class="{red:checkThumb()==0, green:checkThumb()==1, blue:checkThumb()==2}" data-ng-click="toggleThumb();">추천 {{boardContent.thumbs.length}}</span>
 			
 			 <span class="tags right" ng-if="boardContent.tags != null" ng-init="tags=parseJson(boardContent.tags)">
 				<span ng-repeat="tag in tags"><span class="chip red lighten-2 hover white-text border-flat" style="">{{tag}} </span></span>
@@ -311,6 +311,16 @@
 <script	src="https://code.angularjs.org/1.6.1/angular-sanitize.js"></script>
 <script	src="/assets/js/dirPagination.js"></script>
 <script src="/assets/js/app.js"></script>
+		<sec:authorize access="isAuthenticated()">
+		<script>
+		$(function() {
+			var scope = angular.element(document.getElementById("DetailController")).scope();
+			scope.$apply(function(){
+				scope.USERID = '${user.id}';
+			});
+		});
+		</script>
+		</sec:authorize>
 <script type="text/javascript">
 var token = $("meta[name='_csrf']").attr("content");
 var header = $("meta[name='_csrf_header']").attr("content");
@@ -319,6 +329,7 @@ $(function() {
 	$(document).ajaxSend(function(e, xhr, options) {
 		xhr.setRequestHeader(header, token);
 	});
+	getBoardDetail('${content.id}');
 	$(".button-collapse").sideNav();
 	$('#preloader').hide();
 	$('.tags').tagging({
@@ -335,7 +346,42 @@ $(function() {
 		"edit-on-delete":false
 	});
 	initSummernote();
-	getBoardDetail('${content.id}');
+	/**
+	 * 단순 메시지 전송을 위함.
+	 */
+	var stompClient = null;
+
+	function sendMessage(message){
+		var scope = angular.element(document.getElementById("DetailController")).scope();
+		
+		if(stompClient != null)
+			stompClient.send("/message/notify/"+scope.boardContent.id, {}, JSON.stringify({'message':$(message).val()}));
+		
+		$(message).val('');
+	}
+
+	$(function() {
+		if(document.getElementById("DetailController") != null){
+			var scope = angular.element(document.getElementById("DetailController")).scope();
+			var socket = new SockJS("/websocket");
+			stompClient = Stomp.over(socket);
+			stompClient.debug = null;
+			stompClient.connect({}, function(frame) {
+				stompClient.subscribe('/board/'+scope.boardContent.id, function(response){
+					var json = JSON.parse(response.body);
+					scope.$apply(function(){
+						scope.messages.push(json);
+					});
+					$("#messagebox").scrollTop($("#messagebox")[0].scrollHeight);
+					
+				});
+			}, function(message){
+				$('#message').attr("placeholder","서버와 연결이 끊어짐");
+				$('#message').attr("readonly",true);
+			});
+		}
+	});
+	
 });
 </script>
 </body>

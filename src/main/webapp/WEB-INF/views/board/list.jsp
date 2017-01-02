@@ -156,7 +156,7 @@
 		<script>
 		$(function() {
 			var scope = angular.element(document.getElementById("BoardController")).scope();
-			scope.apply(function(){
+			scope.$apply(function(){
 				scope.USERID = '${user.id}';
 			});
 		});

@@ -74,6 +74,25 @@ app.controller('ScrapController', function($scope, $http){
 	$scope.move = function (value){
 		location.href="/board/"+value;
 	}
+	$scope.checkThumb = function(boardContent){
+		if(boardContent.thumbs.length > 0){
+			var is = false;
+			if($scope.USERID == null){
+				return 1;
+			}
+			for(var i=0; i < boardContent.thumbs.length; i++){
+				if(boardContent.thumbs[i].thumbId.userid == $scope.USERID){
+					is = true
+					break;
+				}
+			}
+			if(is)
+				return 2;
+			else
+				return 1;
+		}
+		return 0;	
+	}
 	getScrap(scrapUser,0,$scope.pagesize);
 });
 
@@ -479,42 +498,6 @@ function check_scrap(id, index, scope){
         }
     });
 }
-
-/**
- * 단순 메시지 전송을 위함.
- */
-var stompClient = null;
-
-function sendMessage(message){
-	var scope = angular.element(document.getElementById("DetailController")).scope();
-	
-	if(stompClient != null)
-		stompClient.send("/message/notify/"+scope.boardContent.id, {}, JSON.stringify({'message':$(message).val()}));
-	
-	$(message).val('');
-}
-
-$(function() {
-	if(document.getElementById("DetailController") != null){
-		var scope = angular.element(document.getElementById("DetailController")).scope();
-		var socket = new SockJS("/websocket");
-		stompClient = Stomp.over(socket);
-		stompClient.debug = null;
-		stompClient.connect({}, function(frame) {
-			stompClient.subscribe('/board/'+scope.boardContent.id, function(response){
-				var json = JSON.parse(response.body);
-				scope.$apply(function(){
-					scope.messages.push(json);
-				});
-				$("#messagebox").scrollTop($("#messagebox")[0].scrollHeight);
-				
-			});
-		}, function(message){
-			$('#message').attr("placeholder","서버와 연결이 끊어짐");
-			$('#message').attr("readonly",true);
-		});
-	}
-});
 
 function initSummernote(){
 /*	var codeblockButton = function (context) {

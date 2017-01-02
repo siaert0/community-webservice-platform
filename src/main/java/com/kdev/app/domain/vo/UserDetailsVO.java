@@ -8,6 +8,8 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 
+import com.kdev.app.enums.SocialProvider;
+
 import lombok.Getter;
 import lombok.Setter;
 
@@ -19,7 +21,7 @@ public class UserDetailsVO extends User {
 	private String id;
 	private String email;
 	private String nickname;
-	private String socialSignInProvider;
+	private SocialProvider socialSignInProvider;
 	private String thumbnail;
 	private String tags;
 

@@ -9,15 +9,16 @@ import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.portlet.NoHandlerFoundException;
 import org.springframework.web.servlet.ModelAndView;
 
-//@ControllerAdvice
+@ControllerAdvice
 public class GlobalExceptionHandler {
 	private static final Logger logger = LoggerFactory.getLogger(GlobalExceptionHandler.class);
 	private static final String DEFAULT_VIEW = "error";
 	private static final String DEFAULT_JSON_VIEW = "jsonView";
 	
-	@ExceptionHandler({Exception.class})
+	@ExceptionHandler({Exception.class, })
 	public ModelAndView defaultException(HttpServletRequest request, HttpServletResponse response, Exception e){
 		ModelAndView mav = null;
 		String contentType = request.getHeader("Content-Type");
@@ -29,7 +30,6 @@ public class GlobalExceptionHandler {
 		ResponseStatus annotation = e.getClass().getAnnotation(ResponseStatus.class);
 		mav.addObject("errorcode", annotation.value().value());
 		mav.addObject("exception", annotation.reason());
-		logger.info("{}, {}",request.getRequestURL(),annotation.reason());
 		return mav;
 	}
 }

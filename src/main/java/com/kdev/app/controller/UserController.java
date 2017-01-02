@@ -40,6 +40,7 @@ import org.springframework.web.bind.annotation.SessionAttributes;
 import com.kdev.app.domain.dto.UserDTO;
 import com.kdev.app.domain.vo.UserDetailsVO;
 import com.kdev.app.domain.vo.UserVO;
+import com.kdev.app.enums.SocialProvider;
 import com.kdev.app.intercepter.LoginAuthenticationSuccessHandler;
 import com.kdev.app.service.UserRepositoryService;
 
@@ -75,7 +76,6 @@ public class UserController {
 		connection.sync();
 		String [] fields = { "id","name","birthday","email","location","hometown","gender","first_name","last_name"};
 		org.springframework.social.facebook.api.User facebookUser = facebook.fetchObject("me", org.springframework.social.facebook.api.User.class, fields);
-		UserDTO.Create user = new UserDTO.Create();
 		
 		connectionRepository.removeConnection(connection.getKey());
 		//가입 여부 확인
@@ -88,11 +88,11 @@ public class UserController {
 			LoginAuthenticationSuccessHandler handler = new LoginAuthenticationSuccessHandler("/");
 			handler.onAuthenticationSuccess(request, response, authentication);
 		}
-		
+		UserDTO.Create user = new UserDTO.Create();
 		user.setId(facebookUser.getId());
 		user.setNickname(facebookUser.getName());
 		user.setThumbnail("https://graph.facebook.com/"+facebookUser.getId()+"/picture");
-		user.setSocialSignInProvider("Facebook");
+		user.setSocialSignInProvider(SocialProvider.Facebook);
 		user.setRole("ROLE_USER");
 		
 		model.addAttribute("userProfile", user);
@@ -124,7 +124,7 @@ public class UserController {
 		user.setId(String.valueOf(KakaoUser.getId()));
 		user.setNickname(KakaoUser.getProperties().getNickname());
 		user.setThumbnail(KakaoUser.getProperties().getThumbnail_image());
-		user.setSocialSignInProvider("Kakao");
+		user.setSocialSignInProvider(SocialProvider.Kakao);
 		user.setRole("ROLE_USER");
 		
 		kakao.userOperation().logout();

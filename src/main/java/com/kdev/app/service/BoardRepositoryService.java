@@ -11,6 +11,7 @@ import com.kdev.app.domain.dto.BoardDTO;
 import com.kdev.app.domain.vo.Board;
 import com.kdev.app.domain.vo.UserVO;
 import com.kdev.app.exception.NotCreatedException;
+import com.kdev.app.exception.NotFoundException;
 import com.kdev.app.exception.UserNotFoundException;
 import com.kdev.app.repository.BoardRepository;
 import com.kdev.app.repository.CommentRepository;
@@ -69,6 +70,9 @@ public class BoardRepositoryService {
 	}
 	
 	public Board findOne(int id){
-		return boardRepository.findOne(id);
+		Board board = boardRepository.findOne(id);
+		if(board == null)
+			throw new NotFoundException("Board Not Exist");
+		return board;
 	}
 }

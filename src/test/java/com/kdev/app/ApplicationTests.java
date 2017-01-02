@@ -35,6 +35,7 @@ import org.springframework.web.context.WebApplicationContext;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.kdev.app.domain.dto.UserDTO;
+import com.kdev.app.enums.SocialProvider;
 import com.kdev.app.repository.BoardRepository;
 import com.kdev.app.repository.UserRepository;
 import com.kdev.app.service.UserRepositoryService;
@@ -102,7 +103,7 @@ public class ApplicationTests {
 		user.setPassword("1234");
 		user.setNickname("Kr Kdev");
 		user.setRole("ROLE_USER");
-		user.setSocialSignInProvider("Facebook");
+		user.setSocialSignInProvider(SocialProvider.Facebook);
 		user.setThumbnail("https://graph.facebook.com/230032464093191/picture");
 		
 		ResultActions result = mockMvc.perform(
