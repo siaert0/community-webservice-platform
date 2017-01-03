@@ -15,18 +15,10 @@
 
 <title>게시판 자세히 보기</title>
 
-<!--Import Google Icon Font-->
 <link href="http://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-<!-- Compiled and minified CSS -->
-<link rel="stylesheet"	href="https://cdnjs.cloudflare.com/ajax/libs/normalize/5.0.0/normalize.min.css">
-<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.5/css/bootstrap.min.css" integrity="sha384-AysaV+vQoT3kOAXZkl02PThvDr8HYKPZhNT5h/CXfBThSRXQ6jW5DO2ekP5ViFdi" crossorigin="anonymous">
-
-<link rel="stylesheet"	href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.8/css/materialize.min.css">
-<!-- include summernote css/js-->
-
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.5/css/bootstrap.min.css">
 <link href="http://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.2/summernote.css" rel="stylesheet">
 <link rel="stylesheet"  href="/assets/css/tether.min.css">
-<link rel="stylesheet"  href="/assets/css/tag-basic-style.css">
 <link rel="stylesheet"	href="/assets/css/style.css">
 </head>
 <body id="DetailController" ng-controller="DetailController" ng-cloak>
@@ -35,11 +27,7 @@
 			<nav class="z-depth-0">
 				<div class="nav-wrapper blue lighten-1">
 					<form class="" style="margin-bottom: 0;" autocomplete="off">
-						<div class="input-field">
-							<input id="search" type="search" placeholder="키워드로 검색해보세요 ^ㅡ^" required ng-model="searchKeyword" kr-input>
-							<label for="search"><i class="material-icons">search</i></label>
-							<i class="material-icons">close</i>
-						</div>
+							<input id="search" type="search" placeholder="키워드로 검색해보세요 ^ㅡ^" required ng-model="searchKeyword" class="form-control" kr-input style="height:inherit; padding:0rem .75rem;">
 					</form>
 				</div>
 			</nav>
@@ -107,7 +95,7 @@
 				<div class="center-align"><a href="/login">로그인</a> 하고 대화에 참여하기</div>
 			</sec:authorize>
 			<sec:authorize access="isAuthenticated()">
-				<input id="message" type="text" class="" style="margin:0;" placeholder="메시지 입력" onkeypress="if(event.keyCode==13) {sendMessage(this); return false;}"/>
+				<input id="message" type="text" class="form-control" style="margin:0;" placeholder="메시지 입력" onkeypress="if(event.keyCode==13) {sendMessage(this); return false;}"/>
 			</sec:authorize>
 			</div>
 		</div>
@@ -124,8 +112,7 @@
 				</span>
 					<div class="row">
 						<div class="input-field col s12">
-							<input id="u_b_title" name="u_b_title" type="text" />
-							<label class="active" for="u_b_title">제목</label>
+							<input id="u_b_title" name="u_b_title" class="form-control" type="text" />
 						</div>
 						<div class="input-field col s12">
 						
@@ -133,7 +120,7 @@
 							
 						</div>
 						<div class="input-field col s12">
-								<div id="u_b_tags" class="tags" data-tags-input-name="tag"></div>
+								<div id="u_b_tags" class="tags form-control" data-tags-input-name="tag"></div>
 						</div>					
 					</div>
 				<div class="modal-footer white">
@@ -151,8 +138,9 @@
 				<div class="input-field col s12">
 									<div id="u_c_description" class="materialize-textarea contentbox"></div>
 								</div>
+								<div class="input-field col s12"></div>
 																<div class="input-field col s12">
-								<div id="u_c_tags" class="tags" data-tags-input-name="tag"></div>
+								<div id="u_c_tags" class="tags form-control" data-tags-input-name="tag"></div>
 				</div>
 						</div>					
 					</div>
@@ -226,15 +214,20 @@
 					    ${user.nickname}
 				</span>
 				<div class="row">
-			<div class="input-field col s12">
-				<div id="c_tags" class="tags" data-tags-input-name="tag"></div>
-			</div>
-			<div class="input-field col s12">
+			<div class="col s12">
 				<div id="c_description" class="materialize-textarea contentbox"></div>
 			</div>
-			<div class="center-align">
-			<p></p>
-			<button id="comment_form_btn" class="btn teal lighten-2 white-text" onclick="comment(${content.id});">답변하기</button>
+			<div class="col s12">
+			</div>
+			<div class="col s12">
+				<div id="c_tags" class="tags form-control" data-tags-input-name="tag"></div>
+			</div>
+			<div class="col s12">
+			</div>
+			<div class="col s12">
+			<div class="flex-box">
+			<button id="comment_form_btn" class="btn teal lighten-2 white-text btn-full" onclick="comment(${content.id});">답변하기</button>
+			</div>
 			</div>
 		    </div>
 		    </div>
@@ -346,42 +339,41 @@ $(function() {
 		"edit-on-delete":false
 	});
 	initSummernote();
-	/**
-	 * 단순 메시지 전송을 위함.
-	 */
-	var stompClient = null;
+});
+/**
+ * 단순 메시지 전송을 위함.
+ */
+var stompClient = null;
 
-	function sendMessage(message){
-		var scope = angular.element(document.getElementById("DetailController")).scope();
-		
-		if(stompClient != null)
-			stompClient.send("/message/notify/"+scope.boardContent.id, {}, JSON.stringify({'message':$(message).val()}));
-		
-		$(message).val('');
-	}
-
-	$(function() {
-		if(document.getElementById("DetailController") != null){
-			var scope = angular.element(document.getElementById("DetailController")).scope();
-			var socket = new SockJS("/websocket");
-			stompClient = Stomp.over(socket);
-			stompClient.debug = null;
-			stompClient.connect({}, function(frame) {
-				stompClient.subscribe('/board/'+scope.boardContent.id, function(response){
-					var json = JSON.parse(response.body);
-					scope.$apply(function(){
-						scope.messages.push(json);
-					});
-					$("#messagebox").scrollTop($("#messagebox")[0].scrollHeight);
-					
-				});
-			}, function(message){
-				$('#message').attr("placeholder","서버와 연결이 끊어짐");
-				$('#message').attr("readonly",true);
-			});
-		}
-	});
+function sendMessage(message){
+	var scope = angular.element(document.getElementById("DetailController")).scope();
 	
+	if(stompClient != null)
+		stompClient.send("/message/notify/"+scope.boardContent.id, {}, JSON.stringify({'message':$(message).val()}));
+	
+	$(message).val('');
+}
+
+$(function() {
+	if(document.getElementById("DetailController") != null){
+		var scope = angular.element(document.getElementById("DetailController")).scope();
+		var socket = new SockJS("/websocket");
+		stompClient = Stomp.over(socket);
+		stompClient.debug = null;
+		stompClient.connect({}, function(frame) {
+			stompClient.subscribe('/board/'+scope.boardContent.id, function(response){
+				var json = JSON.parse(response.body);
+				scope.$apply(function(){
+					scope.messages.push(json);
+				});
+				$("#messagebox").scrollTop($("#messagebox")[0].scrollHeight);
+				
+			});
+		}, function(message){
+			$('#message').attr("placeholder","서버와 연결이 끊어짐");
+			$('#message').attr("readonly",true);
+		});
+	}
 });
 </script>
 </body>

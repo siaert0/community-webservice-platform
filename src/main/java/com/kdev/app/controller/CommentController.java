@@ -27,13 +27,13 @@ import com.kdev.app.domain.dto.CommentDTO;
 import com.kdev.app.domain.vo.Comment;
 import com.kdev.app.domain.vo.UserDetailsVO;
 import com.kdev.app.domain.vo.UserVO;
-import com.kdev.app.service.CommentRepositoryService;
+import com.kdev.app.service.BoardRepositoryService;
 
 @Controller
 public class CommentController {
 	
 	@Autowired
-	private CommentRepositoryService commentRepositoryService;
+	private BoardRepositoryService boardRepositoryService;
 	
 	@Autowired 
 	ModelMapper modelMapper;
@@ -52,8 +52,8 @@ public class CommentController {
 		UserDetailsVO userDetails = (UserDetailsVO)authentication.getPrincipal();
 		UserVO userVO = modelMapper.map(userDetails, UserVO.class);
 		createComment.setUser(userVO);
-		Comment createdComment = commentRepositoryService.create(createComment);
-		createdComment = commentRepositoryService.findOne(createdComment.getId());
+		Comment createdComment = boardRepositoryService.createComment(createComment);
+		createdComment = boardRepositoryService.findCommentOne(createdComment.getId());
 		createdComment.setCreated(new Date());
 		return new ResponseEntity<Object>(createdComment, HttpStatus.CREATED);
 	}
@@ -65,7 +65,7 @@ public class CommentController {
 	 */
 	@RequestMapping(value="/comment", method=RequestMethod.GET, produces=MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Object> findComment(@PageableDefault(sort = { "id" }, direction = Direction.DESC, size = 1000) Pageable pageable, @RequestParam int board_id){
-		Page<Comment> page = commentRepositoryService.findAll(pageable, board_id);
+		Page<Comment> page = boardRepositoryService.findCommentAll(pageable, board_id);
 		return new ResponseEntity<Object>(page, HttpStatus.ACCEPTED);
 	}
 	
@@ -79,13 +79,13 @@ public class CommentController {
 	public ResponseEntity<Object> updateComment(@PathVariable int id, @RequestBody CommentDTO.Update update, Authentication authentication){
 		UserDetailsVO userDetails = (UserDetailsVO)authentication.getPrincipal();
 		UserVO userVO = modelMapper.map(userDetails, UserVO.class);
-		Comment commentVO = commentRepositoryService.findOne(id);
+		Comment commentVO = boardRepositoryService.findCommentOne(id);
 		
 		if(!(commentVO.getUser().getId().equals(userVO.getId())))
 			return new ResponseEntity<Object>(null, HttpStatus.FORBIDDEN);
 		commentVO.setDescription(update.getDescription());
 		commentVO.setTags(update.getTags());
-		Comment updated = commentRepositoryService.update(commentVO);
+		Comment updated = boardRepositoryService.updateComment(commentVO);
 		return new ResponseEntity<Object>(updated, HttpStatus.ACCEPTED);
 	}
 	
@@ -99,12 +99,12 @@ public class CommentController {
 	public ResponseEntity<Object> deleteComment(@PathVariable int id, Authentication authentication){
 		UserDetailsVO userDetails = (UserDetailsVO)authentication.getPrincipal();
 		UserVO userVO = modelMapper.map(userDetails, UserVO.class);
-		Comment commentVO = commentRepositoryService.findOne(id);
+		Comment commentVO = boardRepositoryService.findCommentOne(id);
 		
 		if(!(commentVO.getUser().getId().equals(userVO.getId())))
 			return new ResponseEntity<Object>(commentVO, HttpStatus.FORBIDDEN);
 		
-		commentRepositoryService.delete(id);
+		boardRepositoryService.deleteComment(id);
 		return new ResponseEntity<Object>(commentVO, HttpStatus.ACCEPTED);
 		
 	}

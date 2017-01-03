@@ -65,7 +65,7 @@ public class UserController {
 	@Autowired
 	private ConnectionRepository connectionRepository;
 	@Autowired 
-	ModelMapper modelMapper;
+	private ModelMapper modelMapper;
 	
 	@RequestMapping(value="/user/facebook", method= RequestMethod.GET)
 	public String FacebookUserView(HttpServletRequest request, HttpServletResponse response, Model model, HttpSession session) throws Exception{
@@ -141,7 +141,7 @@ public class UserController {
 			map.put("responseMessage", result.getAllErrors().toString());
 			return new ResponseEntity<Object>(map,HttpStatus.BAD_REQUEST);
 		}
-		UserDTO.Transfer newUser = modelMapper.map(userRepositroyService.createUser(user), UserDTO.Transfer.class);
+		UserDTO.Transfer newUser = userRepositroyService.signInUser(user);
 		return new ResponseEntity<Object>(newUser, HttpStatus.CREATED);
 	}
 	
@@ -165,7 +165,7 @@ public class UserController {
 		if(!userDetailsVO.getId().equals(id)){
 			return new ResponseEntity<Object>(HttpStatus.FORBIDDEN);
 		}
-		userRepositroyService.delete(id);
+		userRepositroyService.withDraw(id);
 		SecurityContextHolder.getContext().setAuthentication(null);
 		return new ResponseEntity<Object>(HttpStatus.OK);
 	}

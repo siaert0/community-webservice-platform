@@ -54,7 +54,7 @@
 							<p><b>구현 및 적용</b></p>
 							<p>Spring Boot 1.4.3</p>
 							<p>Spring Security</p>
-							<p>Spring Social Faceboo, Kakao : <span class="red-text lighten-2-text"> 오류발생... 원인모름...</span></p>
+							<p>Spring Social Faceboo, Kakao : <span class="red-text lighten-2-text"> 오류발생... 원인모름... 고친듯?</span></p>
 							<p>Spring Data JPA & Hibernate : <span class="red-text lighten-2-text"> 블로그 정리필요...</span></p>
 							<p>Spring Websocket - Sockjs - Stomp : <span class="red-text lighten-2-text"> 구독자수 표현방법?...</span></p>
 							<p>Lombok : Getter Setter</p>
@@ -63,8 +63,7 @@
 							<p><b>추가 요구사항</b></p>
 							<p>1. 회원의 비밀번호를 찾을 수 가 없다.....</p>
 							<p>2. 회원의 정보를 수정할 수 없다.....</p>
-							<p>3. 회원탈퇴 시 게시물을 남길 지 삭제할 지 여부.....</p>
-							<p>4. 스크랩된 게시물이 업데이트되면 알림되는 기능..... -> 스튜어드 프로시저??</p>
+							<p>3. 로그인 시 리다이렉트 기능 엉키고 있음.....</p>
 						</div>
 					</div>
 				</div>
@@ -102,9 +101,7 @@
 		<footer class="page-footer white">
 			<div class="footer-copyright">
 				<div class="container center black-text">
-					© 2016 Copyright <a href="http://materializecss.com/"
-						target="_blank">Materializecss</a> by <a
-						href="https://material.io/">Google Material Design</a>.
+					Bootstrap 4 & Materialize
 				</div>
 			</div>
 		</footer>

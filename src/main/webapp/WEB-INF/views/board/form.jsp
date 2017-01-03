@@ -18,15 +18,10 @@
 <!--Import Google Icon Font-->
 <link href="http://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 <!-- Compiled and minified CSS -->
-<link rel="stylesheet"	href="https://cdnjs.cloudflare.com/ajax/libs/normalize/5.0.0/normalize.min.css">
-<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.5/css/bootstrap.min.css" integrity="sha384-AysaV+vQoT3kOAXZkl02PThvDr8HYKPZhNT5h/CXfBThSRXQ6jW5DO2ekP5ViFdi" crossorigin="anonymous">
-
-<link rel="stylesheet"	href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.8/css/materialize.min.css">
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.5/css/bootstrap.min.css">
 <!-- include summernote css/js-->
-
 <link href="http://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.2/summernote.css" rel="stylesheet">
 <link rel="stylesheet"  href="/assets/css/tether.min.css">
-<link rel="stylesheet"  href="/assets/css/tag-basic-style.css">
 <link rel="stylesheet"	href="/assets/css/style.css">
 </head>
 <body>
@@ -43,21 +38,23 @@
 				</span>
 			<div class="row">
 			<div class="col s12">
-				<select id="q_category" class="browser-default">
+				<select id="q_category" class="browser-default form-control">
 			      <option value="" disabled selected>카테고리를 선택해주세요</option>
 			      <option value="질문">질문</option>
 			      <option value="정보">정보</option>
 			    </select>
 			</div>
+			<div class="col s12"></div>
 			<div class="input-field col s12">
-				<input id="q_title" name="q_title" type="text" autofocus/>
-				<label class="active" for="q_title">제목</label>
+				<input id="q_title" name="q_title" type="text" class="form-control" placeholder="제목을 입력해주세요" autofocus/>
 			</div>
+			<div class="col s12"></div>
 			<div class="input-field col s12">
-				<textarea id="q_content" name="q_content" class="materialize-textarea"></textarea>
+				<textarea id="q_content" name="q_content" class="form-control"></textarea>
 			</div>
+			<div class="col s12"></div>
 			<div class="input-field col s12">
-				<div data-tags-input-name="tag" id="q_tags" class="tags"></div>
+				<div data-tags-input-name="tag" id="q_tags" class="tags form-control"></div>
 			</div>
 			<div class="input-field col s12 right-align">
 				<a class="waves-effect waves-light btn btn-flat" onclick="history.back();">뒤로가기</a>
@@ -68,6 +65,11 @@
 	</div>
 	</div>
 	</article>
+		<div class="fixed-action-btn click-to-toggle">
+		<a class="btn-floating btn-large red button-collapse hide-on-large-only" data-activates="nav-mobile">
+			<i class="material-icons">web</i>
+		</a>
+	</div>
 	<div id="preloader" class="fixed-action-btn">
 	<div class="preloader-wrapper active">
       <div class="spinner-layer spinner-blue">
@@ -126,6 +128,7 @@ var token = $("meta[name='_csrf']").attr("content");
 var header = $("meta[name='_csrf_header']").attr("content");
 
 $(function() {
+	$(".button-collapse").sideNav();
 	$('.tags').tagging({
 		"no-backspace": true,
 		"no-duplicate": true,

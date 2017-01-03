@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 import com.kdev.app.domain.dto.UserDTO;
 import com.kdev.app.domain.vo.UserDetailsVO;
 import com.kdev.app.domain.vo.UserVO;
+import com.kdev.app.exception.NotCreatedException;
 import com.kdev.app.repository.BoardRepository;
 import com.kdev.app.repository.UserRepository;
 
@@ -23,16 +24,16 @@ import com.kdev.app.repository.UserRepository;
 public class UserRepositoryService implements UserDetailsService {
 	
 	@Autowired
-	BoardRepository boardRepository;
+	private BoardRepositoryService boardRepositoryService;
 	
 	@Autowired
-	UserRepository userRepository;
+	private UserRepository userRepository;
 	
 	@Autowired 
-	PasswordEncoder passwordEncoder;
+	private PasswordEncoder passwordEncoder;
 	
 	@Autowired 
-	ModelMapper modelMapper;
+	private ModelMapper modelMapper;
 	
 	@Autowired
 	public UserRepositoryService(UserRepository userRepository) {
@@ -40,12 +41,15 @@ public class UserRepositoryService implements UserDetailsService {
 		this.userRepository = userRepository;
 	}
 	
-	public UserVO createUser(UserDTO.Create user){
-		UserVO newUser = new UserVO();
-		modelMapper.map(user, newUser);
+	public UserDTO.Transfer signInUser(UserDTO.Create user){
+		UserVO newUser = modelMapper.map(user, UserVO.class);
 		newUser.setPassword(passwordEncoder.encode(newUser.getPassword()));
 		UserVO createdUser = userRepository.save(newUser);
-		return createdUser;
+		
+		if(createdUser == null)
+			throw new NotCreatedException("Failed Create User");
+		
+		return modelMapper.map(createdUser, UserDTO.Transfer.class);
 	}
 	
 	public UserVO findUserByEmail(String email){
@@ -66,16 +70,14 @@ public class UserRepositoryService implements UserDetailsService {
 	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
 		// TODO Auto-generated method stub
 		UserVO findUser = findUserByEmail(username);
-		
 		if(findUser == null)
 			throw new UsernameNotFoundException(username);
-		
 		return new UserDetailsVO(findUser);
 	}
 	
-	public void delete(String id){
+	public void withDraw(String id){
 		UserVO userVO = userRepository.findOne(id);
-		boardRepository.deleteByUser(userVO);
+		boardRepositoryService.deleteBoardAllByUser(userVO);
 		userRepository.delete(userVO);
 	}
 }

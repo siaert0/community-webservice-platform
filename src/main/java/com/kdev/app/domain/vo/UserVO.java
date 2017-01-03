@@ -18,27 +18,39 @@ import com.kdev.app.enums.SocialProvider;
 import lombok.Data;
 
 @Entity
-@Table(name = "users")
+@Table(name = "USERS")
 @Data
 public class UserVO {
 	@Id
-	@Column(name = "id", length=155)
+	@Column(name = "USER_ID", length=155)
 	private String id;
+	
+	@Column(name = "USER_EMAIL")
 	private String email;
+	
+	@Column(name = "USER_NICKNAME")
 	private String nickname;
 	
 	@JsonIgnore // JSON으로 응답시에 출력하지 않도록 함
+	@Column(name = "USER_PASSWORD")
 	private String password;
+	
+	@Column(name = "USER_THUMBNAIL")
 	private String thumbnail;
 	
 	@Enumerated(EnumType.STRING) // Enum 형식을 사용하는데 String으로 넣겠다.
-	private SocialProvider socialSignInProvider;
+	@Column(name = "USER_SOCIAL_PROVIDER")
+	private SocialProvider socialProvider;
+	
 	@Enumerated(EnumType.STRING)
+	@Column(name = "USER_ROLE")
 	private Role role;
+	
+	@Column(name = "USER_TAGS")
 	private String tags;
 	
 	@Temporal(TemporalType.TIMESTAMP) // 컬럼을 Timestamp 형식으로 지정하면서 현재 시간을 넣는다.
-	@Column(name="joined", insertable=false, updatable=false, columnDefinition="TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
+	@Column(name="USER_JOINED", insertable=false, updatable=false, columnDefinition="TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
 	private Date joined;
 }
 

@@ -6,19 +6,19 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
-import com.kdev.app.domain.pk.ScrapId;
+import com.kdev.app.domain.pk.BOARD_USER_CP_ID;
 
 import lombok.Data;
 
 @Entity
-@Table(name="scraps")
+@Table(name="SCRAPS")
 @Data
 public class Scrap {
     @EmbeddedId
-	private ScrapId scrapId;
+	private BOARD_USER_CP_ID BOARD_USER_CP_ID;
     
     @ManyToOne
-    @JoinColumn(name = "BOARD_ID", insertable=false, updatable=false)
+    @JoinColumn(name = "BD_ID", insertable=false, updatable=false)
     private Board board;
     
     @ManyToOne

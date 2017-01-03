@@ -7,18 +7,18 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
-import com.kdev.app.domain.pk.ThumbId;
+import com.kdev.app.domain.pk.BOARD_USER_CP_ID;
 
 import lombok.Data;
 
 @Entity
-@Table(name = "thumbs")
+@Table(name = "THUMBS")
 @Data
 public class Thumb {
     @EmbeddedId
-	private ThumbId thumbId;
+	private BOARD_USER_CP_ID BOARD_USER_CP_ID;
     
-    @Column(name = "BOARD_ID", insertable=false, updatable=false)
+    @Column(name = "BD_ID", insertable=false, updatable=false)
     private int board;
     
     @ManyToOne

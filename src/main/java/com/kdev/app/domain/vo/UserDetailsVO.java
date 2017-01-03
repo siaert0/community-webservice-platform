@@ -21,7 +21,7 @@ public class UserDetailsVO extends User {
 	private String id;
 	private String email;
 	private String nickname;
-	private SocialProvider socialSignInProvider;
+	private SocialProvider socialProvider;
 	private String thumbnail;
 	private String tags;
 
@@ -30,7 +30,7 @@ public class UserDetailsVO extends User {
 		this.id = user.getId();
 		this.nickname = user.getNickname();
 		this.thumbnail = user.getThumbnail();
-		this.socialSignInProvider = user.getSocialSignInProvider();
+		this.socialProvider = user.getSocialProvider();
 		this.tags = user.getTags();
 		this.email = user.getEmail();
 		// TODO Auto-generated constructor stub

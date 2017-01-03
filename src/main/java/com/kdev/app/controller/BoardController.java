@@ -25,8 +25,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import com.kdev.app.domain.dto.BoardDTO;
-import com.kdev.app.domain.pk.ScrapId;
-import com.kdev.app.domain.pk.ThumbId;
+import com.kdev.app.domain.pk.BOARD_USER_CP_ID;
 import com.kdev.app.domain.vo.Board;
 import com.kdev.app.domain.vo.Scrap;
 import com.kdev.app.domain.vo.Thumb;
@@ -36,8 +35,6 @@ import com.kdev.app.exception.ExceptionResponse;
 import com.kdev.app.exception.NotFoundException;
 import com.kdev.app.exception.ValidException;
 import com.kdev.app.service.BoardRepositoryService;
-import com.kdev.app.service.ScrapRepositoryService;
-import com.kdev.app.service.ThumbRepositoryService;
 
 @Controller
 public class BoardController {
@@ -45,14 +42,8 @@ public class BoardController {
 	@Autowired
 	private BoardRepositoryService boardRepositoryService;
 	
-	@Autowired
-	private ScrapRepositoryService scrapRepositroyService;
-	
-	@Autowired
-	private ThumbRepositoryService thumbRepositoryService;
-	
 	@Autowired 
-	ModelMapper modelMapper;
+	private ModelMapper modelMapper;
 	
 	@Secured(value="ROLE_USER")
 	@RequestMapping(value="/board", method=RequestMethod.GET)
@@ -62,7 +53,7 @@ public class BoardController {
 	
 	@RequestMapping(value="/board/{id}", method=RequestMethod.GET)
 	public String findBoardOne(@PathVariable int id, Model model){
-		Board boardVO = boardRepositoryService.findOne(id);	
+		Board boardVO = boardRepositoryService.findBoardOne(id);	
 		if(boardVO == null)
 			throw new NotFoundException("게시물을 찾을 수 없습니다.");
 		model.addAttribute("content", boardVO);
@@ -70,33 +61,33 @@ public class BoardController {
 	}
 	@Secured("ROLE_USER")
 	@RequestMapping(value="/board/scrap", method=RequestMethod.POST, produces=MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<Object> checkScrap(@RequestBody ScrapId scrapId, Authentication authentication){
+	public ResponseEntity<Object> checkScrap(@RequestBody BOARD_USER_CP_ID scrapId, Authentication authentication){
 		UserDetailsVO userDetails = (UserDetailsVO)authentication.getPrincipal();
 
 		UserVO userVO = modelMapper.map(userDetails, UserVO.class);
 		scrapId.setUserid(userVO.getId());
-		scrapRepositroyService.checkScrap(scrapId);
+		boardRepositoryService.checkScrap(scrapId);
 		return new ResponseEntity<Object>("스크랩 완료", HttpStatus.ACCEPTED);
 	}
 	@Secured("ROLE_USER")
 	@RequestMapping(value="/board/thumb", method=RequestMethod.POST, produces=MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<Object> checkThumb(@RequestBody ThumbId thumbId, Authentication authentication){
+	public ResponseEntity<Object> checkThumb(@RequestBody BOARD_USER_CP_ID BOARD_USER_CP_ID, Authentication authentication){
 		UserDetailsVO userDetails = (UserDetailsVO)authentication.getPrincipal();
 
 		UserVO userVO = modelMapper.map(userDetails, UserVO.class);
-		thumbId.setUserid(userVO.getId());
-		Thumb thumb = thumbRepositoryService.checkThumb(thumbId);
-		List<Thumb> thumbs = thumbRepositoryService.findByBoard(thumbId.getBoardid());
+		BOARD_USER_CP_ID.setUserid(userVO.getId());
+		boardRepositoryService.checkThumb(BOARD_USER_CP_ID);
+		List<Thumb> thumbs = boardRepositoryService.findThumbByBoard(BOARD_USER_CP_ID.getBoardid());
 		return new ResponseEntity<Object>(thumbs, HttpStatus.ACCEPTED);
 	}
 	
 	@Secured("ROLE_USER")
 	@RequestMapping(value="/board/scrap", method=RequestMethod.DELETE, produces=MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<Object> deleteScrap(@RequestBody ScrapId scrapId, Authentication authentication){
+	public ResponseEntity<Object> deleteScrap(@RequestBody BOARD_USER_CP_ID scrapId, Authentication authentication){
 		UserDetailsVO userDetails = (UserDetailsVO)authentication.getPrincipal();
 		UserVO userVO = modelMapper.map(userDetails, UserVO.class);
 		scrapId.setUserid(userVO.getId());
-		scrapRepositroyService.deleteScrap(scrapId);
+		boardRepositoryService.deleteScrap(scrapId);
 		return new ResponseEntity<Object>("스크랩 취소", HttpStatus.ACCEPTED);
 	}
 	
@@ -123,7 +114,7 @@ public class BoardController {
 		if(user.equals(""))
 			return new ResponseEntity<Object>(page, HttpStatus.NOT_ACCEPTABLE);
 		else
-			page = scrapRepositroyService.findByUser(userVO, pageable);
+			page = boardRepositoryService.findScrapByUser(userVO, pageable);
 		
 		return new ResponseEntity<Object>(page, HttpStatus.ACCEPTED);
 	}
@@ -131,7 +122,7 @@ public class BoardController {
 	@RequestMapping(value="/board/{id}", method=RequestMethod.GET, produces=MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Object> findBoardOneREST(@PathVariable int id){
 		
-		Board boardVO = boardRepositoryService.findOne(id);
+		Board boardVO = boardRepositoryService.findBoardOne(id);
 		
 		/**
 		 * 에러 처리 방법 1
@@ -156,16 +147,16 @@ public class BoardController {
 	public ResponseEntity<Object> createBoard(@RequestBody @Valid BoardDTO.Create createBoard, BindingResult result, Authentication authentication){
 		
 		if(result.hasErrors()){
-			throw new ValidException();
+			throw new ValidException(result.getAllErrors().toString());
 		}
 		UserDetailsVO userDetails = (UserDetailsVO)authentication.getPrincipal();
 		UserVO userVO = modelMapper.map(userDetails, UserVO.class);
 		createBoard.setUser(userVO);
-		Board createdBoard = boardRepositoryService.create(createBoard);
-		ScrapId scrapId = new ScrapId();
+		Board createdBoard = boardRepositoryService.createBoard(createBoard);
+		BOARD_USER_CP_ID scrapId = new BOARD_USER_CP_ID();
 		scrapId.setBoardid(createdBoard.getId());
 		scrapId.setUserid(userVO.getId());
-		scrapRepositroyService.checkScrap(scrapId);
+		boardRepositoryService.checkScrap(scrapId);
 		return new ResponseEntity<Object>(createdBoard, HttpStatus.CREATED);
 	}
 		
@@ -179,9 +170,9 @@ public class BoardController {
 		Page<Board> page = null;
 		
 		if(category.equals(""))
-			page= boardRepositoryService.findByAll(pageable);
+			page= boardRepositoryService.findAllBoard(pageable);
 		else
-			page = boardRepositoryService.findAllByCategory(category, pageable);
+			page = boardRepositoryService.findAllBoardByCategory(category, pageable);
 		
 		return new ResponseEntity<Object>(page, HttpStatus.ACCEPTED);
 	}
@@ -195,7 +186,7 @@ public class BoardController {
 	public ResponseEntity<Object> findBoardByUser(@PathVariable String userid,@PageableDefault(sort = { "id" }, direction = Direction.DESC, size = 1000) Pageable pageable){
 		UserVO userVO = new UserVO();
 		userVO.setId(userid);
-		Page<Board> page = boardRepositoryService.findAllByUser(userVO, pageable);
+		Page<Board> page = boardRepositoryService.findAllBoardByUser(userVO, pageable);
 		List<Board> list = page.getContent();
 		return new ResponseEntity<Object>(list, HttpStatus.ACCEPTED);
 	}
@@ -212,7 +203,7 @@ public class BoardController {
 		UserDetailsVO userDetails = (UserDetailsVO)authentication.getPrincipal();
 		UserVO userVO = modelMapper.map(userDetails, UserVO.class);
 		
-		Board boardVO = boardRepositoryService.findOne(id);
+		Board boardVO = boardRepositoryService.findBoardOne(id);
 		
 		if(!(boardVO.getUser().getId().equals(userVO.getId())))
 			return new ResponseEntity<Object>(update, HttpStatus.FORBIDDEN);
@@ -223,7 +214,7 @@ public class BoardController {
 		boardVO.setTags(update.getTags());
 		boardVO.setSelected(update.getSelected());
 
-		Board updated = boardRepositoryService.update(boardVO);
+		Board updated = boardRepositoryService.updateBoard(boardVO);
 		return new ResponseEntity<Object>(updated, HttpStatus.ACCEPTED);
 	}
 	
@@ -238,12 +229,12 @@ public class BoardController {
 		
 		UserDetailsVO userDetails = (UserDetailsVO)authentication.getPrincipal();
 		UserVO userVO = modelMapper.map(userDetails, UserVO.class);
-		Board boardVO = boardRepositoryService.findOne(id);
+		Board boardVO = boardRepositoryService.findBoardOne(id);
 		
 		if(!(boardVO.getUser().getId().equals(userVO.getId())))
 			return new ResponseEntity<Object>(boardVO, HttpStatus.FORBIDDEN);
 		
-		boardRepositoryService.delete(id);
+		boardRepositoryService.deleteBoard(id);
 		return new ResponseEntity<Object>(boardVO, HttpStatus.ACCEPTED);
 		
 	}

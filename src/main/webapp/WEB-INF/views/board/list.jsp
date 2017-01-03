@@ -16,10 +16,9 @@
 
 		<!--Import Google Icon Font-->
 		<link href="http://fonts.googleapis.com/icon?family=Material+Icons"	rel="stylesheet">
+		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.5/css/bootstrap.min.css">
 		<!-- Compiled and minified CSS -->
-		<link rel="stylesheet"	href="https://cdnjs.cloudflare.com/ajax/libs/normalize/5.0.0/normalize.min.css">
-		<link rel="stylesheet"	href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.8/css/materialize.min.css">
-		<link rel="stylesheet" href="/assets/css/style.css">
+		<link rel="stylesheet"  href="/assets/css/style.css">
 	</head>
 	<body id="BoardController" ng-controller="BoardController" ng-cloak>
 	<!-- 헤더 영역 -->
@@ -27,12 +26,8 @@
 			<div class="navbar-fixed">
 				<nav class="z-depth-0">
 					<div class="nav-wrapper blue lighten-1">
-						<form class="" style="margin-bottom: 0;" autocomplete="off">
-							<div class="input-field">
-								<input id="search" type="search" placeholder="키워드로 검색해보세요 ^ㅡ^" required ng-model="searchKeyword" kr-input>
-								<label for="search"><i class="material-icons">search</i></label>
-								<i class="material-icons">close</i>
-							</div>
+						<form class="" style="margin-bottom: 0;" autocomplete="off" >
+								<input id="search" type="search" placeholder="키워드로 검색해보세요 ^ㅡ^" required class="form-control" ng-model="searchKeyword" kr-input style="height:inherit; padding:0rem .75rem;">
 						</form>
 					</div>
 				</nav>
@@ -125,9 +120,7 @@
 		<footer class="page-footer white">
 			<div class="footer-copyright">
 				<div class="container center black-text">
-					© 2016 Copyright <a href="http://materializecss.com/"
-						target="_blank">Materializecss</a> by <a
-						href="https://material.io/">Google Material Design</a>.
+					Bootstrap 4 & Materialize
 				</div>
 			</div>
 		</footer>

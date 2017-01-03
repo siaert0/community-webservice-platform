@@ -8,13 +8,11 @@
 <meta id="_csrf" name="_csrf" content="${_csrf.token}" />
 <meta id="_csrf_header" name="_csrf_header" content="${_csrf.headerName}" />
 <title>회원가입 페이지</title>
-<!--Import Google Icon Font-->
 <link href="http://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-<!-- Compiled and minified CSS -->
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/5.0.0/normalize.min.css">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.8/css/materialize.min.css">
-<link rel="stylesheet"  href="/assets/css/tag-basic-style.css">
-<link rel="stylesheet" href="/assets/css/style.css">
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.5/css/bootstrap.min.css">
+<link href="http://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.2/summernote.css" rel="stylesheet">
+<link rel="stylesheet"  href="/assets/css/tether.min.css">
+<link rel="stylesheet"	href="/assets/css/style.css">
 <style>
 header, article, footer {
 		    padding-left: 0;
@@ -28,40 +26,41 @@ header, article, footer {
       <input type="hidden"                        
 		name="${_csrf.parameterName}"
 		value="${_csrf.token}"/>
+	<p></p>
       <h5 class="center">회원가입 페이지[${userProfile.socialSignInProvider} 연동]</h5>
       <br>
       <div class="row left-align">
       <div class="col s12">
       <div class="col s3 m2">
-      	<img class="responsive-img" src="${userProfile.thumbnail}"/>
+      	<img class="responsive-img" src="${userProfile.thumbnail}" style="width:50px; height:50px; padding-bottom:15px;"/>
       </div>
        <div class="input-field col s9 m5">
-          <input id="id" name="id" type="text" class="validate" value="${userProfile.id}" readonly>
-          <label for="id">식별번호</label>
+          <input id="id" name="id" type="text" class="form-control validate" value="${userProfile.id}" readonly>
         </div>
          <div class="input-field col s12 m5">
-          <input id="nickname" type="text" class="validate" value="${userProfile.nickname}" readonly>
-          <label for="nickname">이름</label>
+          <input id="nickname" type="text" class="form-control validate" value="${userProfile.nickname}" readonly>
         </div>
-        </div>
-        <div class="input-field col s8">
-          <input id="email" name="email" type="email" class="validate">
-          <label for="email">아이디(이메일)</label>
-        </div>
-        <div class="input-field col s4 right-align">
-          <button type="button" class="btn" onclick="checkByEmail();">중복확인</button>
         </div>
         <div class="input-field col s12">
-          <input id="password" type="password" class="validate">
-          <label for="password">비밀번호</label>
+        <div class="input-group">
+          <input id="email" name="email" type="email" class="form-control validate" placeholder="이메일 형식">
+	      <span class="input-group-btn">
+	        <button class="waves-effect waves-light btn btn-flat teal lighten-2 white-text" type="button" onclick="checkByEmail();">중복확인</button>
+	      </span>
+        </div>
         </div>
         <div class="input-field col s12">
-			<div id="tag" class="tags" data-tags-input-name="tag"></div>
+          <input id="password" type="password" class="form-control validate" placeholder="비밀번호(8자이상)">
+        </div>
+        <div class="input-field col s12">
+        </div>
+        <div class="input-field col s12">
+			<div id="tag" class="tags form-control" data-tags-input-name="tag"></div>
 		</div>
      </div>
-         <div class="row right-align">
-      <a class="waves-effect waves-light btn-flat" onclick="register()">회원가입 </a>
-      <a class="waves-effect waves-light btn-flat" onclick="location.href='/login'">취소 </a>
+         <div class="flex-box right-align">
+         <a class="waves-effect waves-light btn blue lighten-2 white-text btn-full" onclick="register()">회원가입 </a>
+      	<a class="waves-effect waves-light btn red lighten-2 white-text btn-full" onclick="location.href='/login'">취소 </a>
        </div>
     </form>
     </div>
@@ -93,6 +92,7 @@ header, article, footer {
 	function checkByEmail(){
 
 		if($('#email').val() == "" || $('#email').val() == null){
+			alert("이메일을 입력해주세요");
 			$('#email').focus();
 			return;
 		}
