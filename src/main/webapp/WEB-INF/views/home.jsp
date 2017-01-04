@@ -55,8 +55,8 @@
 							<p>Spring Boot 1.4.3</p>
 							<p>Spring Security</p>
 							<p>Spring Social Faceboo, Kakao : <span class="red-text lighten-2-text"> 오류발생... 원인모름... 고친듯?</span></p>
-							<p>Spring Data JPA & Hibernate : <span class="red-text lighten-2-text"> 블로그 정리필요...</span></p>
-							<p>Spring Websocket - Sockjs - Stomp : <span class="red-text lighten-2-text"> 구독자수 표현방법?...</span></p>
+							<p>Spring Data JPA & Hibernate</p>
+							<p>Spring Websocket - Sockjs - Stomp : <span class="red-text lighten-2-text"> 구독자수 표현방법이 있나?...</span></p>
 							<p>Lombok : Getter Setter</p>
 							<p>ModelMapper</p>
 							<hr>
@@ -64,6 +64,7 @@
 							<p>1. 회원의 비밀번호를 찾을 수 가 없다.....</p>
 							<p>2. 회원의 정보를 수정할 수 없다.....</p>
 							<p>3. 로그인 시 리다이렉트 기능 엉키고 있음.....</p>
+							<p>4. 비즈니스 로직 에러처리 개선 필요.....</p>
 						</div>
 					</div>
 				</div>

@@ -58,7 +58,7 @@ app.controller('BoardController', function($scope, $http, $log, $sce){
 				return 1;
 			}
 			for(var i=0; i < boardContent.thumbs.length; i++){
-				if(boardContent.thumbs[i].thumbId.userid == $scope.USERID){
+				if(boardContent.thumbs[i].board_USER_CP_ID.userid == $scope.USERID){
 					is = true
 					break;
 				}
