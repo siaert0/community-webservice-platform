@@ -97,7 +97,7 @@ app.controller('ScrapController', function($scope, $http){
 				return 1;
 			}
 			for(var i=0; i < boardContent.thumbs.length; i++){
-				if(boardContent.thumbs[i].thumbId.userid == $scope.USERID){
+				if(boardContent.thumbs[i].board_USER_CP_ID.userid == $scope.USERID){
 					is = true
 					break;
 				}
@@ -135,7 +135,7 @@ app.controller('DetailController', function($scope, $http, $log, $sce){
 				return 1;
 			}
 			for(var i=0; i < $scope.boardContent.thumbs.length; i++){
-				if($scope.boardContent.thumbs[i].thumbId.userid == $scope.USERID){
+				if($scope.boardContent.thumbs[i].board_USER_CP_ID.userid == $scope.USERID){
 					is = true
 					break;
 				}
@@ -148,6 +148,10 @@ app.controller('DetailController', function($scope, $http, $log, $sce){
 		return 0;	
 	}
 	$scope.toggleThumb = function(){
+		if($scope.USERID == null){
+			Materialize.toast("비회원 추천 방지", 3000);
+			return ;
+		}
 		var dataObject = new Object();
 		dataObject.boardid = $scope.boardContent.id;
 		$.ajax({

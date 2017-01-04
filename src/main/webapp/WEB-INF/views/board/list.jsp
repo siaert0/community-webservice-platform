@@ -23,7 +23,7 @@
 				<nav class="z-depth-0">
 					<div class="nav-wrapper blue lighten-1">
 						<form class="" style="margin-bottom: 0;" autocomplete="off" >
-								<input id="search" type="search" placeholder="키워드로 검색해보세요 ^ㅡ^" required class="form-control" ng-enter="searchKeywordChange()" ng-model="searchText" kr-input style="height:inherit; padding:0rem .75rem;">
+								<input id="search" type="search" placeholder="제목 및 태그로 검색가능" required class="form-control" ng-enter="searchKeywordChange()" ng-model="searchText" kr-input style="height:inherit; padding:0rem .75rem;">
 						</form>
 					</div>
 				</nav>

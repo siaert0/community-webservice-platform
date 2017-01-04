@@ -27,7 +27,7 @@
 			<nav class="z-depth-0">
 				<div class="nav-wrapper blue lighten-1">
 					<form class="" style="margin-bottom: 0;" autocomplete="off">
-							<input id="search" type="search" placeholder="키워드로 검색해보세요 ^ㅡ^" required ng-model="searchKeyword" class="form-control" kr-input style="height:inherit; padding:0rem .75rem;">
+							<input id="search" type="search" placeholder="원하는 댓글찾기 ^ㅡ^" required ng-model="searchKeyword" class="form-control" kr-input style="height:inherit; padding:0rem .75rem;">
 					</form>
 				</div>
 			</nav>
@@ -64,11 +64,11 @@
 			</div>
 		</div>
 		<div class="card-action left-align">
-		 <span class="chip teal lighten-2 hover white-text border-flat" >{{boardContent.category}}</span>
-		 <span class="chip lighten-2 hover white-text border-flat" ng-class="{blue:boardContent.selected == 0 && boardContent.comments.length > 0, red:boardContent.selected == 0 && boardContent.comments.length == 0, green:boardContent.selected != 0}">댓글 {{boardContent.comments.length}}</span>
+		 <span class="chip teal lighten-2 white-text border-flat" >{{boardContent.category}}</span>
+		 <span class="chip lighten-2 white-text border-flat" ng-class="{blue:boardContent.selected == 0 && boardContent.comments.length > 0, red:boardContent.selected == 0 && boardContent.comments.length == 0, green:boardContent.selected != 0}">댓글 {{boardContent.comments.length}}</span>
 		 <span class="chip lighten-2 hover white-text border-flat" ng-class="{red:checkThumb()==0, green:checkThumb()==1, blue:checkThumb()==2}" data-ng-click="toggleThumb();">추천 {{boardContent.thumbs.length}}</span>
 		 <span class="tags right" ng-if="boardContent.tags != null" ng-init="tags=parseJson(boardContent.tags)">
-			<span ng-repeat="tag in tags"><span class="chip red lighten-2 hover white-text border-flat" style="">{{tag}} </span></span>
+			<span ng-repeat="tag in tags"><span class="chip red lighten-2 white-text border-flat" style="">{{tag}} </span></span>
 		 </span>
 		</div>
 	</div>
@@ -375,5 +375,15 @@ $(function() {
 	}
 });
 </script>
+		<sec:authorize access="isAuthenticated()">
+		<script>
+		$(function() {
+			var scope = angular.element(document.getElementById("DetailController")).scope();
+			scope.$apply(function(){
+				scope.USERID = '${user.id}';
+			});
+		});
+		</script>
+		</sec:authorize>
 </body>
 </html>
