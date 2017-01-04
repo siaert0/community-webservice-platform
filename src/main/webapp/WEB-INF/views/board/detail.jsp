@@ -18,8 +18,8 @@
 <link href="http://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.5/css/bootstrap.min.css">
 <link href="http://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.2/summernote.css" rel="stylesheet">
-<link rel="stylesheet"  href="/assets/css/tether.min.css">
-<link rel="stylesheet"	href="/assets/css/style.css">
+<link rel="stylesheet"  href="${pageContext.request.contextPath}/assets/css/tether.min.css">
+<link rel="stylesheet"	href="${pageContext.request.contextPath}/assets/css/style.css">
 </head>
 <body id="DetailController" ng-controller="DetailController" ng-cloak>
 <header>
@@ -41,38 +41,35 @@
 	<div class="col s12 m8">
 	<div class="card sticky-action" ng-if="boardContent != null">
 		<div class="card-content right-align" style="border-bottom:1px solid #EEE">
-		    								<span class="chip white left">
+		      <span class="chip white left">
 			    <img style="height:100%;" ng-src="{{boardContent.user.thumbnail}}">
-			   {{boardContent.user.nickname}}
+			    {{boardContent.user.nickname}}
 			  </span>
 			
 			<span class="chip grey darken-2 white-text border-flat">{{boardContent.created | date:'yyyy년 MM월 dd일 h:mma'}}</span>
-						<sec:authorize access="isAuthenticated()">
+			<sec:authorize access="isAuthenticated()">
 			     <c:if test="${content.user.id == user.id}">
-			     <span class="chip red lighten-2 hover white-text border-flat" data-ng-click="requestBoardUpdate();">수정</span>
-			     <span class="chip blue lighten-2 hover white-text border-flat" data-ng-click="requestBoardDelete();">삭제</span>
+				     <span class="chip red lighten-2 hover white-text border-flat" data-ng-click="requestBoardUpdate();">수정</span>
+				     <span class="chip blue lighten-2 hover white-text border-flat" data-ng-click="requestBoardDelete();">삭제</span>
 			     </c:if>
 			     <span class="chip green lighten-2 hover white-text border-flat" data-ng-click="scrap(boardContent.id)">스크랩</span>
-	    		</sec:authorize>
+	    	</sec:authorize>
 		</div>
 		<div class="card-content">
 			<div class="justify-align">
 				<div class="">
 				<p class="" style="font-weight:700; font-size:18px;">{{boardContent.title}}</p>
-					<p class="collection-title" ng-bind-html="trustHtml(boardContent.description)"></p>
+				<p class="collection-title" ng-bind-html="trustHtml(boardContent.description)"></p>
 				</div>
 			</div>
 		</div>
 		<div class="card-action left-align">
 		 <span class="chip teal lighten-2 hover white-text border-flat" >{{boardContent.category}}</span>
-		<span class="chip lighten-2 hover white-text border-flat" ng-class="{blue:boardContent.selected == 0 && boardContent.comments.length > 0, red:boardContent.selected == 0 && boardContent.comments.length == 0, green:boardContent.selected != 0}">댓글 {{boardContent.comments.length}}</span>
-			 
-			 
-			 <span class="chip lighten-2 hover white-text border-flat" ng-class="{red:checkThumb()==0, green:checkThumb()==1, blue:checkThumb()==2}" data-ng-click="toggleThumb();">추천 {{boardContent.thumbs.length}}</span>
-			
-			 <span class="tags right" ng-if="boardContent.tags != null" ng-init="tags=parseJson(boardContent.tags)">
-				<span ng-repeat="tag in tags"><span class="chip red lighten-2 hover white-text border-flat" style="">{{tag}} </span></span>
-			</span>
+		 <span class="chip lighten-2 hover white-text border-flat" ng-class="{blue:boardContent.selected == 0 && boardContent.comments.length > 0, red:boardContent.selected == 0 && boardContent.comments.length == 0, green:boardContent.selected != 0}">댓글 {{boardContent.comments.length}}</span>
+		 <span class="chip lighten-2 hover white-text border-flat" ng-class="{red:checkThumb()==0, green:checkThumb()==1, blue:checkThumb()==2}" data-ng-click="toggleThumb();">추천 {{boardContent.thumbs.length}}</span>
+		 <span class="tags right" ng-if="boardContent.tags != null" ng-init="tags=parseJson(boardContent.tags)">
+			<span ng-repeat="tag in tags"><span class="chip red lighten-2 hover white-text border-flat" style="">{{tag}} </span></span>
+		 </span>
 		</div>
 	</div>
 	</div>
@@ -84,10 +81,9 @@
 			</div>
 			<div id="messagebox" class="collection-item" style="min-height:255px; max-height:255px; overflow:auto; padding-left:10px; padding-right:10px; overflow-wrap:break-word;">
 				<p class="" ng-repeat="message in messages">
-					
-			   <span style="border-right:2px solid red; padding-right:10px;">{{message.user.nickname}}</span>
-			  &nbsp;
-			  {{message.message}}
+				   <span style="border-right:2px solid red; padding-right:10px;">{{message.user.nickname}}</span>
+				  &nbsp;
+				  {{message.message}}
 				</p>
 			</div>
 			<div class="collection-item" style="padding:0.5rem;">
@@ -101,7 +97,6 @@
 		</div>
 	</div>
 	</div>
-
 		  <sec:authorize access="isAuthenticated()">
 		  <!-- 게시물 업데이트 모달 박스 영역 -->
 					<div class="collection white" id="updateBoardModal" style="display:none; border:2px solid #81c784;">
@@ -110,14 +105,13 @@
 					<img src="${user.thumbnail}" alt="Contact Person">
 					    ${user.nickname}
 				</span>
+				<p></p>
 					<div class="row">
 						<div class="input-field col s12">
 							<input id="u_b_title" name="u_b_title" class="form-control" type="text" />
 						</div>
 						<div class="input-field col s12">
-						
 							<div id="u_b_description" class="materialize-textarea contentbox"></div>
-							
 						</div>
 						<div class="input-field col s12">
 								<div id="u_b_tags" class="tags form-control" data-tags-input-name="tag"></div>
@@ -133,6 +127,11 @@
 		<!-- 답변 업데이트 모달 박스 영역 -->
 			<div id="updateCommentModal" class="collection white" style="display:none; border:2px solid #81c784;">
 				<div class="collection-item">
+				<span class="chip transparent">
+					<img src="${user.thumbnail}" alt="Contact Person">
+					    ${user.nickname}
+				</span>
+				<p></p>
 					<div class="row">
 						<div class="col s12">
 				<div class="input-field col s12">
@@ -190,7 +189,7 @@
 	  	<div class="center-align">
 				<dir-pagination-controls
 				    max-size="5"
-				    template-url="/assets/html/dirPagination.tpl.html"
+				    template-url="${pageContext.request.contextPath}/assets/html/dirPagination.tpl.html"
 				    direction-links="true"
   						boundary-links="true"
 				    pagination-id="commentpage">
@@ -200,7 +199,7 @@
 		  <sec:authorize access="isAnonymous()">
 		  	<div class="collection">
 			<div class="collection-item center">
-				<a href="/login">로그인</a> 하셔야 답변을 다실 수 있습니다.
+				<a href="${pageContext.request.contextPath}/login">로그인</a> 하셔야 답변을 다실 수 있습니다.
 			</div>
 			</div>
 		  </sec:authorize>
@@ -304,19 +303,19 @@
 <script	src="https://code.angularjs.org/1.6.1/angular-sanitize.js"></script>
 <script	src="/assets/js/dirPagination.js"></script>
 <script src="/assets/js/app.js"></script>
-		<sec:authorize access="isAuthenticated()">
-		<script>
-		$(function() {
-			var scope = angular.element(document.getElementById("DetailController")).scope();
-			scope.$apply(function(){
-				scope.USERID = '${user.id}';
-			});
-		});
-		</script>
-		</sec:authorize>
+<sec:authorize access="isAuthenticated()">
+<script>
+$(function() {
+	var scope = angular.element(document.getElementById("DetailController")).scope();
+	scope.$apply(function(){
+		scope.USERID = '${user.id}';
+	});
+});
+</script>
+</sec:authorize>
 <script type="text/javascript">
-var token = $("meta[name='_csrf']").attr("content");
-var header = $("meta[name='_csrf_header']").attr("content");
+var token = '${_csrf.token}';
+var header = '${_csrf.headerName}';
 
 $(function() {
 	$(document).ajaxSend(function(e, xhr, options) {

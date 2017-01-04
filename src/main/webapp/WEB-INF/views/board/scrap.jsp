@@ -8,10 +8,6 @@
 	<head>
 		<meta http-equiv="X-UA-Compatible" content="IE=edge" charset="utf-8">
 		<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-		
-		<!-- 스프링 시큐리티의 CSRF 토큰을 AJAX에서 사용 -->
-		<meta id="_csrf" name="_csrf" content="${_csrf.token}" />
-		<meta id="_csrf_header" name="_csrf_header" content="${_csrf.headerName}" />
 
 		<title>스프링 부트 웹 애플리케이션</title>
 
@@ -19,7 +15,7 @@
 		<link href="http://fonts.googleapis.com/icon?family=Material+Icons"	rel="stylesheet">
 		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.5/css/bootstrap.min.css">
 		<!-- Compiled and minified CSS -->
-		<link rel="stylesheet" href="/assets/css/style.css">
+		<link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/style.css">
 	</head>
 	<body id="ScrapController" ng-controller="ScrapController" ng-cloak>
 	<!-- 헤더 영역 -->
@@ -69,7 +65,7 @@
 					<div class="center-align">
 						<dir-pagination-controls
 						    max-size="5"
-						    template-url="/assets/html/dirPagination.tpl.html"
+						    template-url="${pageContext.request.contextPath}/assets/html/dirPagination.tpl.html"
 						    direction-links="true"
 	   						boundary-links="true"
 						    pagination-id="scrappage"
@@ -120,7 +116,6 @@
 		<!-- Compiled and minified JavaScript -->
 		
 		<script	src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.8/js/materialize.min.js"></script>
-		
 		<script	src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.7/angular.min.js"></script>
 		<script	src="https://code.angularjs.org/1.5.7/angular-sanitize.js"></script>
 		<script	src="/assets/js/dirPagination.js"></script>
@@ -137,8 +132,8 @@
 		</sec:authorize>
 		<script type="text/javascript">
 		    var scrapUser = '${scrapUser}';
-			var token = $("meta[name='_csrf']").attr("content");
-			var header = $("meta[name='_csrf_header']").attr("content");
+			var token = '${_csrf.token}';
+			var header = '${_csrf.headerName}';
 			$(function() {
 				$(".button-collapse").sideNav();
 				$(document).ajaxSend(function(e, xhr, options) {

@@ -23,11 +23,8 @@ import com.kdev.app.service.UserRepositoryService;
 @EnableGlobalMethodSecurity(securedEnabled = true)
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 	
-	@Autowired 
-	UserDetailsService userDetailsService;
-	
 	@Autowired
-    private UserRepository userRepository;
+	private UserRepositoryService userRepositoryService;
 	
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
@@ -45,7 +42,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 			.logout()
 				.logoutUrl("/logout")
 				.logoutSuccessUrl("/");
-		
 	}
 
 	@Override
@@ -57,7 +53,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 	
 	@Autowired
     public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
-		auth.userDetailsService(userDetailsService).passwordEncoder(passwordEncoder());
+		auth.userDetailsService(userRepositoryService).passwordEncoder(passwordEncoder());
     }
 	
 	@Bean
@@ -68,11 +64,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 	@Bean
     public SocialUserDetailsService socialUserDetailsService() {
         return new SocialUserService(userDetailsService());
-    }
- 
-    @Bean
-    public UserDetailsService userDetailsService() {
-        return new UserRepositoryService(userRepository);
     }
     
 	@Bean

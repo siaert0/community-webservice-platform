@@ -65,6 +65,9 @@ public class BoardRepositoryService {
 	public Page<Board> findAllBoard(Pageable pageable){
 		 return boardRepository.findAll(pageable);
 	}
+	public Page<Board> findAllByCategoryAndTitleContainingOrTagsContaining(String category, String title, String tags, Pageable pageable){
+		return boardRepository.findAllByCategoryAndTitleContainingOrTagsContaining(category, title, tags, pageable);
+	}
 	
 	public Page<Board> findAllBoardByCategory(String category, Pageable pageable){
 		return boardRepository.findAllByCategory(category, pageable);

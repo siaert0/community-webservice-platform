@@ -28,7 +28,7 @@ import com.kdev.app.controller.SocialConnectController;
 public class SocialConfig implements SocialConfigurer {
 
 	@Autowired
-	DataSource dataSource;
+	private DataSource dataSource;
 	
 	@Override
 	public void addConnectionFactories(ConnectionFactoryConfigurer connectionFactoryConfigurer, Environment environment) {

@@ -17,7 +17,7 @@ public class GlobalExceptionHandler {
 	private static final String DEFAULT_VIEW = "error";
 	private static final String DEFAULT_JSON_VIEW = "jsonView";
 	
-	@ExceptionHandler({Exception.class, })
+	@ExceptionHandler({Exception.class, RuntimeException.class})
 	public ModelAndView defaultException(HttpServletRequest request, HttpServletResponse response, Exception e){
 		ModelAndView mav = null;
 		String contentType = request.getHeader("Content-Type");

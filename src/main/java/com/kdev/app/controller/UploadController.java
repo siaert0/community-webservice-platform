@@ -10,6 +10,7 @@ import java.util.HashMap;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
+import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,6 +18,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -24,8 +26,8 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.kdev.app.domain.vo.UserDetailsVO;
 import com.kdev.app.domain.vo.UserVO;
-import com.kdev.app.service.UserRepositoryService;
 
 @RestController
 @RequestMapping(value="/upload")
@@ -34,15 +36,15 @@ public class UploadController {
 	
 	private static final Logger logger = LoggerFactory.getLogger(UploadController.class);
 	
-	@Autowired
-	private UserRepositoryService userRepositroyService;
+	@Autowired 
+	private ModelMapper modelMapper;
 	
 	@RequestMapping(value = "/image", method = RequestMethod.POST, produces=MediaType.APPLICATION_JSON_VALUE)
-	public @ResponseBody ResponseEntity<Object> socialUpload(@RequestParam("Filedata") MultipartFile multipartFile, HttpSession httpSession, HttpServletRequest request, Principal principal) throws IOException{
+	public @ResponseBody ResponseEntity<Object> socialUpload(@RequestParam("Filedata") MultipartFile multipartFile, HttpSession httpSession, HttpServletRequest request, Authentication authentication) throws IOException{
 		HashMap<String, Object> fileInfo = new HashMap<String, Object>();
 		
-		UserVO userVO = userRepositroyService.findUserByEmail(principal.getName());
-		
+		UserDetailsVO userDetails = (UserDetailsVO)authentication.getPrincipal();
+		UserVO userVO = modelMapper.map(userDetails, UserVO.class);
 	    if(multipartFile != null && !(multipartFile.getOriginalFilename().equals(""))) {
 	         
 	        // 확장자 제한
@@ -97,16 +99,11 @@ public class UploadController {
 	
 	@RequestMapping(value = "/image", method = RequestMethod.DELETE, produces=MediaType.APPLICATION_JSON_VALUE)
 	public @ResponseBody ResponseEntity<Object> deleteImage(@RequestParam(value="url") String url, HttpSession httpSession, HttpServletRequest request, Principal principal){
-	
-
-		
 		String filename = url.substring( url.lastIndexOf('/')+1, url.length() );
 		
 		String defaultPath = httpSession.getServletContext().getRealPath("/"); 
         String path = defaultPath + "upload" + File.separator + "images" + File.separator + filename;
 	    
-	    logger.info("{}",filename);
-	    logger.info("{}",path);
 		File file = new File(path);
 		if(!file.exists())
 			return new ResponseEntity<Object>("", HttpStatus.NOT_FOUND);

@@ -14,9 +14,21 @@ app.directive('krInput', [ '$parse', function($parse) {
 app.controller('HomeController', function($scope){
 	
 });
-
-
+app.directive('ngEnter', function () {
+    return function (scope, element, attrs) {
+        element.bind("keydown keypress", function (event) {
+            if(event.which === 13) {
+                scope.$apply(function (){
+                    scope.$eval(attrs.ngEnter);
+                });
+ 
+                event.preventDefault();
+            }
+        });
+    };
+});
 app.controller('BoardController', function($scope, $http, $log, $sce){
+	$scope.searchKeyword = '';
 	$scope.pagesize = 5;
 	$scope.totalElements = 0;
 	
@@ -30,7 +42,11 @@ app.controller('BoardController', function($scope, $http, $log, $sce){
 		location.href="/board/"+value;
 	}
 	$scope.pageChange = function(page){
-		getInformation(category,page,$scope.pagesize);
+		getInformation(category, page, $scope.pagesize, $scope.searchKeyword);
+	}
+	$scope.searchKeywordChange = function(){
+		$scope.searchKeyword = $scope.searchText;
+		getInformation(category, 0, $scope.pagesize, $scope.searchKeyword);
 	}
 	$scope.trustHtml = function(html){
 		return $sce.trustAsHtml(html);
@@ -55,7 +71,7 @@ app.controller('BoardController', function($scope, $http, $log, $sce){
 		return 0;	
 	}
 	
-	getInformation(category,0,$scope.pagesize);
+	getInformation(category, 0, $scope.pagesize, $scope.searchKeyword);
 });
 
 app.controller('ScrapController', function($scope, $http){
@@ -238,12 +254,13 @@ app.controller('DetailController', function($scope, $http, $log, $sce){
 	
 });
 
-function getInformation(value, page, size){
+function getInformation(value, page, size, search){
 	var scope = angular.element(document.getElementById("BoardController")).scope();
 	var dataObject = {
 		category : 	value,
 		page : page,
 		size : size,
+		search : search
 	};
 	
 	$.ajax({
@@ -500,18 +517,6 @@ function check_scrap(id, index, scope){
 }
 
 function initSummernote(){
-/*	var codeblockButton = function (context) {
-        var ui = $.summernote.ui;
-        // create button
-        var button = ui.button({
-            contents: '코드',
-            tooltip: '코드',
-            click: function () {
-            	$('.contentbox').summernote('pasteHTML', '<p><pre><code>코드 붙여넣기</code></pre></p>');
-            }
-	  });
-	  return button.render(); 
-	}*/
 	$('.contentbox').summernote({
 		toolbar: [
 		          ['pre',['style']],

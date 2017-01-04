@@ -5,15 +5,11 @@
 <!DOCTYPE html>
 <html>
 <head>
-<!-- 스프링 시큐리티의 CSRF 토큰을 AJAX에서 사용 -->
-<meta id="_csrf" name="_csrf" content="${_csrf.token}" />
-<meta id="_csrf_header" name="_csrf_header" content="${_csrf.headerName}" />
-
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
-<title>게시물 작성하기</title>
+<title>스프링 부트 웹 애플리케이션</title>
 
 <!--Import Google Icon Font-->
 <link href="http://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
@@ -21,8 +17,8 @@
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.5/css/bootstrap.min.css">
 <!-- include summernote css/js-->
 <link href="http://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.2/summernote.css" rel="stylesheet">
-<link rel="stylesheet"  href="/assets/css/tether.min.css">
-<link rel="stylesheet"	href="/assets/css/style.css">
+<link rel="stylesheet"  href="${pageContext.request.contextPath}/assets/css/tether.min.css">
+<link rel="stylesheet"	href="${pageContext.request.contextPath}/assets/css/style.css">
 </head>
 <body>
 	<header>
@@ -116,16 +112,15 @@
 	<!-- Compiled and minified JavaScript -->
 <script	src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.8/js/materialize.min.js"></script>
-<script src="/assets/js/tether.min.js"></script>
+<script src="${pageContext.request.contextPath}/assets/js/tether.min.js"></script>
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.5/js/bootstrap.min.js" integrity="sha384-BLiI7JTZm+JWlgKa0M0kGRpJbF2J8q+qreVrKBC47e3K6BW78kGLrCkeRX6I9RoK" crossorigin="anonymous"></script>
 <script src="http://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.2/summernote.js"></script>
-<script src="/assets/js/tagging.js"></script>
-<script src="/assets/js/lib/src-noconflict/ace.js"></script>
-<script src="/assets/js/summernote-ace-plugin.js"></script>
-<script src="/assets/js/summernote-ko-KR.min.js"></script>
+<script src="${pageContext.request.contextPath}/assets/js/tagging.js"></script>
+<script src="${pageContext.request.contextPath}/assets/js/summernote-ko-KR.min.js"></script>
 <script type="text/javascript">
-var token = $("meta[name='_csrf']").attr("content");
-var header = $("meta[name='_csrf_header']").attr("content");
+<!-- 스프링 시큐리티의 CSRF 토큰을 AJAX에서 사용 -->
+var token = '${_csrf.token}';
+var header = '${_csrf.headerName}';
 
 $(function() {
 	$(".button-collapse").sideNav();
@@ -164,7 +159,6 @@ $(function() {
 		    }
 		  }
 	});
-	$('select').material_select();
 	$('#preloader').hide();
 	$(document).ajaxSend(function(e, xhr, options) {
 		xhr.setRequestHeader(header, token);
@@ -198,7 +192,6 @@ function board_post(){
 		dataType	: 'JSON',
 		success	: function(response){
 			Materialize.toast("정상적으로 등록되었습니다.", 3000);
-			console.log(response);
 			location.href="/board/"+response.id;
 		},
 		error	: function(response){

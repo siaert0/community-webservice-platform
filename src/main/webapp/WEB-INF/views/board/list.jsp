@@ -7,10 +7,6 @@
 	<head>
 		<meta http-equiv="X-UA-Compatible" content="IE=edge" charset="utf-8">
 		<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-		
-		<!-- 스프링 시큐리티의 CSRF 토큰을 AJAX에서 사용 -->
-		<meta id="_csrf" name="_csrf" content="${_csrf.token}" />
-		<meta id="_csrf_header" name="_csrf_header" content="${_csrf.headerName}" />
 
 		<title>스프링 부트 웹 애플리케이션</title>
 
@@ -18,7 +14,7 @@
 		<link href="http://fonts.googleapis.com/icon?family=Material+Icons"	rel="stylesheet">
 		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.5/css/bootstrap.min.css">
 		<!-- Compiled and minified CSS -->
-		<link rel="stylesheet"  href="/assets/css/style.css">
+		<link rel="stylesheet"  href="${pageContext.request.contextPath}/assets/css/style.css">
 	</head>
 	<body id="BoardController" ng-controller="BoardController" ng-cloak>
 	<!-- 헤더 영역 -->
@@ -27,7 +23,7 @@
 				<nav class="z-depth-0">
 					<div class="nav-wrapper blue lighten-1">
 						<form class="" style="margin-bottom: 0;" autocomplete="off" >
-								<input id="search" type="search" placeholder="키워드로 검색해보세요 ^ㅡ^" required class="form-control" ng-model="searchKeyword" kr-input style="height:inherit; padding:0rem .75rem;">
+								<input id="search" type="search" placeholder="키워드로 검색해보세요 ^ㅡ^" required class="form-control" ng-enter="searchKeywordChange()" ng-model="searchText" kr-input style="height:inherit; padding:0rem .75rem;">
 						</form>
 					</div>
 				</nav>
@@ -50,7 +46,7 @@
 				
 				<!-- 게시물 영역 -->
 				<div class="row">
-				<div dir-paginate="x in search_contents = (boardContents | filter:searchKeyword | orderBy:-index) | itemsPerPage:pagesize" pagination-id="boardpage" total-items="totalElements">
+				<div dir-paginate="x in search_contents = (boardContents | orderBy:-index) | itemsPerPage:pagesize" pagination-id="boardpage" total-items="totalElements">
 					<div class="col s12">
 						<div class="card sticky-action hoverable hover border-flat" data-ng-click="move(x.id)" ng-class="{selectedBoard:x.selected != 0, commentedBoard:x.selected == 0 && x.comments.length > 0}">
 							<div class="card-content">
@@ -135,8 +131,9 @@
 		<script src="/assets/js/app.js"></script>
 		<script type="text/javascript">
 			var category = "${category}";
-			var token = $("meta[name='_csrf']").attr("content");
-			var header = $("meta[name='_csrf_header']").attr("content");
+			var token = '${_csrf.token}';
+			var header = '${_csrf.headerName}';
+			
 			$(function() {
 				$(".button-collapse").sideNav();
 				$(document).ajaxSend(function(e, xhr, options) {

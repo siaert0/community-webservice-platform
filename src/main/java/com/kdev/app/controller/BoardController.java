@@ -1,5 +1,6 @@
 package com.kdev.app.controller;
 
+import java.util.Date;
 import java.util.List;
 
 import javax.validation.Valid;
@@ -25,8 +26,10 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import com.kdev.app.domain.dto.BoardDTO;
+import com.kdev.app.domain.dto.CommentDTO;
 import com.kdev.app.domain.pk.BOARD_USER_CP_ID;
 import com.kdev.app.domain.vo.Board;
+import com.kdev.app.domain.vo.Comment;
 import com.kdev.app.domain.vo.Scrap;
 import com.kdev.app.domain.vo.Thumb;
 import com.kdev.app.domain.vo.UserDetailsVO;
@@ -36,6 +39,10 @@ import com.kdev.app.exception.NotFoundException;
 import com.kdev.app.exception.ValidException;
 import com.kdev.app.service.BoardRepositoryService;
 
+/**
+ * @author K
+ *
+ */
 @Controller
 public class BoardController {
 	
@@ -59,6 +66,27 @@ public class BoardController {
 		model.addAttribute("content", boardVO);
 		return "board/detail";
 	}
+
+	/**
+	 * @author		: K
+	 * @method		: checkThumb
+	 * @description	: 추천 및 취소
+	 */
+	@Secured("ROLE_USER")
+	@RequestMapping(value="/board/thumb", method=RequestMethod.POST, produces=MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<Object> checkThumb(@RequestBody BOARD_USER_CP_ID BOARD_USER_CP_ID, Authentication authentication){
+		UserDetailsVO userDetails = (UserDetailsVO)authentication.getPrincipal();
+		UserVO userVO = modelMapper.map(userDetails, UserVO.class);
+		BOARD_USER_CP_ID.setUserid(userVO.getId());
+		boardRepositoryService.checkThumb(BOARD_USER_CP_ID);
+		List<Thumb> thumbs = boardRepositoryService.findThumbByBoard(BOARD_USER_CP_ID.getBoardid());
+		return new ResponseEntity<Object>(thumbs, HttpStatus.ACCEPTED);
+	}
+	/**
+	 * @author		: K
+	 * @method		: checkScrap
+	 * @description	: 스크랩
+	 */
 	@Secured("ROLE_USER")
 	@RequestMapping(value="/board/scrap", method=RequestMethod.POST, produces=MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Object> checkScrap(@RequestBody BOARD_USER_CP_ID scrapId, Authentication authentication){
@@ -69,18 +97,12 @@ public class BoardController {
 		boardRepositoryService.checkScrap(scrapId);
 		return new ResponseEntity<Object>("스크랩 완료", HttpStatus.ACCEPTED);
 	}
-	@Secured("ROLE_USER")
-	@RequestMapping(value="/board/thumb", method=RequestMethod.POST, produces=MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<Object> checkThumb(@RequestBody BOARD_USER_CP_ID BOARD_USER_CP_ID, Authentication authentication){
-		UserDetailsVO userDetails = (UserDetailsVO)authentication.getPrincipal();
-
-		UserVO userVO = modelMapper.map(userDetails, UserVO.class);
-		BOARD_USER_CP_ID.setUserid(userVO.getId());
-		boardRepositoryService.checkThumb(BOARD_USER_CP_ID);
-		List<Thumb> thumbs = boardRepositoryService.findThumbByBoard(BOARD_USER_CP_ID.getBoardid());
-		return new ResponseEntity<Object>(thumbs, HttpStatus.ACCEPTED);
-	}
 	
+	/**
+	 * @author		: K
+	 * @method		: deleteScrap
+	 * @description	: 스크랩 취소
+	 */
 	@Secured("ROLE_USER")
 	@RequestMapping(value="/board/scrap", method=RequestMethod.DELETE, produces=MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Object> deleteScrap(@RequestBody BOARD_USER_CP_ID scrapId, Authentication authentication){
@@ -90,7 +112,11 @@ public class BoardController {
 		boardRepositoryService.deleteScrap(scrapId);
 		return new ResponseEntity<Object>("스크랩 취소", HttpStatus.ACCEPTED);
 	}
-	
+	/**
+	 * @author		: K
+	 * @method		: findScrapUser
+	 * @description	: 스크랩 뷰
+	 */
 	@Secured("ROLE_USER")
 	@RequestMapping(value="/board/scrap", method=RequestMethod.GET)
 	public String findScrapUser(Model model, Authentication authentication){
@@ -166,14 +192,10 @@ public class BoardController {
 	 * @description	: 게시물 가져오기 & 페이징
 	 */
 	@RequestMapping(value="/board", method=RequestMethod.GET, produces=MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<Object> findBoard(@RequestParam(value="category", required=false, defaultValue="") String category, @PageableDefault(sort = { "id" }, direction = Direction.DESC, size = 5) Pageable pageable){
-		Page<Board> page = null;
-		
-		if(category.equals(""))
-			page= boardRepositoryService.findAllBoard(pageable);
-		else
-			page = boardRepositoryService.findAllBoardByCategory(category, pageable);
-		
+	public ResponseEntity<Object> findBoard(@RequestParam(value="category", required=false, defaultValue="") String category, 
+			@RequestParam(value="search", required=false, defaultValue="") String search,
+			@PageableDefault(sort = { "id" }, direction = Direction.DESC, size = 5) Pageable pageable){
+		Page<Board> page = boardRepositoryService.findAllByCategoryAndTitleContainingOrTagsContaining(category, search, search, pageable);
 		return new ResponseEntity<Object>(page, HttpStatus.ACCEPTED);
 	}
 	
@@ -236,6 +258,74 @@ public class BoardController {
 		
 		boardRepositoryService.deleteBoard(id);
 		return new ResponseEntity<Object>(boardVO, HttpStatus.ACCEPTED);
+	}
+	
+	/**
+	 * @author		: K
+	 * @method		: createComment
+	 * @description	: 게시물 작성하기
+	 */
+	@Secured(value="ROLE_USER")
+	@RequestMapping(value="/comment", method=RequestMethod.POST, produces=MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<Object> createComment(@RequestBody @Valid CommentDTO.Create createComment, BindingResult result, Authentication authentication){
+		if(result.hasErrors()){
+			return new ResponseEntity<Object>(result.getAllErrors().toString(), HttpStatus.BAD_REQUEST);
+		}
+		UserDetailsVO userDetails = (UserDetailsVO)authentication.getPrincipal();
+		UserVO userVO = modelMapper.map(userDetails, UserVO.class);
+		createComment.setUser(userVO);
+		Comment createdComment = boardRepositoryService.createComment(createComment);
+		createdComment = boardRepositoryService.findCommentOne(createdComment.getId());
+		createdComment.setCreated(new Date());
+		return new ResponseEntity<Object>(createdComment, HttpStatus.CREATED);
+	}
 		
+	/**
+	 * @author		: K
+	 * @method		: findComment
+	 * @description	: 댓글 가져오기 & 페이징
+	 */
+	@RequestMapping(value="/comment", method=RequestMethod.GET, produces=MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<Object> findComment(@PageableDefault(sort = { "id" }, direction = Direction.DESC, size = 1000) Pageable pageable, @RequestParam int board_id){
+		Page<Comment> page = boardRepositoryService.findCommentAll(pageable, board_id);
+		return new ResponseEntity<Object>(page, HttpStatus.ACCEPTED);
+	}
+	
+	/**
+	 * @author		: K
+	 * @method		: updateComment
+	 * @description	: 댓글 수정하기
+	 */
+	@Secured(value="ROLE_USER")
+	@RequestMapping(value="/comment/{id}", method=RequestMethod.POST, produces=MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<Object> updateComment(@PathVariable int id, @RequestBody CommentDTO.Update update, Authentication authentication){
+		UserDetailsVO userDetails = (UserDetailsVO)authentication.getPrincipal();
+		UserVO userVO = modelMapper.map(userDetails, UserVO.class);
+		Comment commentVO = boardRepositoryService.findCommentOne(id);
+		
+		if(!(commentVO.getUser().getId().equals(userVO.getId())))
+			return new ResponseEntity<Object>(null, HttpStatus.FORBIDDEN);
+		commentVO.setDescription(update.getDescription());
+		commentVO.setTags(update.getTags());
+		Comment updated = boardRepositoryService.updateComment(commentVO);
+		return new ResponseEntity<Object>(updated, HttpStatus.ACCEPTED);
+	}
+	
+	/**
+	 * @author		: K
+	 * @method		: deleteComment
+	 * @description	: 댓글 삭제하기
+	 */
+	@Secured(value="ROLE_USER")
+	@RequestMapping(value="/comment/{id}", method=RequestMethod.DELETE, produces=MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<Object> deleteComment(@PathVariable int id, Authentication authentication){
+		UserDetailsVO userDetails = (UserDetailsVO)authentication.getPrincipal();
+		UserVO userVO = modelMapper.map(userDetails, UserVO.class);
+		Comment commentVO = boardRepositoryService.findCommentOne(id);
+		if(!(commentVO.getUser().getId().equals(userVO.getId())))
+			return new ResponseEntity<Object>(commentVO, HttpStatus.FORBIDDEN);
+		
+		boardRepositoryService.deleteComment(id);
+		return new ResponseEntity<Object>(commentVO, HttpStatus.ACCEPTED);
 	}
 }

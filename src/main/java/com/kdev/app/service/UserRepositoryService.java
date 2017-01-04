@@ -16,7 +16,6 @@ import com.kdev.app.domain.dto.UserDTO;
 import com.kdev.app.domain.vo.UserDetailsVO;
 import com.kdev.app.domain.vo.UserVO;
 import com.kdev.app.exception.NotCreatedException;
-import com.kdev.app.repository.BoardRepository;
 import com.kdev.app.repository.UserRepository;
 
 @Service
@@ -34,12 +33,6 @@ public class UserRepositoryService implements UserDetailsService {
 	
 	@Autowired 
 	private ModelMapper modelMapper;
-	
-	@Autowired
-	public UserRepositoryService(UserRepository userRepository) {
-		// TODO Auto-generated constructor stub
-		this.userRepository = userRepository;
-	}
 	
 	public UserDTO.Transfer signInUser(UserDTO.Create user){
 		UserVO newUser = modelMapper.map(user, UserVO.class);

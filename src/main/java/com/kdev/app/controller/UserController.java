@@ -1,7 +1,5 @@
 package com.kdev.app.controller;
 
-import java.io.IOException;
-import java.security.Principal;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -10,7 +8,6 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 
-import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -64,8 +61,6 @@ public class UserController {
 	private Kakao kakao;
 	@Autowired
 	private ConnectionRepository connectionRepository;
-	@Autowired 
-	private ModelMapper modelMapper;
 	
 	@RequestMapping(value="/user/facebook", method= RequestMethod.GET)
 	public String FacebookUserView(HttpServletRequest request, HttpServletResponse response, Model model, HttpSession session) throws Exception{
@@ -73,15 +68,13 @@ public class UserController {
 		if (connection == null) {
 			return "redirect:/connect/facebook";
 		}
-		connection.sync();
 		String [] fields = { "id","name","birthday","email","location","hometown","gender","first_name","last_name"};
 		org.springframework.social.facebook.api.User facebookUser = facebook.fetchObject("me", org.springframework.social.facebook.api.User.class, fields);
 		
 		connectionRepository.removeConnection(connection.getKey());
-		//가입 여부 확인
+
 		UserVO userVO = userRepositroyService.findUserById(facebookUser.getId());
 		if(userVO != null){
-			//가입 되었으니까...
 			UserDetailsVO userDetailsVO = new UserDetailsVO(userVO);
 			Authentication authentication = new UsernamePasswordAuthenticationToken(userDetailsVO, null, userDetailsVO.getAuthorities());
 			SecurityContextHolder.getContext().setAuthentication(authentication);
@@ -102,18 +95,16 @@ public class UserController {
 	@RequestMapping(value="/user/kakao", method= RequestMethod.GET)
 	public String KakaoUserView(HttpServletRequest request, HttpServletResponse response, Model model, HttpSession session) throws Exception{
 		Connection<Kakao> connection = connectionRepository.findPrimaryConnection(Kakao.class);
-		
 		if (connection == null) {
 			return "redirect:/connect/kakao";
 		}
 			
 		KakaoProfile KakaoUser = kakao.userOperation().getUserProfile();
 		connectionRepository.removeConnection(connection.getKey());
-		//가입 여부 확인
+
 		UserVO userVO = userRepositroyService.findUserById(String.valueOf(KakaoUser.getId()));
 		
 		if(userVO != null){
-			//가입 되었으니까...
 			UserDetailsVO userDetailsVO = new UserDetailsVO(userVO);
 			Authentication authentication = new UsernamePasswordAuthenticationToken(userDetailsVO, null, userDetailsVO.getAuthorities());
 			SecurityContextHolder.getContext().setAuthentication(authentication);
@@ -126,8 +117,6 @@ public class UserController {
 		user.setThumbnail(KakaoUser.getProperties().getThumbnail_image());
 		user.setSocialSignInProvider(SocialProvider.Kakao);
 		user.setRole("ROLE_USER");
-		
-		kakao.userOperation().logout();
 		model.addAttribute("userProfile", user);
 
 		return "register/form";
@@ -158,9 +147,11 @@ public class UserController {
 		map.put("responseMessage", "해당 이메일은 사용가능 합니다.");
 		return new ResponseEntity<Object>(map,HttpStatus.OK);
 	}
+	
+	// 회원탈퇴
 	@Secured("ROLE_USER")
 	@RequestMapping(value="/user/{id}", method = RequestMethod.DELETE, produces=MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<Object> delete(@PathVariable String id, Authentication authentication, HttpSession session){
+	public ResponseEntity<Object> withDraw(@PathVariable String id, Authentication authentication, HttpSession session){
 		UserDetailsVO userDetailsVO = (UserDetailsVO)authentication.getPrincipal();
 		if(!userDetailsVO.getId().equals(id)){
 			return new ResponseEntity<Object>(HttpStatus.FORBIDDEN);
@@ -169,5 +160,4 @@ public class UserController {
 		SecurityContextHolder.getContext().setAuthentication(null);
 		return new ResponseEntity<Object>(HttpStatus.OK);
 	}
-	
 }

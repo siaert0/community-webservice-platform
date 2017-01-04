@@ -18,13 +18,9 @@ public class SocialUserDetails extends SocialUser {
 	private static final long serialVersionUID = 855226823777023437L;
 
 	private String id;
- 
     private String nickname;
- 
     private String role;
-    
     private String thumbnail;
- 
     private String socialSignInProvider;
  
     public SocialUserDetails(String username, String password, Collection<? extends GrantedAuthority> authorities) {
@@ -32,23 +28,14 @@ public class SocialUserDetails extends SocialUser {
     }
  
     //Getters are omitted for the sake of clarity.
- 
     public static class Builder {
- 
         private String id;
- 
         private String username;
- 
         private String nickname;
- 
         private String password;
-        
         private String thumbnail;
- 
         private String role;
- 
         private String socialSignInProvider;
- 
         private Set<GrantedAuthority> authorities;
  
         public Builder() {
@@ -69,17 +56,14 @@ public class SocialUserDetails extends SocialUser {
             if (password == null) {
                 password = "SocialUser";
             }
- 
             this.password = password;
             return this;
         }
  
         public Builder role(String role) {
             this.role = role;
- 
             SimpleGrantedAuthority authority = new SimpleGrantedAuthority(role.toString());
             this.authorities.add(authority);
- 
             return this;
         }
  
@@ -100,7 +84,6 @@ public class SocialUserDetails extends SocialUser {
  
         public SocialUserDetails build() {
             SocialUserDetails user = new SocialUserDetails(username, password, authorities);
- 
             user.id = id;
             user.nickname = nickname;
             user.role = role;

@@ -33,12 +33,4 @@ public class SocialConnectController extends ConnectController {
 			return "redirect:/user/kakao";
 		return super.connectedView(providerId);
 	}
-
-	@Override
-	public RedirectView oauth2ErrorCallback(String providerId, String error, String errorDescription, String errorUri,
-			NativeWebRequest request) {
-		// TODO Auto-generated method stub
-		
-		return super.oauth2ErrorCallback(providerId, error, errorDescription, errorUri, request);
-	}
 }

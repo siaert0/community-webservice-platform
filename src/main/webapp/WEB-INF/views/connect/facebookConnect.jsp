@@ -1,13 +1,14 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://www.springframework.org/security/tags" prefix="sec" %>
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
-    
 <!DOCTYPE html>
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <title>Facebook Account</title>
-<link rel="stylesheet" type="text/css" href="/assets/css/access_confirmation_v2.css">
+<link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/assets/css/access_confirmation_v2.css">
 </head>
 <body>
 <header class="title">
@@ -22,10 +23,8 @@
           </ul>
         </div>
       </div>
-      <form action="/connect/facebook" method="POST">
-       <input type="hidden"                        
-		name="${_csrf.parameterName}"
-		value="${_csrf.token}"/>
+      <form action="${pageContext.request.contextPath}/connect/facebook" method="POST">
+       <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
 				<input type="hidden" name="scope" value="" />
 				<section class="main_section privacy">
           <header>
@@ -66,7 +65,7 @@
           </article>
         </section>
         <div class="actions btn_split">
-        <button id="denyButton" type="button" name="user_oauth_approval" onclick="location.href='/login'" class="btn btn_noagree">동의안함
+        <button id="denyButton" type="button" name="user_oauth_approval" onclick="location.href='${pageContext.request.contextPath}/login'" class="btn btn_noagree">동의안함
           </button>
         <button id="acceptButton" type="submit" name="user_oauth_approval" value="true" class="btn btn_agree facebook">동의
           </button>
