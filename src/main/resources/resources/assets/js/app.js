@@ -150,8 +150,8 @@ app.controller('DetailController', function($scope, $http, $log, $sce){
 	}
 	$scope.toggleThumb = function(){
 		if($scope.USERID == null){
-			Materialize.toast("비회원 추천 방지", 3000);
-			return ;
+			Materialize.toast("비회원 추천 방지", 3000,'red');
+			return;
 		}
 		var dataObject = new Object();
 		dataObject.boardid = $scope.boardContent.id;
@@ -162,12 +162,17 @@ app.controller('DetailController', function($scope, $http, $log, $sce){
 			contentType: 'application/json',
 			dataType	: 'JSON',
 			success	: function(response){
+				Materialize.toast("추천하거나 취소하였습니다",3000,'green',function(){
+
+				});
 				$scope.$apply(function(){
 					$scope.boardContent.thumbs = response;
 				});
 			},
 			error	: function(response){
-				Materialize.toast("통신 오류", 3000);
+				Materialize.toast("오류가 발생하였습니다. 개발자 도구를 확인하세요",3000,'red',function(){
+
+				});
 			}
 		});
 	}
@@ -177,11 +182,14 @@ app.controller('DetailController', function($scope, $http, $log, $sce){
 			url		: '/board/'+$scope.boardContent.id,
 			dataType	: 'JSON',
 			success	: function(response){
-				Materialize.toast("정상적으로 삭제되었습니다.", 3000);
-				location.href="/";
+				Materialize.toast("정상적으로 삭제하였습니다. 잠시후 메인으로 이동합니다",3000,'green',function(){
+					location.href="/";
+				});
 			},
 			error	: function(response){
-				Materialize.toast("삭제하지 못했습니다", 3000);
+				Materialize.toast("오류가 발생하였습니다. 개발자 도구를 확인해주세요",3000,'red',function(){
+					console.log(response);
+				});
 			}
 		});
 	}
@@ -204,15 +212,18 @@ app.controller('DetailController', function($scope, $http, $log, $sce){
 			url		: '/comment/'+comment.id,
 			dataType	: 'JSON',
 			success	: function(response){
-				Materialize.toast("정상적으로 삭제되었습니다.", 3000);
+				Materialize.toast("정상적으로 삭제되었습니다",3000,'green',function(){
+					console.log(response);
+				});
 				var index = $scope.boardContent.comments.indexOf(comment);
-				$scope.boardContent.comments.splice(index, 1);
 				$scope.$apply(function(){
-					
+					$scope.boardContent.comments.splice(index, 1);
 				});
 			},
 			error	: function(response){
-				Materialize.toast("삭제하지 못했네요", 3000);
+				Materialize.toast("오류가 발생하였습니다. 개발자 도구를 확인해주세요",3000,'red',function(){
+					console.log(response);
+				});
 			}
 		});
 	}
@@ -247,12 +258,16 @@ app.controller('DetailController', function($scope, $http, $log, $sce){
 			contentType: 'application/json',
 			dataType	: 'JSON',
 			success	: function(response){
-				Materialize.toast("정상적으로 선택되었습니다.", 3000);
+				Materialize.toast("댓글 선택완료",3000,'green',function(){
+					console.log(response);
+				});
 				$scope.boardContent = response;
 				$scope.$apply();
 			},
 			error	: function(response){
-				Materialize.toast("처리되지 못했네요", 3000);
+				Materialize.toast("오류가 발생하였습니다. 개발자 도구를 확인해주세요",3000,'red',function(){
+					console.log(response);
+				});
 			}
 		});
 	}
@@ -282,7 +297,9 @@ function getInformation(value, page, size, search){
 			}
 		},
 		error	: function(response){
-			Materialize.toast("정보를 가져오지 못했네요", 3000);
+			Materialize.toast("오류가 발생하였습니다. 개발자 도구를 확인해주세요",3000,'red',function(){
+				console.log(response);
+			});
 		}
 	});
 }
@@ -308,7 +325,9 @@ function getScrap(value, page, size){
 			}
 		},
 		error	: function(response){
-			Materialize.toast("정보를 가져오지 못했네요", 3000);
+			Materialize.toast("오류가 발생하였습니다. 개발자 도구를 확인해주세요",3000,'red',function(){
+				console.log(response);
+			});
 		}
 	});
 }
@@ -327,7 +346,9 @@ function getBoardDetail(value){
 			}
 		},
 		error	: function(response){
-			Materialize.toast("정보를 가져오지 못했네요", 3000);
+			Materialize.toast("오류가 발생하였습니다. 개발자 도구를 확인해주세요",3000,'red',function(){
+				console.log(response);
+			});
 		}
 	});
 }
@@ -352,10 +373,14 @@ function comment(board){
 			scope.$apply(function () {
 				scope.boardContent.comments.push(response);
 			});
-			Materialize.toast("정상적으로 등록되었습니다.", 3000);
+			Materialize.toast("정상적으로 댓글이 작성되었습니다.",3000,'green',function(){
+				
+			});
 		},
 		error : function(response){
-			Materialize.toast("등록할 수 없었습니다.", 3000);
+			Materialize.toast("오류가 발생하였습니다. 개발자 도구를 확인해주세요",3000,'red',function(){
+				console.log(response);
+			});
     		}
     	});
 	$('#preloader').hide();
@@ -382,10 +407,14 @@ function updateComment(comment, index){
 				resetUpdateCommentForm();
 				$('#updateCommentModal').modal('hide');
 			});
-			Materialize.toast("정상적으로 수정되었습니다.", 3000);
+			Materialize.toast("정상적으로 댓글을 수정하였습니다",3000,'green',function(){
+				console.log(response);
+			});
 		},
 		error : function(response){
-			Materialize.toast("수정할 수 없었습니다.", 3000);
+			Materialize.toast("오류가 발생하였습니다. 개발자 도구를 확인해주세요",3000,'red',function(){
+				console.log(response);
+			});
     		}
     	});
 	$('#preloader').hide();
@@ -412,11 +441,14 @@ function updateBoard(board){
 		contentType: 'application/json',
 		dataType	: 'JSON',
 		success	: function(response){
-			
-			location.reload();
+			Materialize.toast("정상적으로 수정되었습니다. 잠시후 화면이 갱신됩니다.",3000,'green',function(){
+				location.reload();
+			});
 		},
 		error : function(response){
-			Materialize.toast("수정할 수 없었습니다.", 3000);
+			Materialize.toast("오류가 발생하였습니다. 개발자 도구를 확인해주세요",3000,'red',function(){
+				console.log(response);
+			});
     		}
     	});
 	$('#preloader').hide();
@@ -433,7 +465,9 @@ function validation(fileName){
     var fileNameExtension = fileName.toLowerCase().substring(fileNameExtensionIndex,fileName.length); //확장자 자르기
      
     if( !( (fileNameExtension=='jpg') || (fileNameExtension=='gif') || (fileNameExtension=='png') || (fileNameExtension=='bmp') ) ) {
-        alert('jpg, gif, png, bmp 확장자만 업로드 가능합니다.');
+			Materialize.toast("jpg, gif, png, bmp 확장자만 업로드 가능합니다.",3000,'red',function(){
+				
+			});
         return true;
     }
     else{
@@ -456,15 +490,21 @@ function sendImage(file, summernote){
           success: function(fileInfo){
         	  if(fileInfo.result == 1)
         		  $(summernote).summernote('insertImage', fileInfo.imageurl, fileInfo.filename); 
-        	  Materialize.toast("정상적으로 업로드되었습니다.", 3000);
+  			Materialize.toast("정상적으로 업로드되었습니다.",3000,'green',function(){
+				
+			});
           },
           error: function(fileInfo){
         	  if(fileInfo.result==-1){ //서버단에서 체크 후 수행됨
-                  alert('jpg, gif, png, bmp 확장자만 업로드 가능합니다.');
+      			Materialize.toast("jpg, gif, png, bmp 확장자만 업로드 가능합니다.",3000,'red',function(){
+    				
+    			});
                   return false;
               }
               else if(fileInfo.result==-2){ //서버단에서 체크 후 수행됨
-                  alert('파일이 5MB를 초과하였습니다.');
+      			Materialize.toast("파일이 5MB를 초과하였습니다.",3000,'red',function(){
+    				
+    			});
                   return false;
               }
           }
@@ -478,7 +518,13 @@ function deleteImage(file){
           beforeSubmit: function(){
           },
           success: function(response){
-        	  Materialize.toast("정상적으로 삭제되었습니다.", 3000);
+    			Materialize.toast("정상적으로 삭제되었습니다.",3000,'green',function(){
+    				
+    			});
+          },error: function(response){
+      			Materialize.toast("오류가 발생하였습니다. 개발자 도구를 통해 확인해주세요",3000,'red',function(){
+    				console.log(response);
+    			});
           }
       });
     }
@@ -496,10 +542,14 @@ function delete_scrap(id, index, scope){
         	scope.$apply(function(){
         		scope.scraps.splice(index, 1);
         	});
-        	Materialize.toast("스크랩 취소 완료.", 3000);
+  			Materialize.toast("스크랩을 취소하였습니다.",3000,'green',function(){
+  				
+			});
         	
         },error: function(response){
-        	Materialize.toast("통신 오류.", 3000);
+  			Materialize.toast("오류가 발생하였습니다. 개발자 도구를 통해 확인해주세요",3000,'red',function(){
+				console.log(response);
+			});
         }
     });
 }
@@ -513,10 +563,14 @@ function check_scrap(id, index, scope){
         data: JSON.stringify(dataObject),
         dataType: 'TEXT', //리턴되는 데이타 타입
         success: function(response){
-        	Materialize.toast("스크랩 완료.", 3000);
+  			Materialize.toast("스크랩 되었습니다.",3000,'green',function(){
+				
+			});
         	
         },error: function(response){
-        	Materialize.toast("통신 오류.", 3000);
+  			Materialize.toast("오류가 발생하였습니다. 개발자 도구를 통해 확인해주세요",3000,'red',function(){
+				console.log(response);
+			});
         }
     });
 }

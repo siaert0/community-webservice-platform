@@ -1,6 +1,8 @@
 package com.kdev.app.controller;
 
 import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
@@ -28,11 +30,12 @@ import org.springframework.social.kakao.api.KakaoProfile;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.SessionAttributes;
 
@@ -40,7 +43,7 @@ import com.kdev.app.domain.dto.UserDTO;
 import com.kdev.app.domain.vo.UserDetailsVO;
 import com.kdev.app.domain.vo.UserVO;
 import com.kdev.app.enums.SocialProvider;
-import com.kdev.app.exception.badgateway.ValidException;
+import com.kdev.app.exception.badgateway.ValidErrorException;
 import com.kdev.app.exception.forbidden.UserNotEqualException;
 import com.kdev.app.exception.notacceptable.EmailDuplicatedException;
 import com.kdev.app.intercepter.LoginAuthenticationSuccessHandler;
@@ -134,10 +137,15 @@ public class UserController {
 	// 회원정보 생성
 	@RequestMapping(value="/user", method= RequestMethod.POST, produces=MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Object> createUser(@ModelAttribute("userProfile") @Valid UserDTO.Create user, BindingResult result){
-		Map<String, Object> map = new HashMap<String, Object>();
 		if(result.hasErrors()){
-			map.put("responseMessage", result.getAllErrors().toString());
-			return new ResponseEntity<Object>(map,HttpStatus.BAD_REQUEST);
+			List<Object> errors = new LinkedList<Object>();
+			for(FieldError error : result.getFieldErrors()){
+				Map<String, Object> map = new HashMap<String, Object>();
+				map.put("ErrorField", error.getField());
+				map.put("ErrorMessage", error.getDefaultMessage());
+				errors.add(map);
+			}
+			throw new ValidErrorException(errors.toString());
 		}
 		UserVO newUser = userRepositroyService.signInUser(user);
 		return new ResponseEntity<Object>(newUser, HttpStatus.CREATED);
@@ -161,7 +169,14 @@ public class UserController {
 	public ResponseEntity<Object> updateUser(@PathVariable String id, @Valid UserDTO.Update user, BindingResult result, Authentication authentication){
 
 		if(result.hasErrors()){
-			throw new ValidException(result.getFieldError().getRejectedValue().toString());
+			List<Object> errors = new LinkedList<Object>();
+			for(FieldError error : result.getFieldErrors()){
+				Map<String, Object> map = new HashMap<String, Object>();
+				map.put("ErrorField", error.getField());
+				map.put("ErrorMessage", error.getDefaultMessage());
+				errors.add(map);
+			}
+			throw new ValidErrorException(errors.toString());
 		}
 		
 		UserDetailsVO userDetails = (UserDetailsVO)authentication.getPrincipal();
@@ -170,8 +185,7 @@ public class UserController {
 		}
 		
 		UserVO userVO = modelMapper.map(userDetails, UserVO.class);
-		if(!user.getPassword().equals(""))
-			userVO.setPassword(passwordEncoder.encode(user.getPassword()));
+		userVO.setPassword(passwordEncoder.encode(user.getPassword()));
 		userVO.setNickname(user.getNickname());
 		userVO.setTags(user.getTags());
 		
@@ -187,14 +201,24 @@ public class UserController {
 	//이메일 중복체크
 	@RequestMapping(value = "/check/email", method = RequestMethod.GET, produces=MediaType.APPLICATION_JSON_VALUE)
 	public @ResponseBody ResponseEntity<Object> checkByEmail(
-			@RequestParam(value = "email", required = true) String email) {
-		UserVO user = userRepositroyService.findUserByEmail(email);
-		Map<String, Object> map = new HashMap<String, Object>();
+			@Valid UserDTO.EmailCheck email,
+			BindingResult result) {
+		if(result.hasErrors()){
+			List<Object> errors = new LinkedList<Object>();
+			for(FieldError error : result.getFieldErrors()){
+				Map<String, Object> map = new HashMap<String, Object>();
+				map.put("ErrorField", error.getField());
+				map.put("ErrorMessage", error.getDefaultMessage());
+				errors.add(map);
+			}
+			throw new ValidErrorException(errors.toString());
+		}
+		
+		UserVO user = userRepositroyService.findUserByEmail(email.getEmail());
 		if(user != null){
 			throw new EmailDuplicatedException();
 		}
-		map.put("responseMessage", "해당 이메일은 사용가능 합니다.");
-		return new ResponseEntity<Object>(map,HttpStatus.OK);
+		return new ResponseEntity<Object>(email,HttpStatus.OK);
 	}
 	
 	// 회원탈퇴

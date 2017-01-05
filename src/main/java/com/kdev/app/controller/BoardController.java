@@ -1,7 +1,10 @@
 package com.kdev.app.controller;
 
 import java.util.Date;
+import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 import javax.validation.Valid;
 
@@ -19,6 +22,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -34,9 +38,9 @@ import com.kdev.app.domain.vo.Scrap;
 import com.kdev.app.domain.vo.Thumb;
 import com.kdev.app.domain.vo.UserDetailsVO;
 import com.kdev.app.domain.vo.UserVO;
-import com.kdev.app.exception.badgateway.ValidException;
-import com.kdev.app.exception.forbidden.ForbiddenException;
-import com.kdev.app.exception.notfound.NotFoundException;
+import com.kdev.app.exception.badgateway.ValidErrorException;
+import com.kdev.app.exception.forbidden.UserNotEqualException;
+import com.kdev.app.exception.notfound.BoardNotFoundException;
 import com.kdev.app.service.BoardRepositoryService;
 
 @Controller
@@ -75,7 +79,7 @@ public class BoardController {
 	public String findBoardOne(@PathVariable int id, Model model){
 		Board boardVO = boardRepositoryService.findBoardOne(id);	
 		if(boardVO == null)
-			throw new NotFoundException();
+			throw new BoardNotFoundException();
 		model.addAttribute("content", boardVO);
 		return "board/detail";
 	}
@@ -91,7 +95,7 @@ public class BoardController {
 		
 		Board boardVO = boardRepositoryService.findBoardOne(id);
 		if(boardVO == null){
-			throw new NotFoundException();
+			throw new BoardNotFoundException();
 		}
 		return new ResponseEntity<Object>(boardVO, HttpStatus.OK);
 	}
@@ -106,7 +110,14 @@ public class BoardController {
 	public ResponseEntity<Object> createBoard(@RequestBody @Valid BoardDTO.Create createBoard, BindingResult result, Authentication authentication){
 		
 		if(result.hasErrors()){
-			throw new ValidException(result.getAllErrors().toString());
+			List<Object> errors = new LinkedList<Object>();
+			for(FieldError error : result.getFieldErrors()){
+				Map<String, Object> map = new HashMap<String, Object>();
+				map.put("ErrorField", error.getField());
+				map.put("ErrorMessage", error.getDefaultMessage());
+				errors.add(map);
+			}
+			throw new ValidErrorException(errors.toString());
 		}
 		UserDetailsVO userDetails = (UserDetailsVO)authentication.getPrincipal();
 		UserVO userVO = modelMapper.map(userDetails, UserVO.class);
@@ -153,7 +164,18 @@ public class BoardController {
 	 */
 	@Secured(value="ROLE_USER")
 	@RequestMapping(value="/board/{id}", method=RequestMethod.POST, produces=MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<Object> updateBoard(@PathVariable int id, @RequestBody BoardDTO.Update update, Authentication authentication){
+	public ResponseEntity<Object> updateBoard(@PathVariable int id, @RequestBody @Valid BoardDTO.Update update, BindingResult result, Authentication authentication){
+		
+		if(result.hasErrors()){
+			List<Object> errors = new LinkedList<Object>();
+			for(FieldError error : result.getFieldErrors()){
+				Map<String, Object> map = new HashMap<String, Object>();
+				map.put("ErrorField", error.getField());
+				map.put("ErrorMessage", error.getDefaultMessage());
+				errors.add(map);
+			}
+			throw new ValidErrorException(errors.toString());
+		}
 		
 		UserDetailsVO userDetails = (UserDetailsVO)authentication.getPrincipal();
 		UserVO userVO = modelMapper.map(userDetails, UserVO.class);
@@ -161,7 +183,7 @@ public class BoardController {
 		Board boardVO = boardRepositoryService.findBoardOne(id);
 		
 		if(!(boardVO.getUser().getId().equals(userVO.getId())))
-			throw new ForbiddenException();
+			throw new UserNotEqualException();
 		
 		boardVO.setCategory(update.getCategory());
 		boardVO.setDescription(update.getDescription());
@@ -188,7 +210,7 @@ public class BoardController {
 		
 		// 작성자 여부 체크
 		if(!(boardVO.getUser().getId().equals(userVO.getId())))
-			throw new ForbiddenException();
+			throw new UserNotEqualException();
 		
 		boardRepositoryService.deleteBoard(id);
 		return new ResponseEntity<Object>(boardVO, HttpStatus.ACCEPTED);
@@ -209,7 +231,7 @@ public class BoardController {
 	@RequestMapping(value="/comment", method=RequestMethod.POST, produces=MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Object> createComment(@RequestBody @Valid CommentDTO.Create createComment, BindingResult result, Authentication authentication){
 		if(result.hasErrors()){
-			throw new ValidException(result.getAllErrors().toString());
+			throw new ValidErrorException(result.getAllErrors().toString());
 		}
 		UserDetailsVO userDetails = (UserDetailsVO)authentication.getPrincipal();
 		UserVO userVO = modelMapper.map(userDetails, UserVO.class);
@@ -245,7 +267,7 @@ public class BoardController {
 		
 		// 작성자 여부 체크
 		if(!(commentVO.getUser().getId().equals(userVO.getId())))
-			throw new ForbiddenException();
+			throw new UserNotEqualException();
 		
 		commentVO.setDescription(update.getDescription());
 		commentVO.setTags(update.getTags());
@@ -267,7 +289,7 @@ public class BoardController {
 		
 		// 작성자 여부 체크
 		if(!(commentVO.getUser().getId().equals(userVO.getId())))
-			throw new ForbiddenException();
+			throw new UserNotEqualException();
 		
 		boardRepositoryService.deleteComment(id);
 		return new ResponseEntity<Object>(commentVO, HttpStatus.ACCEPTED);

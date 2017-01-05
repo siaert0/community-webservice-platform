@@ -18,7 +18,7 @@ import com.kdev.app.domain.vo.Scrap;
 import com.kdev.app.domain.vo.Thumb;
 import com.kdev.app.domain.vo.UserVO;
 import com.kdev.app.exception.badgateway.NotCreatedException;
-import com.kdev.app.exception.notfound.NotFoundException;
+import com.kdev.app.exception.notfound.BoardNotFoundException;
 import com.kdev.app.exception.notfound.UserNotFoundException;
 import com.kdev.app.repository.BoardRepository;
 import com.kdev.app.repository.CommentRepository;
@@ -88,7 +88,7 @@ public class BoardRepositoryService {
 	public Board findBoardOne(int id){
 		Board board = boardRepository.findOne(id);
 		if(board == null)
-			throw new NotFoundException();
+			throw new BoardNotFoundException();
 		return board;
 	}
 	public void deleteBoardAllByUser(UserVO userVO){

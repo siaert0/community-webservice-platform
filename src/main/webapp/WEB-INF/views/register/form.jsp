@@ -7,8 +7,6 @@
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<meta id="_csrf" name="_csrf" content="${_csrf.token}" />
-<meta id="_csrf_header" name="_csrf_header" content="${_csrf.headerName}" />
 <title>회원가입 페이지</title>
 <link rel="stylesheet" href="http://fonts.googleapis.com/icon?family=Material+Icons">
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.5/css/bootstrap.min.css">
@@ -44,7 +42,7 @@ header, article, footer {
 						<div class="input-group">
 							<input id="email" name="email" type="email" class="form-control validate" placeholder="이메일 형식"/> 
 							<span class="input-group-btn">
-								<button class="waves-effect waves-light btn btn-flat teal lighten-2 white-text" type="button" onclick="checkByEmail();">중복확인</button>
+								<button class="waves-effect waves-light btn btn-flat teal lighten-2 white-text" type="button" onclick="checkByEmail();" id="checkByEmailBtn">중복확인</button>
 							</span>
 						</div>
 					</div>
@@ -68,8 +66,8 @@ header, article, footer {
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.8/js/materialize.min.js"></script>
 	<script src="${pageContext.request.contextPath}/assets/js/tagging.js"></script>
 	<script type="text/javascript">
-		var token = $("meta[name='_csrf']").attr("content");
-		var header = $("meta[name='_csrf_header']").attr("content");
+	var token = '${_csrf.token}';
+	var header = '${_csrf.headerName}';
 		$(function() {
 			$(document).ajaxSend(function(e, xhr, options) {
 				xhr.setRequestHeader(header, token);
@@ -89,12 +87,14 @@ header, article, footer {
 		});
 		
 		var isEmail = false;
+		
 		function checkByEmail() {
 			if ($('#email').val() == "" || $('#email').val() == null) {
 				alert("이메일을 입력해주세요");
 				$('#email').focus();
 				return;
 			}
+			
 			var dataObject = {
 				email : $('#email').val()
 			};
@@ -105,15 +105,27 @@ header, article, footer {
 				data : dataObject,
 				dataType : 'JSON',
 				success : function(response) {
-					console.log("success", response);
-					alert("해당 이메일은 사용가능 합니다.");
+					Materialize.toast("해당 이메일은 사용가능 합니다",3000,'green',function(){
+						$('#checkByEmailBtn').attr("disabled",true);
+						$('#email').attr("readonly",true);
+					});
 					isEmail = true;
 				},
 				error : function(response) {
-					console.log("error", response);
-					alert("해당 이메일은 사용 중입니다.");
+					if(response.status == 400){
+						Materialize.toast("이메일 형식이 아닙니다",3000,'orange',function(){
+							console.log(response);
+						});
+					}else if(response.status == 406){
+						Materialize.toast("해당 이메일은 이미 사용중 입니다",3000,'orange',function(){
+							console.log(response);
+						});
+					}else{
+						Materialize.toast("통신오류",3000,'red',function(){
+							console.log(response);
+						});
+					}
 					$('#email').focus();
-					isEmail = false;
 				}
 			});
 		}
@@ -143,7 +155,7 @@ header, article, footer {
 				},
 				error : function(response) {
 					console.log(response);
-					alert("이메일 형식과 비밀번호 4자리 이상 입력해주세요");
+					alert("이메일 형식과 비밀번호 8자리 이상 입력해주세요");
 				}
 			});
 		}

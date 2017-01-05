@@ -167,12 +167,16 @@ $(function() {
   
 function board_post(){
 	if($('#q_category').val() == "" || $('#q_category').val() == null){
-		alert("카테고리를 선택하셔야 합니다.");
+		Materialize.toast("카테고리는 선택하셔야 합니다",3000,'orange',function(){
+		});
+		$('#q_category').focus();
 		return;
 	}
 	
 	if($('#q_title').val() == "" || $('#q_title').val() == null){
-		alert("제목을 작성하셔야 합니다.");
+		Materialize.toast("제목을 작성하셔야 합니다",3000,'orange',function(){
+		});
+		$('#q_title').focus();
 		return;
 	}
 	
@@ -191,12 +195,14 @@ function board_post(){
 		contentType: 'application/json',
 		dataType	: 'JSON',
 		success	: function(response){
-			Materialize.toast("정상적으로 등록되었습니다.", 3000);
-			location.href="/board/"+response.id;
+ 			Materialize.toast("정상적으로 등록되었습니다. 잠시후 이동됩니다.",3000,'green',function(){
+ 				location.href="/board/"+response.id;
+			});
 		},
 		error	: function(response){
-			console.log(response);
-			alert("오류가 발생하였습니다.");
+ 			Materialize.toast("오류가 발생하였습니다. 개발자 도구를 통해 확인해주세요",3000,'red',function(){
+				console.log(response);
+			});
 		}
 	});
 	
@@ -208,7 +214,9 @@ function validation(fileName){
     var fileNameExtension = fileName.toLowerCase().substring(fileNameExtensionIndex,fileName.length); //확장자 자르기
      
     if( !( (fileNameExtension=='jpg') || (fileNameExtension=='gif') || (fileNameExtension=='png') || (fileNameExtension=='bmp') ) ) {
-        alert('jpg, gif, png, bmp 확장자만 업로드 가능합니다.');
+			Materialize.toast("jpg, gif, png, bmp 확장자만 업로드 가능합니다.",3000,'red',function(){
+				
+			});
         return true;
     }
     else{
@@ -230,14 +238,21 @@ function sendImage(file, summernote){
           },
           success: function(fileInfo){ //fileInfo는 이미지 정보를 리턴하는 객체
               if(fileInfo.result==-1){ //서버단에서 체크 후 수행됨
-                  alert('jpg, gif, png, bmp 확장자만 업로드 가능합니다.');
+        			Materialize.toast("jpg, gif, png, bmp 확장자만 업로드 가능합니다.",3000,'red',function(){
+        				console.log(response);
+        			});
                   return false;
               }
               else if(fileInfo.result==-2){ //서버단에서 체크 후 수행됨
-                  alert('파일이 5MB를 초과하였습니다.');
+        			Materialize.toast("파일이 5MB를 초과하였습니다.",3000,'red',function(){
+        				console.log(response);
+        			});
                   return false;
               }
               else{
+         			Materialize.toast("정상적으로 업로드되었습니다.",3000,'green',function(){
+        				
+        			});
             	  summernote.summernote('insertImage', fileInfo.imageurl, fileInfo.filename); 
               }
           }
@@ -252,12 +267,16 @@ function deleteImage(file){
       beforeSubmit: function(){
       },
       success: function(response){
-    	  Materialize.toast("정상적으로 삭제되었습니다.", 3000);
+			Materialize.toast("정상적으로 업로드되었습니다.",3000,'green',function(){
+				
+			});
+      },error: function(response){
+  			Materialize.toast("오류가 발생하였습니다. 개발자 도구를 통해 확인해주세요",3000,'red',function(){
+				console.log(response);
+			});
       }
   });
 }
-
-
 </script>
 </body>
 </html>

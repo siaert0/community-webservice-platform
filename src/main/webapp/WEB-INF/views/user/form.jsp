@@ -8,8 +8,6 @@
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<meta id="_csrf" name="_csrf" content="${_csrf.token}" />
-<meta id="_csrf_header" name="_csrf_header" content="${_csrf.headerName}" />
 <title>회원정보 수정 페이지</title>
 <link rel="stylesheet" href="http://fonts.googleapis.com/icon?family=Material+Icons">
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.5/css/bootstrap.min.css">
@@ -66,8 +64,8 @@ header, article, footer {
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.8/js/materialize.min.js"></script>
 	<script src="${pageContext.request.contextPath}/assets/js/tagging.js"></script>
 	<script type="text/javascript">
-		var token = $("meta[name='_csrf']").attr("content");
-		var header = $("meta[name='_csrf_header']").attr("content");
+		var token = '${_csrf.token}';
+		var header = '${_csrf.headerName}';
 		$(function() {
 			$(document).ajaxSend(function(e, xhr, options) {
 				xhr.setRequestHeader(header, token);
@@ -89,16 +87,10 @@ header, article, footer {
 		});
 		
 		function userProfileUpdate() {
-/* 			if ($('#password').val() == "" || $('#password').val() == null) {
-				alert("패스워드를 반드시 입력해주세요.");
-				$('#password').focus();
-				return;
-			} */
-			
 			var AuthObject = new Object();
 			AuthObject.nickname = $('#nickname').val();
 			if ($('#password').val() == "" || $('#password').val() == null)
-				AuthObject.password = '';
+				AuthObject.password = '${user.password}';
 			else
 				AuthObject.password = $('#password').val();
 			
@@ -109,11 +101,15 @@ header, article, footer {
 				data : AuthObject,
 				dataType : 'JSON',
 				success : function(response) {
-					location.reload();
+					Materialize.toast("성공적으로 수정되었습니다 잠시후 페이지가 갱신됩니다",3000,'blue',function(){
+						location.reload();
+					});
+					
 				},
 				error : function(response) {
-					console.log(response);
-					alert("오류가 발생하였습니다.");
+					Materialize.toast("오류가 발생하였습니다. 개발자 도구를 통해 확인부탁드립니다",3000,'red',function(){
+						console.log(response);
+					});
 				}
 			});
 		}
