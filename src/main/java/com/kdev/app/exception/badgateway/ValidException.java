@@ -1,4 +1,4 @@
-package com.kdev.app.exception;
+package com.kdev.app.exception.badgateway;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;

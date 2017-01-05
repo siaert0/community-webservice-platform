@@ -1,7 +1,6 @@
 package com.kdev.app.config;
 
 import org.springframework.context.annotation.Configuration;
-import org.springframework.messaging.simp.config.ChannelRegistration;
 import org.springframework.messaging.simp.config.MessageBrokerRegistry;
 import org.springframework.web.socket.config.annotation.AbstractWebSocketMessageBrokerConfigurer;
 import org.springframework.web.socket.config.annotation.EnableWebSocketMessageBroker;
@@ -23,5 +22,4 @@ public class WebsocketConfig extends AbstractWebSocketMessageBrokerConfigurer {
 		registry.enableSimpleBroker("/board");
 		registry.setApplicationDestinationPrefixes("/message"); // 메시지를 받을 컨트롤러 앞
 	}
-
 }

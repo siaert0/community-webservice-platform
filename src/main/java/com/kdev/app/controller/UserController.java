@@ -8,6 +8,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 
+import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,6 +19,7 @@ import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.social.connect.Connection;
 import org.springframework.social.connect.ConnectionRepository;
 import org.springframework.social.facebook.api.Facebook;
@@ -38,6 +40,9 @@ import com.kdev.app.domain.dto.UserDTO;
 import com.kdev.app.domain.vo.UserDetailsVO;
 import com.kdev.app.domain.vo.UserVO;
 import com.kdev.app.enums.SocialProvider;
+import com.kdev.app.exception.badgateway.ValidException;
+import com.kdev.app.exception.forbidden.UserNotEqualException;
+import com.kdev.app.exception.notacceptable.EmailDuplicatedException;
 import com.kdev.app.intercepter.LoginAuthenticationSuccessHandler;
 import com.kdev.app.service.UserRepositoryService;
 
@@ -61,8 +66,12 @@ public class UserController {
 	private Kakao kakao;
 	@Autowired
 	private ConnectionRepository connectionRepository;
+	@Autowired 
+	private PasswordEncoder passwordEncoder;
+	@Autowired 
+	private ModelMapper modelMapper;
 	
-	@RequestMapping(value="/user/facebook", method= RequestMethod.GET)
+	@RequestMapping(value="/signin/facebook", method= RequestMethod.GET)
 	public String FacebookUserView(HttpServletRequest request, HttpServletResponse response, Model model, HttpSession session) throws Exception{
 		Connection<Facebook> connection = connectionRepository.findPrimaryConnection(Facebook.class);
 		if (connection == null) {
@@ -92,7 +101,7 @@ public class UserController {
 		return "register/form";
 	}
 	
-	@RequestMapping(value="/user/kakao", method= RequestMethod.GET)
+	@RequestMapping(value="/signin/kakao", method= RequestMethod.GET)
 	public String KakaoUserView(HttpServletRequest request, HttpServletResponse response, Model model, HttpSession session) throws Exception{
 		Connection<Kakao> connection = connectionRepository.findPrimaryConnection(Kakao.class);
 		if (connection == null) {
@@ -130,7 +139,48 @@ public class UserController {
 			map.put("responseMessage", result.getAllErrors().toString());
 			return new ResponseEntity<Object>(map,HttpStatus.BAD_REQUEST);
 		}
-		UserDTO.Transfer newUser = userRepositroyService.signInUser(user);
+		UserVO newUser = userRepositroyService.signInUser(user);
+		return new ResponseEntity<Object>(newUser, HttpStatus.CREATED);
+	}
+	
+	// 회원정보 수정 폼
+	@Secured("ROLE_USER")
+	@RequestMapping(value="/user/{id}", method = RequestMethod.GET)
+	public String updateForm(@PathVariable String id, Authentication authentication){
+		UserDetailsVO userDetails = (UserDetailsVO)authentication.getPrincipal();
+		if(!userDetails.getId().equals(id)){
+			throw new UserNotEqualException();
+		}
+		
+		return "user/form";
+	}
+	
+	// 회원정보 수정
+	@Secured("ROLE_USER")
+	@RequestMapping(value="/user/{id}", method= RequestMethod.POST, produces=MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<Object> updateUser(@PathVariable String id, @Valid UserDTO.Update user, BindingResult result, Authentication authentication){
+
+		if(result.hasErrors()){
+			throw new ValidException(result.getFieldError().getRejectedValue().toString());
+		}
+		
+		UserDetailsVO userDetails = (UserDetailsVO)authentication.getPrincipal();
+		if(!userDetails.getId().equals(id)){
+			throw new UserNotEqualException();
+		}
+		
+		UserVO userVO = modelMapper.map(userDetails, UserVO.class);
+		if(!user.getPassword().equals(""))
+			userVO.setPassword(passwordEncoder.encode(user.getPassword()));
+		userVO.setNickname(user.getNickname());
+		userVO.setTags(user.getTags());
+		
+		UserVO newUser = userRepositroyService.updateUser(userVO);
+		
+		UserDetailsVO userDetailsVO = new UserDetailsVO(userVO);
+		authentication = new UsernamePasswordAuthenticationToken(userDetailsVO, null, userDetailsVO.getAuthorities());
+		SecurityContextHolder.getContext().setAuthentication(authentication);
+		
 		return new ResponseEntity<Object>(newUser, HttpStatus.CREATED);
 	}
 	
@@ -141,8 +191,7 @@ public class UserController {
 		UserVO user = userRepositroyService.findUserByEmail(email);
 		Map<String, Object> map = new HashMap<String, Object>();
 		if(user != null){
-			map.put("responseMessage", "해당 이메일은 사용중입니다.");
-			return new ResponseEntity<Object>(map,HttpStatus.BAD_REQUEST);
+			throw new EmailDuplicatedException();
 		}
 		map.put("responseMessage", "해당 이메일은 사용가능 합니다.");
 		return new ResponseEntity<Object>(map,HttpStatus.OK);
@@ -154,7 +203,7 @@ public class UserController {
 	public ResponseEntity<Object> withDraw(@PathVariable String id, Authentication authentication, HttpSession session){
 		UserDetailsVO userDetailsVO = (UserDetailsVO)authentication.getPrincipal();
 		if(!userDetailsVO.getId().equals(id)){
-			return new ResponseEntity<Object>(HttpStatus.FORBIDDEN);
+			throw new UserNotEqualException();
 		}
 		userRepositroyService.withDraw(id);
 		SecurityContextHolder.getContext().setAuthentication(null);

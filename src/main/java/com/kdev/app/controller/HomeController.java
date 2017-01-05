@@ -11,6 +11,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+
 import com.kdev.app.repository.UserRepository;
 
 @Controller
@@ -29,8 +30,6 @@ public class HomeController {
 	
 	@RequestMapping(value="/board/category/{category}", method = RequestMethod.GET)
 	public String category(Model model, @PathVariable String category){
-		model.addAttribute("userCount", userRepositroy.count());
-		model.addAttribute("systemMemory", (Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory())/(1024*1024));
 		model.addAttribute("category", category);
 		return "board/list";
 	}
@@ -42,7 +41,18 @@ public class HomeController {
 	
 	@RequestMapping(value = "/login", method = RequestMethod.GET)
 	public String login(HttpSession session, HttpServletRequest request, Model model) {
-		session.setAttribute("redirectUrl", request.getHeader("referer"));
+		String referer = request.getHeader("referer");
+		String path = "http://"+request.getServerName();
+		if(referer != null){
+			path = referer.substring(path.length());
+		
+			/**
+			 *  리다이렉트 되면 안되는 경우를 체크
+			 */
+			if(!(path.equals("/connect/kakao") || path.equals("/connect/facebook") || path.equals("/user"))){
+				session.setAttribute("redirectUrl", referer);
+			}
+		}
 		return "login";
 	}
 

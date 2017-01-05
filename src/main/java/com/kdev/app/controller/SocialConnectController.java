@@ -28,9 +28,9 @@ public class SocialConnectController extends ConnectController {
 	protected String connectedView(String providerId) {
 		// TODO Auto-generated method stub
 		if(providerId.equals("facebook"))
-			return "redirect:/user/facebook";
+			return "redirect:/signin/facebook";
 		else if(providerId.equals("kakao"))
-			return "redirect:/user/kakao";
+			return "redirect:/signin/kakao";
 		return super.connectedView(providerId);
 	}
 }

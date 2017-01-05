@@ -34,15 +34,11 @@ import com.kdev.app.domain.vo.Scrap;
 import com.kdev.app.domain.vo.Thumb;
 import com.kdev.app.domain.vo.UserDetailsVO;
 import com.kdev.app.domain.vo.UserVO;
-import com.kdev.app.exception.ExceptionResponse;
-import com.kdev.app.exception.NotFoundException;
-import com.kdev.app.exception.ValidException;
+import com.kdev.app.exception.badgateway.ValidException;
+import com.kdev.app.exception.forbidden.ForbiddenException;
+import com.kdev.app.exception.notfound.NotFoundException;
 import com.kdev.app.service.BoardRepositoryService;
 
-/**
- * @author K
- *
- */
 @Controller
 public class BoardController {
 	
@@ -52,113 +48,50 @@ public class BoardController {
 	@Autowired 
 	private ModelMapper modelMapper;
 	
+	
+	/**
+	 * ######################
+	 * 		게시물 관련 서비스
+	 * ######################
+	 */
+	
+	/**
+	 * @author		: K
+	 * @method		: board_form
+	 * @description	: 게시물 작성 페이지 호출, 로그인된 유저만 접근
+	 */
 	@Secured(value="ROLE_USER")
 	@RequestMapping(value="/board", method=RequestMethod.GET)
 	public String board_form(Model model){
 		return "board/form";
 	}
+	/**
+	 * @author		: K
+	 * @method		: findBoardOne
+	 * @description	: 해당 번호의 게시물 페이지 호출, 없을 경우 404 에러처리
+	 */
 	
 	@RequestMapping(value="/board/{id}", method=RequestMethod.GET)
 	public String findBoardOne(@PathVariable int id, Model model){
 		Board boardVO = boardRepositoryService.findBoardOne(id);	
 		if(boardVO == null)
-			throw new NotFoundException("게시물을 찾을 수 없습니다.");
+			throw new NotFoundException();
 		model.addAttribute("content", boardVO);
 		return "board/detail";
-	}
-
-	/**
-	 * @author		: K
-	 * @method		: checkThumb
-	 * @description	: 추천 및 취소
-	 */
-	@Secured("ROLE_USER")
-	@RequestMapping(value="/board/thumb", method=RequestMethod.POST, produces=MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<Object> checkThumb(@RequestBody BOARD_USER_CP_ID BOARD_USER_CP_ID, Authentication authentication){
-		UserDetailsVO userDetails = (UserDetailsVO)authentication.getPrincipal();
-		UserVO userVO = modelMapper.map(userDetails, UserVO.class);
-		BOARD_USER_CP_ID.setUserid(userVO.getId());
-		boardRepositoryService.checkThumb(BOARD_USER_CP_ID);
-		List<Thumb> thumbs = boardRepositoryService.findThumbByBoard(BOARD_USER_CP_ID.getBoardid());
-		return new ResponseEntity<Object>(thumbs, HttpStatus.ACCEPTED);
-	}
-	/**
-	 * @author		: K
-	 * @method		: checkScrap
-	 * @description	: 스크랩
-	 */
-	@Secured("ROLE_USER")
-	@RequestMapping(value="/board/scrap", method=RequestMethod.POST, produces=MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<Object> checkScrap(@RequestBody BOARD_USER_CP_ID scrapId, Authentication authentication){
-		UserDetailsVO userDetails = (UserDetailsVO)authentication.getPrincipal();
-
-		UserVO userVO = modelMapper.map(userDetails, UserVO.class);
-		scrapId.setUserid(userVO.getId());
-		boardRepositoryService.checkScrap(scrapId);
-		return new ResponseEntity<Object>("스크랩 완료", HttpStatus.ACCEPTED);
 	}
 	
 	/**
 	 * @author		: K
-	 * @method		: deleteScrap
-	 * @description	: 스크랩 취소
+	 * @method		: findBoardOne
+	 * @description	: 해당 번호의 게시물 서비스, JSON
 	 */
-	@Secured("ROLE_USER")
-	@RequestMapping(value="/board/scrap", method=RequestMethod.DELETE, produces=MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<Object> deleteScrap(@RequestBody BOARD_USER_CP_ID scrapId, Authentication authentication){
-		UserDetailsVO userDetails = (UserDetailsVO)authentication.getPrincipal();
-		UserVO userVO = modelMapper.map(userDetails, UserVO.class);
-		scrapId.setUserid(userVO.getId());
-		boardRepositoryService.deleteScrap(scrapId);
-		return new ResponseEntity<Object>("스크랩 취소", HttpStatus.ACCEPTED);
-	}
-	/**
-	 * @author		: K
-	 * @method		: findScrapUser
-	 * @description	: 스크랩 뷰
-	 */
-	@Secured("ROLE_USER")
-	@RequestMapping(value="/board/scrap", method=RequestMethod.GET)
-	public String findScrapUser(Model model, Authentication authentication){
-		UserDetailsVO userDetails = (UserDetailsVO)authentication.getPrincipal();
-		UserVO userVO = modelMapper.map(userDetails, UserVO.class);
-		model.addAttribute("scrapUser", userVO.getId());
-		return "board/scrap";
-	}
-	/**
-	 * @author		: K
-	 * @method		: findBoard
-	 * @description	: 스크랩 게시물 가져오기 & 페이징
-	 */
-	@Secured("ROLE_USER")
-	@RequestMapping(value="/board/scrap/{user}", method=RequestMethod.GET, produces=MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<Object> findScrap(@PathVariable String user, @PageableDefault(sort = { "board" }, direction = Direction.DESC, size = 5) Pageable pageable, Authentication authentication){
-		Page<Scrap> page = null;
-		UserDetailsVO userDetails = (UserDetailsVO)authentication.getPrincipal();
-		UserVO userVO = modelMapper.map(userDetails, UserVO.class);
-		
-		if(user.equals(""))
-			return new ResponseEntity<Object>(page, HttpStatus.NOT_ACCEPTABLE);
-		else
-			page = boardRepositoryService.findScrapByUser(userVO, pageable);
-		
-		return new ResponseEntity<Object>(page, HttpStatus.ACCEPTED);
-	}
 	
 	@RequestMapping(value="/board/{id}", method=RequestMethod.GET, produces=MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Object> findBoardOneREST(@PathVariable int id){
 		
 		Board boardVO = boardRepositoryService.findBoardOne(id);
-		
-		/**
-		 * 에러 처리 방법 1
-		 */
 		if(boardVO == null){
-			ExceptionResponse response = new ExceptionResponse();
-			response.setRequest("요청 게시물 번호 : "+id);
-			response.setResponse("해당 번호의 게시물을 찾을 수 없습니다.");
-			response.setHttpStatus("404");
-			return new ResponseEntity<Object>(response, HttpStatus.NOT_FOUND);
+			throw new NotFoundException();
 		}
 		return new ResponseEntity<Object>(boardVO, HttpStatus.OK);
 	}
@@ -166,7 +99,7 @@ public class BoardController {
 	/**
 	 * @author		: K
 	 * @method		: createBoard
-	 * @description	: 게시물 작성하기
+	 * @description	: 게시물 작성 서비스
 	 */
 	@Secured(value="ROLE_USER")
 	@RequestMapping(value="/board", method=RequestMethod.POST, produces=MediaType.APPLICATION_JSON_VALUE)
@@ -189,7 +122,7 @@ public class BoardController {
 	/**
 	 * @author		: K
 	 * @method		: findBoard
-	 * @description	: 게시물 가져오기 & 페이징
+	 * @description	: 게시물 가져오기 & 페이징 서비스 + 검색 기능 추가
 	 */
 	@RequestMapping(value="/board", method=RequestMethod.GET, produces=MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Object> findBoard(@RequestParam(value="category", required=false, defaultValue="") String category, 
@@ -202,7 +135,7 @@ public class BoardController {
 	/**
 	 * @author		: K
 	 * @method		: findBoardByUser
-	 * @description	: 사용자가 작성한 게시물 가져오기 & 페이징
+	 * @description	: 사용자가 작성한 게시물 가져오기 & 페이징 서비스 [사용안함]
 	 */
 	@RequestMapping(value="/board/user/{userid}", method=RequestMethod.GET, produces=MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Object> findBoardByUser(@PathVariable String userid,@PageableDefault(sort = { "id" }, direction = Direction.DESC, size = 1000) Pageable pageable){
@@ -216,7 +149,7 @@ public class BoardController {
 	/**
 	 * @author		: K
 	 * @method		: updateBoard
-	 * @description	: 게시물 수정하기
+	 * @description	: 게시물 수정하기 서비스
 	 */
 	@Secured(value="ROLE_USER")
 	@RequestMapping(value="/board/{id}", method=RequestMethod.POST, produces=MediaType.APPLICATION_JSON_VALUE)
@@ -228,7 +161,7 @@ public class BoardController {
 		Board boardVO = boardRepositoryService.findBoardOne(id);
 		
 		if(!(boardVO.getUser().getId().equals(userVO.getId())))
-			return new ResponseEntity<Object>(update, HttpStatus.FORBIDDEN);
+			throw new ForbiddenException();
 		
 		boardVO.setCategory(update.getCategory());
 		boardVO.setDescription(update.getDescription());
@@ -243,7 +176,7 @@ public class BoardController {
 	/**
 	 * @author		: K
 	 * @method		: deleteBoard
-	 * @description	: 게시물 삭제
+	 * @description	: 게시물 삭제 서비스, 관련된 댓글, 스크랩, 추천 모두 삭제
 	 */
 	@Secured(value="ROLE_USER")
 	@RequestMapping(value="/board/{id}", method=RequestMethod.DELETE, produces=MediaType.APPLICATION_JSON_VALUE)
@@ -253,23 +186,30 @@ public class BoardController {
 		UserVO userVO = modelMapper.map(userDetails, UserVO.class);
 		Board boardVO = boardRepositoryService.findBoardOne(id);
 		
+		// 작성자 여부 체크
 		if(!(boardVO.getUser().getId().equals(userVO.getId())))
-			return new ResponseEntity<Object>(boardVO, HttpStatus.FORBIDDEN);
+			throw new ForbiddenException();
 		
 		boardRepositoryService.deleteBoard(id);
 		return new ResponseEntity<Object>(boardVO, HttpStatus.ACCEPTED);
 	}
 	
 	/**
+	 * ######################
+	 * 		댓글 관련 서비스
+	 * ######################
+	 */
+	
+	/**
 	 * @author		: K
 	 * @method		: createComment
-	 * @description	: 게시물 작성하기
+	 * @description	: 댓글 작성 서비스
 	 */
 	@Secured(value="ROLE_USER")
 	@RequestMapping(value="/comment", method=RequestMethod.POST, produces=MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Object> createComment(@RequestBody @Valid CommentDTO.Create createComment, BindingResult result, Authentication authentication){
 		if(result.hasErrors()){
-			return new ResponseEntity<Object>(result.getAllErrors().toString(), HttpStatus.BAD_REQUEST);
+			throw new ValidException(result.getAllErrors().toString());
 		}
 		UserDetailsVO userDetails = (UserDetailsVO)authentication.getPrincipal();
 		UserVO userVO = modelMapper.map(userDetails, UserVO.class);
@@ -283,7 +223,7 @@ public class BoardController {
 	/**
 	 * @author		: K
 	 * @method		: findComment
-	 * @description	: 댓글 가져오기 & 페이징
+	 * @description	: 댓글 가져오기 & 페이징 서비스
 	 */
 	@RequestMapping(value="/comment", method=RequestMethod.GET, produces=MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Object> findComment(@PageableDefault(sort = { "id" }, direction = Direction.DESC, size = 1000) Pageable pageable, @RequestParam int board_id){
@@ -294,7 +234,7 @@ public class BoardController {
 	/**
 	 * @author		: K
 	 * @method		: updateComment
-	 * @description	: 댓글 수정하기
+	 * @description	: 댓글 수정하기 서비스 [검증 부분 추가 필요]
 	 */
 	@Secured(value="ROLE_USER")
 	@RequestMapping(value="/comment/{id}", method=RequestMethod.POST, produces=MediaType.APPLICATION_JSON_VALUE)
@@ -303,8 +243,10 @@ public class BoardController {
 		UserVO userVO = modelMapper.map(userDetails, UserVO.class);
 		Comment commentVO = boardRepositoryService.findCommentOne(id);
 		
+		// 작성자 여부 체크
 		if(!(commentVO.getUser().getId().equals(userVO.getId())))
-			return new ResponseEntity<Object>(null, HttpStatus.FORBIDDEN);
+			throw new ForbiddenException();
+		
 		commentVO.setDescription(update.getDescription());
 		commentVO.setTags(update.getTags());
 		Comment updated = boardRepositoryService.updateComment(commentVO);
@@ -314,7 +256,7 @@ public class BoardController {
 	/**
 	 * @author		: K
 	 * @method		: deleteComment
-	 * @description	: 댓글 삭제하기
+	 * @description	: 댓글 삭제하기 서비스
 	 */
 	@Secured(value="ROLE_USER")
 	@RequestMapping(value="/comment/{id}", method=RequestMethod.DELETE, produces=MediaType.APPLICATION_JSON_VALUE)
@@ -322,10 +264,104 @@ public class BoardController {
 		UserDetailsVO userDetails = (UserDetailsVO)authentication.getPrincipal();
 		UserVO userVO = modelMapper.map(userDetails, UserVO.class);
 		Comment commentVO = boardRepositoryService.findCommentOne(id);
+		
+		// 작성자 여부 체크
 		if(!(commentVO.getUser().getId().equals(userVO.getId())))
-			return new ResponseEntity<Object>(commentVO, HttpStatus.FORBIDDEN);
+			throw new ForbiddenException();
 		
 		boardRepositoryService.deleteComment(id);
 		return new ResponseEntity<Object>(commentVO, HttpStatus.ACCEPTED);
+	}
+	
+	/**
+	 * ######################
+	 * 		추천 관련 서비스
+	 * ######################
+	 */
+
+	/**
+	 * @author		: K
+	 * @method		: checkThumb
+	 * @description	: 게시물 추천 및 취소 서비스
+	 */
+	@Secured("ROLE_USER")
+	@RequestMapping(value="/board/thumb", method=RequestMethod.POST, produces=MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<Object> checkThumb(@RequestBody BOARD_USER_CP_ID BOARD_USER_CP_ID, Authentication authentication){
+		UserDetailsVO userDetails = (UserDetailsVO)authentication.getPrincipal();
+		UserVO userVO = modelMapper.map(userDetails, UserVO.class);
+		BOARD_USER_CP_ID.setUserid(userVO.getId());
+		boardRepositoryService.checkThumb(BOARD_USER_CP_ID);
+		List<Thumb> thumbs = boardRepositoryService.findThumbByBoard(BOARD_USER_CP_ID.getBoardid());
+		return new ResponseEntity<Object>(thumbs, HttpStatus.ACCEPTED);
+	}
+	
+	/**
+	 * ######################
+	 * 		스크랩 관련 서비스
+	 * ######################
+	 */
+	
+	/**
+	 * @author		: K
+	 * @method		: checkScrap
+	 * @description	: 게시물 스크랩 서비스
+	 */
+	@Secured("ROLE_USER")
+	@RequestMapping(value="/board/scrap", method=RequestMethod.POST, produces=MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<Object> checkScrap(@RequestBody BOARD_USER_CP_ID BOARD_USER_CP_ID, Authentication authentication){
+		UserDetailsVO userDetails = (UserDetailsVO)authentication.getPrincipal();
+		UserVO userVO = modelMapper.map(userDetails, UserVO.class);
+		BOARD_USER_CP_ID.setUserid(userVO.getId());
+		boardRepositoryService.checkScrap(BOARD_USER_CP_ID);
+		return new ResponseEntity<Object>("스크랩 완료", HttpStatus.ACCEPTED);
+	}
+	
+	/**
+	 * @author		: K
+	 * @method		: deleteScrap
+	 * @description	: 게시물 스크랩 취소 서비스
+	 */
+	@Secured("ROLE_USER")
+	@RequestMapping(value="/board/scrap", method=RequestMethod.DELETE, produces=MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<Object> deleteScrap(@RequestBody BOARD_USER_CP_ID scrapId, Authentication authentication){
+		UserDetailsVO userDetails = (UserDetailsVO)authentication.getPrincipal();
+		UserVO userVO = modelMapper.map(userDetails, UserVO.class);
+		scrapId.setUserid(userVO.getId());
+		boardRepositoryService.deleteScrap(scrapId);
+		return new ResponseEntity<Object>("스크랩 취소", HttpStatus.ACCEPTED);
+	}
+	
+	/**
+	 * @author		: K
+	 * @method		: findScrapUser
+	 * @description	: 사용자가 스크랩한 게시물 페이지 호출
+	 */
+	@Secured("ROLE_USER")
+	@RequestMapping(value="/board/scrap", method=RequestMethod.GET)
+	public String findScrapUser(Model model, Authentication authentication){
+		UserDetailsVO userDetails = (UserDetailsVO)authentication.getPrincipal();
+		UserVO userVO = modelMapper.map(userDetails, UserVO.class);
+		model.addAttribute("scrapUser", userVO.getId());
+		return "board/scrap";
+	}
+	
+	/**
+	 * @author		: K
+	 * @method		: findBoard
+	 * @description	: 스크랩 게시물 가져오기 & 페이징
+	 */
+	@Secured("ROLE_USER")
+	@RequestMapping(value="/board/scrap/{user}", method=RequestMethod.GET, produces=MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<Object> findScrap(@PathVariable String user, @PageableDefault(sort = { "board" }, direction = Direction.DESC, size = 5) Pageable pageable, Authentication authentication){
+		Page<Scrap> page = null;
+		UserDetailsVO userDetails = (UserDetailsVO)authentication.getPrincipal();
+		UserVO userVO = modelMapper.map(userDetails, UserVO.class);
+		
+		if(user.equals(""))
+			return new ResponseEntity<Object>(page, HttpStatus.NOT_ACCEPTABLE);
+		else
+			page = boardRepositoryService.findScrapByUser(userVO, pageable);
+		
+		return new ResponseEntity<Object>(page, HttpStatus.ACCEPTED);
 	}
 }

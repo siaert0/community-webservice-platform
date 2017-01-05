@@ -34,6 +34,7 @@ public class LoginAuthenticationSuccessHandler extends SavedRequestAwareAuthenti
     	if(redirect != null){
     		request.getSession().removeAttribute("redirectUrl");
     		response.sendRedirect(redirect);
+    		return;
     	}
         super.onAuthenticationSuccess(request, response, authentication);
     }

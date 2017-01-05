@@ -15,7 +15,8 @@ import org.springframework.stereotype.Service;
 import com.kdev.app.domain.dto.UserDTO;
 import com.kdev.app.domain.vo.UserDetailsVO;
 import com.kdev.app.domain.vo.UserVO;
-import com.kdev.app.exception.NotCreatedException;
+import com.kdev.app.exception.badgateway.NotCreatedException;
+import com.kdev.app.exception.badgateway.NotUpdatedException;
 import com.kdev.app.repository.UserRepository;
 
 @Service
@@ -34,15 +35,15 @@ public class UserRepositoryService implements UserDetailsService {
 	@Autowired 
 	private ModelMapper modelMapper;
 	
-	public UserDTO.Transfer signInUser(UserDTO.Create user){
+	public UserVO signInUser(UserDTO.Create user){
 		UserVO newUser = modelMapper.map(user, UserVO.class);
 		newUser.setPassword(passwordEncoder.encode(newUser.getPassword()));
 		UserVO createdUser = userRepository.save(newUser);
 		
 		if(createdUser == null)
-			throw new NotCreatedException("Failed Create User");
+			throw new NotCreatedException();
 		
-		return modelMapper.map(createdUser, UserDTO.Transfer.class);
+		return createdUser;
 	}
 	
 	public UserVO findUserByEmail(String email){
@@ -66,6 +67,15 @@ public class UserRepositoryService implements UserDetailsService {
 		if(findUser == null)
 			throw new UsernameNotFoundException(username);
 		return new UserDetailsVO(findUser);
+	}
+	
+	public UserVO updateUser(UserVO user){
+		
+		UserVO updatedUser = userRepository.save(user);
+		if(updatedUser == null)
+			throw new NotUpdatedException();
+		
+		return updatedUser;
 	}
 	
 	public void withDraw(String id){

@@ -26,11 +26,11 @@
 				<br>
 				<div class="form-group">
 					<input id="username" type="text" name="username"
-						class="form-control" placeholder="guest" required>
+						class="form-control" placeholder="guest" value="guest" required>
 				</div>
 				<div class="form-group">
 					<input id="password" type="password" name="password"
-						class="form-control" placeholder="12345678" required>
+						class="form-control" placeholder="12345678" value="12345678" required>
 				</div>
 				<button type="submit"
 					class="btn blue lighten-2 waves-effect waves-light z-depth-0">

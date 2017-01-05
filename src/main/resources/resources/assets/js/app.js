@@ -14,6 +14,7 @@ app.directive('krInput', [ '$parse', function($parse) {
 app.controller('HomeController', function($scope){
 	
 });
+
 app.directive('ngEnter', function () {
     return function (scope, element, attrs) {
         element.bind("keydown keypress", function (event) {

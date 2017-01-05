@@ -17,9 +17,9 @@ import com.kdev.app.domain.vo.Comment;
 import com.kdev.app.domain.vo.Scrap;
 import com.kdev.app.domain.vo.Thumb;
 import com.kdev.app.domain.vo.UserVO;
-import com.kdev.app.exception.NotCreatedException;
-import com.kdev.app.exception.NotFoundException;
-import com.kdev.app.exception.UserNotFoundException;
+import com.kdev.app.exception.badgateway.NotCreatedException;
+import com.kdev.app.exception.notfound.NotFoundException;
+import com.kdev.app.exception.notfound.UserNotFoundException;
 import com.kdev.app.repository.BoardRepository;
 import com.kdev.app.repository.CommentRepository;
 import com.kdev.app.repository.ScrapRepository;
@@ -57,7 +57,7 @@ public class BoardRepositoryService {
 		Board createdBoard = boardRepository.save(modelMapper.map(createBoard, Board.class));
 		
 		if(createdBoard == null)
-			throw new NotCreatedException("Board Not Created");
+			throw new NotCreatedException();
 			
 		return createdBoard;
 	}
@@ -88,7 +88,7 @@ public class BoardRepositoryService {
 	public Board findBoardOne(int id){
 		Board board = boardRepository.findOne(id);
 		if(board == null)
-			throw new NotFoundException("Board Not Exist");
+			throw new NotFoundException();
 		return board;
 	}
 	public void deleteBoardAllByUser(UserVO userVO){
@@ -109,7 +109,7 @@ public class BoardRepositoryService {
 		Comment created = commentRepository.save(modelMapper.map(create, Comment.class));
 		
 		if(created == null)
-			throw new NotCreatedException("Failed Create Comment");
+			throw new NotCreatedException();
 		
 		return created;
 	}

@@ -54,7 +54,7 @@
 							<p><b>구현 및 적용</b></p>
 							<p>Spring Boot 1.4.3</p>
 							<p>Spring Security</p>
-							<p>Spring Social Faceboo, Kakao : <span class="red-text lighten-2-text"> 오류발생... 원인모름... 고친듯?</span></p>
+							<p>Spring Social Facebook, Kakao</p>
 							<p>Spring Data JPA & Hibernate</p>
 							<p>Spring Websocket - Sockjs - Stomp : <span class="red-text lighten-2-text"> 구독자수 표현방법이 있나?...</span></p>
 							<p>Lombok : Getter Setter</p>
@@ -63,8 +63,9 @@
 							<p><b>추가 요구사항</b></p>
 							<p>1. 회원의 비밀번호를 찾을 수 가 없다.....</p>
 							<p>2. 회원의 정보를 수정할 수 없다.....</p>
-							<p>3. 로그인 시 리다이렉트 기능 엉키고 있음.....</p>
+							<p>3. 로그인 시 리다이렉트 기능 엉키고 있음..... [referer 체크로 해결완료]</p>
 							<p>4. 비즈니스 로직 에러처리 개선 필요.....</p>
+							<p>5. 관리자 기능 필요..... [추후 공부시 구현]</p>
 						</div>
 					</div>
 				</div>

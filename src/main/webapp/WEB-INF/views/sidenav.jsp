@@ -23,6 +23,7 @@
     <li><a href="/"><i class="material-icons">home</i>홈</a></li>
     <sec:authorize access="isAuthenticated()">
     <c:if test="${user.nickname != '게스트'}">
+    <li><a href="/user/${user.id}"><i class="material-icons">account_box</i>회원정보수정</a></li>
     <li><a href="#회원탈퇴" onclick="withdraw(${user.id});"><i class="material-icons">account_box</i>회원탈퇴</a></li>
     </c:if>
     <li><a href="/board/scrap"><i class="material-icons">share</i>스크랩</a></li>

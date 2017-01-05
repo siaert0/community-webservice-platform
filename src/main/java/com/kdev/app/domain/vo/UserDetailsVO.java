@@ -8,6 +8,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 
+import com.kdev.app.enums.Role;
 import com.kdev.app.enums.SocialProvider;
 
 import lombok.Getter;
@@ -24,6 +25,7 @@ public class UserDetailsVO extends User {
 	private SocialProvider socialProvider;
 	private String thumbnail;
 	private String tags;
+	private Role role;
 
 	public UserDetailsVO(UserVO user) {
 		super(user.getEmail(), user.getPassword(), authorities(user));
@@ -33,6 +35,7 @@ public class UserDetailsVO extends User {
 		this.socialProvider = user.getSocialProvider();
 		this.tags = user.getTags();
 		this.email = user.getEmail();
+		this.role = user.getRole();
 		// TODO Auto-generated constructor stub
 	}
 

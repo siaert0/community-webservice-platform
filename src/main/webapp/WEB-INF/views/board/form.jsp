@@ -256,6 +256,8 @@ function deleteImage(file){
       }
   });
 }
+
+
 </script>
 </body>
 </html>
