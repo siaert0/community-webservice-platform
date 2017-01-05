@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.servlet.ModelAndView;
 
+import com.kdev.app.domain.vo.ExceptionResponse;
 import com.kdev.app.exception.badgateway.NotCreatedException;
 import com.kdev.app.exception.badgateway.NotUpdatedException;
 import com.kdev.app.exception.badgateway.ValidErrorException;
@@ -24,7 +25,6 @@ import com.kdev.app.exception.notfound.UserNotFoundException;
 public class GlobalExceptionHandler {
 	private static final Logger logger = LoggerFactory.getLogger(GlobalExceptionHandler.class);
 	private static final String DEFAULT_VIEW = "error";
-	private static final String DEFAULT_JSON_VIEW = "jsonView";
 	
 	/**
 	 * AccessDeniedException이 RuntimeException이기 때문에 RuntimeException을 잡아버리면 Response is commited 오류 발생
@@ -45,75 +45,27 @@ public class GlobalExceptionHandler {
 		return mav;
 	}
 	
-	@ExceptionHandler({BoardNotFoundException.class})
-	public Object boardNotFoundException(HttpServletRequest request, HttpServletResponse response, BoardNotFoundException exception){
+	public ResponseEntity<Object> ajaxExceptionHandler(HttpServletRequest request, Exception exception){
+		ResponseStatus annotation = exception.getClass().getAnnotation(ResponseStatus.class);
+		HttpStatus httpStatus = HttpStatus.valueOf(annotation.value().value());
+		ExceptionResponse exceptionResponse = new ExceptionResponse();
+		exceptionResponse.setRequest(request.getRequestURI());
+		exceptionResponse.setStatus(httpStatus.name());
+		exceptionResponse.setReason(annotation.reason());
+		return new ResponseEntity<Object>(exceptionResponse, httpStatus);
+	}
+	
+	@ExceptionHandler({
+		BoardNotFoundException.class, UserNotFoundException.class
+		,UserNotEqualException.class
+		,NotCreatedException.class, NotUpdatedException.class
+		,EmailDuplicatedException.class})
+	public Object runtimeException(HttpServletRequest request, HttpServletResponse response, RuntimeException exception){
 		String RequestType = request.getHeader("X-Requested-With");	
 		if(RequestType != null && !RequestType.equals("XMLHttpRequest")){
 			return this.defaultExceptionHandler(exception);
 		}else{
-			ResponseStatus annotation = exception.getClass().getAnnotation(ResponseStatus.class);
-			HttpStatus httpStatus = HttpStatus.valueOf(annotation.value().value());
-			return new ResponseEntity<Object>(exception, httpStatus);
-		}
-	}
-	
-	@ExceptionHandler({UserNotFoundException.class})
-	public Object userNotFoundException(HttpServletRequest request, HttpServletResponse response, UserNotFoundException exception){
-		String RequestType = request.getHeader("X-Requested-With");	
-		if(RequestType != null && !RequestType.equals("XMLHttpRequest")){
-			return this.defaultExceptionHandler(exception);
-		}else{
-			ResponseStatus annotation = exception.getClass().getAnnotation(ResponseStatus.class);
-			HttpStatus httpStatus = HttpStatus.valueOf(annotation.value().value());
-			return new ResponseEntity<Object>(exception, httpStatus);
-		}
-	}
-	
-	@ExceptionHandler({UserNotEqualException.class})
-	public Object userNotEqualException(HttpServletRequest request, HttpServletResponse response, UserNotEqualException exception){
-		String RequestType = request.getHeader("X-Requested-With");
-		if(RequestType != null && !RequestType.equals("XMLHttpRequest")){
-			return this.defaultExceptionHandler(exception);
-		}else{
-			ResponseStatus annotation = exception.getClass().getAnnotation(ResponseStatus.class);
-			HttpStatus httpStatus = HttpStatus.valueOf(annotation.value().value());
-			return new ResponseEntity<Object>(exception, httpStatus);
-		}
-	}
-	
-	@ExceptionHandler({NotCreatedException.class})
-	public Object notCreatedException(HttpServletRequest request, HttpServletResponse response, NotCreatedException exception){
-		String RequestType = request.getHeader("X-Requested-With");	
-		if(RequestType != null && !RequestType.equals("XMLHttpRequest")){
-			return this.defaultExceptionHandler(exception);
-		}else{
-			ResponseStatus annotation = exception.getClass().getAnnotation(ResponseStatus.class);
-			HttpStatus httpStatus = HttpStatus.valueOf(annotation.value().value());
-			return new ResponseEntity<Object>(exception, httpStatus);
-		}
-	}
-	
-	@ExceptionHandler({NotUpdatedException.class})
-	public Object notUpdatedException(HttpServletRequest request, HttpServletResponse response, NotUpdatedException exception){
-		String RequestType = request.getHeader("X-Requested-With");	
-		if(RequestType != null && !RequestType.equals("XMLHttpRequest")){
-			return this.defaultExceptionHandler(exception);
-		}else{
-			ResponseStatus annotation = exception.getClass().getAnnotation(ResponseStatus.class);
-			HttpStatus httpStatus = HttpStatus.valueOf(annotation.value().value());
-			return new ResponseEntity<Object>(exception, httpStatus);
-		}
-	}
-	
-	@ExceptionHandler({EmailDuplicatedException.class})
-	public Object emailDuplicatedException(HttpServletRequest request, HttpServletResponse response, EmailDuplicatedException exception){
-		String RequestType = request.getHeader("X-Requested-With");	
-		if(RequestType != null && !RequestType.equals("XMLHttpRequest")){
-			return this.defaultExceptionHandler(exception);
-		}else{
-			ResponseStatus annotation = exception.getClass().getAnnotation(ResponseStatus.class);
-			HttpStatus httpStatus = HttpStatus.valueOf(annotation.value().value());
-			return new ResponseEntity<Object>("이메일이 중복됩니다", httpStatus);
+			return ajaxExceptionHandler(request, exception);
 		}
 	}
 	
