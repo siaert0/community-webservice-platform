@@ -13,19 +13,14 @@
 <link href="http://fonts.googleapis.com/icon?family=Material+Icons"
 	rel="stylesheet">
 <!-- Compiled and minified CSS -->
-<link rel="stylesheet"
-	href="https://cdnjs.cloudflare.com/ajax/libs/normalize/5.0.0/normalize.min.css">
-<link rel="stylesheet"
-	href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.8/css/materialize.min.css">
-<link rel="stylesheet"
-	href="/assets/css/style.css">
-<style>
-header, article, footer {
-	padding-left: 0;
-}
-</style>
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.5/css/bootstrap.min.css">
+<link rel="stylesheet" href="/assets/css/tether.min.css">
+<link rel="stylesheet" href="/assets/css/style.css">
 </head>
 <body>
+		<header>
+			<c:import url="/sidenav" />
+		</header>
 	<article>
 		<div class="valign-wrapper" style="width: 100%; height: 100%;">
 			<div class="valign center" style="margin: auto;">
@@ -45,9 +40,26 @@ header, article, footer {
 			</div>
 		</div>
 	</article>
+		<div class="fixed-action-btn click-to-toggle">
+			<a class="btn-floating btn-large red button-collapse hide-on-large-only" data-activates="nav-mobile">
+				<i class="material-icons">web</i>
+			</a>
+		</div>
+			
 	<script
 		src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
 	<!-- Compiled and minified JavaScript -->
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.8/js/materialize.min.js"></script>
+			<script type="text/javascript">
+			$(".button-collapse").sideNav();
+			
+			var token = $("meta[name='_csrf']").attr("content");
+			var header = $("meta[name='_csrf_header']").attr("content");
+			$(function() {			
+				$(document).ajaxSend(function(e, xhr, options) {
+					xhr.setRequestHeader(header, token);
+				});
+			});
+		</script>
 </body>
 </html>

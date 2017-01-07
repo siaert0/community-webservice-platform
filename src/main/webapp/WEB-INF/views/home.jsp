@@ -17,8 +17,8 @@
 		<!--Import Google Icon Font-->
 		<link href="http://fonts.googleapis.com/icon?family=Material+Icons"	rel="stylesheet">
 		<!-- Compiled and minified CSS -->
-		<link rel="stylesheet"	href="https://cdnjs.cloudflare.com/ajax/libs/normalize/5.0.0/normalize.min.css">
-		<link rel="stylesheet"	href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.8/css/materialize.min.css">
+		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.5/css/bootstrap.min.css">
+		<link rel="stylesheet" href="/assets/css/tether.min.css">
 		<link rel="stylesheet" href="/assets/css/style.css">
 	</head>
 	<body id="HomeController" ng-controller="HomeController" ng-cloak>
