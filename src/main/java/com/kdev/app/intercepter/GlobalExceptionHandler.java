@@ -33,25 +33,31 @@ public class GlobalExceptionHandler {
 	 * 기존 ContentType 으로 체크하는 방식에서 X-Requested-With 값을 체크하는 것으로 변경.
 	 */
 
-	public ModelAndView defaultExceptionHandler(Exception e){
-		ResponseStatus annotation = e.getClass().getAnnotation(ResponseStatus.class);
+	public ModelAndView defaultExceptionHandler(HttpServletRequest request, Exception exception){
+		ResponseStatus annotation = exception.getClass().getAnnotation(ResponseStatus.class);
 		HttpStatus httpStatus = HttpStatus.valueOf(annotation.value().value());
 		String reason = annotation.reason();
 		
+		ExceptionResponse exceptionResponse = new ExceptionResponse();
+		exceptionResponse.setRequest(request.getRequestURI());
+		exceptionResponse.setStatus(httpStatus.name());
+		exceptionResponse.setReason(reason);
+		
 		ModelAndView mav = new ModelAndView(DEFAULT_VIEW);
 		mav.setStatus(httpStatus);
-		mav.addObject("errorcode", httpStatus);
-		mav.addObject("exception", reason);
+		mav.addObject(exceptionResponse);
 		return mav;
 	}
 	
 	public ResponseEntity<Object> ajaxExceptionHandler(HttpServletRequest request, Exception exception){
 		ResponseStatus annotation = exception.getClass().getAnnotation(ResponseStatus.class);
 		HttpStatus httpStatus = HttpStatus.valueOf(annotation.value().value());
+		String reason = annotation.reason();
+		
 		ExceptionResponse exceptionResponse = new ExceptionResponse();
 		exceptionResponse.setRequest(request.getRequestURI());
 		exceptionResponse.setStatus(httpStatus.name());
-		exceptionResponse.setReason(annotation.reason());
+		exceptionResponse.setReason(reason);
 		return new ResponseEntity<Object>(exceptionResponse, httpStatus);
 	}
 	
@@ -63,7 +69,7 @@ public class GlobalExceptionHandler {
 	public Object runtimeException(HttpServletRequest request, HttpServletResponse response, RuntimeException exception){
 		String RequestType = request.getHeader("X-Requested-With");	
 		if(RequestType != null && !RequestType.equals("XMLHttpRequest")){
-			return this.defaultExceptionHandler(exception);
+			return this.defaultExceptionHandler(request, exception);
 		}else{
 			return ajaxExceptionHandler(request, exception);
 		}
@@ -73,7 +79,14 @@ public class GlobalExceptionHandler {
 	public Object validErrorException(HttpServletRequest request, HttpServletResponse response, ValidErrorException exception){
 		String RequestType = request.getHeader("X-Requested-With");	
 		if(RequestType != null && !RequestType.equals("XMLHttpRequest")){
-			return this.defaultExceptionHandler(exception);
+			ModelAndView mav = new ModelAndView(DEFAULT_VIEW);
+			mav.setStatus(HttpStatus.BAD_GATEWAY);
+			ExceptionResponse exceptionResponse = new ExceptionResponse();
+			exceptionResponse.setRequest(request.getRequestURI());
+			exceptionResponse.setStatus(HttpStatus.BAD_GATEWAY.name());
+			exceptionResponse.setReason(exception.getValid());
+			mav.addObject(exceptionResponse);
+			return mav;
 		}else{
 			ResponseStatus annotation = exception.getClass().getAnnotation(ResponseStatus.class);
 			HttpStatus httpStatus = HttpStatus.valueOf(annotation.value().value());

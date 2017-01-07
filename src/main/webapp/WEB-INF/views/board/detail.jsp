@@ -38,8 +38,8 @@
 	<!-- 게시물 컨트롤러 만들기 -->
 	<div class="container-fluid">
 	<div class="row">
-	<div class="col s12 m8">
-	<div class="card sticky-action" ng-if="boardContent != null">
+	<div class="col s12">
+	<div class="card sticky-action z-depth-0" ng-if="boardContent != null" id="board-div">
 		<div class="card-content right-align" style="border-bottom:1px solid #EEE">
 		      <span class="chip white left">
 			    <img style="height:100%;" ng-src="{{boardContent.user.thumbnail}}">
@@ -48,9 +48,9 @@
 			
 			<span class="chip grey darken-2 white-text border-flat">{{boardContent.created | date:'yyyy년 MM월 dd일 h:mma'}}</span>
 			<sec:authorize access="isAuthenticated()">
-			     <c:if test="${content.user.id == user.id}">
-				     <span class="chip red lighten-2 hover white-text border-flat" data-ng-click="requestBoardUpdate();">수정</span>
-				     <span class="chip blue lighten-2 hover white-text border-flat" data-ng-click="requestBoardDelete();">삭제</span>
+			     <c:if test="${(content.user.id eq user.id) or (user.role eq 'ROLE_ADMIN')}">
+				     <span class="chip blue lighten-2 hover white-text border-flat" data-ng-click="requestBoardUpdate();">수정</span>
+				     <span class="chip red lighten-2 hover white-text border-flat" data-ng-click="requestBoardDelete();">삭제</span>
 			     </c:if>
 			     <span class="chip green lighten-2 hover white-text border-flat" data-ng-click="scrap(boardContent.id)">스크랩</span>
 	    	</sec:authorize>
@@ -61,29 +61,19 @@
 				<p class="" style="font-weight:700; font-size:18px;">{{boardContent.title}}</p>
 				<p class="collection-title" ng-bind-html="trustHtml(boardContent.description)"></p>
 				</div>
-			</div>
-		</div>
-		<div class="card-action left-align">
-		 <span class="chip teal lighten-2 white-text border-flat" >{{boardContent.category}}</span>
-		 <span class="chip lighten-2 white-text border-flat" ng-class="{blue:boardContent.selected == 0 && boardContent.comments.length > 0, red:boardContent.selected == 0 && boardContent.comments.length == 0, green:boardContent.selected != 0}">댓글 {{boardContent.comments.length}}</span>
-		 <span class="chip lighten-2 hover white-text border-flat" ng-class="{red:checkThumb()==0, green:checkThumb()==1, blue:checkThumb()==2}" data-ng-click="toggleThumb();">추천 {{boardContent.thumbs.length}}</span>
-		 <span class="tags right" ng-if="boardContent.tags != null" ng-init="tags=parseJson(boardContent.tags)">
-			<span ng-repeat="tag in tags"><span class="chip red lighten-2 white-text border-flat" style="">{{tag}} </span></span>
-		 </span>
-		</div>
-	</div>
-	</div>
-	<!-- 실시간 구독 영역 -->
-	<div class="col s12 m4">
+				<!-- 실시간 구독 영역 -->
+				<hr>
 		<div class="collection">
 			<div class="collection-item center-align">
-				실시간으로 물어보세요
+				<b>실시간으로 물어보세요</b>
 			</div>
-			<div id="messagebox" class="collection-item" style="min-height:255px; max-height:255px; overflow:auto; padding-left:10px; padding-right:10px; overflow-wrap:break-word;">
+			<div id="messagebox" class="collection-item" style="min-height:100px; max-height:100px; overflow:auto; padding-left:10px; padding-right:10px; overflow-wrap:break-word;">
 				<p class="" ng-repeat="message in messages">
-				   <span style="border-right:2px solid red; padding-right:10px;">{{message.user.nickname}}</span>
-				  &nbsp;
-				  {{message.message}}
+						      <span class="chip white left">
+			    <img style="height:100%;" ng-src="{{message.user.thumbnail}}">
+			    {{message.user.nickname}}
+			  </span>
+				  <span class="chip white border-flat">{{message.message}}</span>
 				</p>
 			</div>
 			<div class="collection-item" style="padding:0.5rem;">
@@ -95,50 +85,82 @@
 			</sec:authorize>
 			</div>
 		</div>
+			</div>
+		</div>
+		<div class="card-action left-align">
+		 <span class="chip teal lighten-2 white-text border-flat" >{{boardContent.category}}</span>
+		 <span class="chip lighten-2 white-text border-flat" ng-class="{blue:boardContent.selected == 0 && boardContent.comments.length > 0, red:boardContent.selected == 0 && boardContent.comments.length == 0, green:boardContent.selected != 0}">댓글 {{boardContent.comments.length}}</span>
+		 <span class="chip lighten-2 hover white-text border-flat" ng-class="{red:checkThumb()==0, green:checkThumb()==1, blue:checkThumb()==2}" data-ng-click="toggleThumb();">
+		 추천<span ng-if="checkThumb()==1 || checkThumb()==0">하기</span><span ng-if="checkThumb()==2">취소</span> {{boardContent.thumbs.length}}</span>
+		 <span class="tags right" ng-if="boardContent.tags != null" ng-init="tags=parseJson(boardContent.tags)">
+			<span ng-repeat="tag in tags"><span class="chip red lighten-2 white-text border-flat" style="">{{tag}} </span></span>
+		 </span>
+		</div>
 	</div>
+	</div>
+	
 	</div>
 		  <sec:authorize access="isAuthenticated()">
 		  <!-- 게시물 업데이트 모달 박스 영역 -->
-					<div class="collection white" id="updateBoardModal" style="display:none; border:2px solid #81c784;">
+					<div class="collection white" id="updateBoardModal" ng-show="isBoardUpdate" style="border:2px solid #81c784;">
 			<div class="collection-item">
 				<span class="chip transparent">
 					<img src="${user.thumbnail}" alt="Contact Person">
-					    ${user.nickname}
+					    <b>${user.nickname}</b>
 				</span>
 				<p></p>
 					<div class="row">
+								<div class="col s12">
+				<select id="u_b_category" class="browser-default form-control">
+			      <option value="" disabled selected>카테고리를 선택해주세요</option>
+			      <option value="자바" ng-selected="boardContent.category=='JAVA/SPRING'">자바</option>
+			      <option value="닷넷" ng-selected="boardContent.category=='닷넷'">닷넷</option>
+			      <option value="파이썬" ng-selected="boardContent.category=='파이썬'">파이썬</option>
+			      <option value="HTML5" ng-selected="boardContent.category=='HTML5'">HTML5</option>
+			      <option value="자바스크립트" ng-selected="boardContent.category=='자바스크립트'">자바스크립트</option>
+			      <option value="앵귤러JS" ng-selected="boardContent.category=='앵귤러JS'">앵귤러JS</option>
+			      <option value="리액트JS" ng-selected="boardContent.category=='리액트JS'">리액트JS</option>
+			      <option value="데이터베이스" ng-selected="boardContent.category=='데이터베이스'">데이터베이스</option>
+			      <option value="기타" ng-selected="boardContent.category=='기타'">기타</option>
+			    </select>
+			</div>
 						<div class="input-field col s12">
+							<b>제목</b>
 							<input id="u_b_title" name="u_b_title" class="form-control" type="text" />
 						</div>
 						<div class="input-field col s12">
+							<b>내용</b>
 							<div id="u_b_description" class="materialize-textarea contentbox"></div>
 						</div>
 						<div class="input-field col s12">
+							<b>태그</b>
 								<div id="u_b_tags" class="tags form-control" data-tags-input-name="tag"></div>
 						</div>					
 					</div>
 				<div class="modal-footer white">
 				    <a class="waves-effect waves-light btn-flat" id="updateBoardBtn">수정하기</a>
-					<a class="modal-action modal-close waves-effect waves-light btn-flat" onclick="resetUpdateBoardForm();">닫기</a>
+					<a class="modal-action modal-close waves-effect waves-light btn-flat" data-ng-click="resetUpdateBoardForm();">닫기</a>
 				</div>
 				</div>			
 			</div>
 		
 		<!-- 답변 업데이트 모달 박스 영역 -->
-			<div id="updateCommentModal" class="collection white" style="display:none; border:2px solid #81c784;">
+			<div id="updateCommentModal" class="collection white" ng-show="isCommentUpdate" style="border:2px solid #81c784;">
 				<div class="collection-item">
 				<span class="chip transparent">
 					<img src="${user.thumbnail}" alt="Contact Person">
-					    ${user.nickname}
+					    <b>${user.nickname}</b>
 				</span>
 				<p></p>
 					<div class="row">
 						<div class="col s12">
 				<div class="input-field col s12">
+							<b>내용</b>
 									<div id="u_c_description" class="materialize-textarea contentbox"></div>
 								</div>
 								<div class="input-field col s12"></div>
 																<div class="input-field col s12">
+																<b>태그</b>
 								<div id="u_c_tags" class="tags form-control" data-tags-input-name="tag"></div>
 				</div>
 						</div>					
@@ -146,8 +168,8 @@
 				</div>
 				
 				<div class="modal-footer white">
-				    <a class="waves-effect waves-light btn-flat" id="updateCommentBtn">수정하기</a>
-					<a class="modal-action modal-close waves-effect waves-light btn-flat" onclick="resetUpdateCommentForm()">닫기</a>
+				    <a class="waves-effect waves-light btn-flat" id="updateCommentBtn" >수정하기</a>
+					<a class="modal-action modal-close waves-effect waves-light btn-flat" data-ng-click="resetUpdateCommentForm()">닫기</a>
 				</div>
 			</div>
 		</sec:authorize>
@@ -155,17 +177,20 @@
 		</div>
 		<div class="container-fluid">
 		
-		<!-- 게시물 답변 영역 -->
-		<div class="collection" ng-class="{selectedComment:boardContent.selected == comment.id}" dir-paginate="comment in search_contents = (boardContent.comments | filter:searchKeyword | orderBy:'-id') | itemsPerPage:5" pagination-id="commentpage">
+		<!-- 게시물 답변 리스트 영역 -->
+		<div id="comment-list" class="collection" ng-class="{selectedComment:boardContent.selected == comment.id}" dir-paginate="comment in search_contents = (boardContent.comments | filter:searchKeyword | orderBy:'-$$hashkey') | itemsPerPage:5" pagination-id="commentpage" ng-show="!isCommentUpdate">
 			<div class="collection-item">
-		    	<span class="chip transparent right"><a class="grey-text">{{comment.created | date:'yyyy년 MM월 dd일 h:mma'}}</a>&nbsp;
+		    	<span class="chip transparent right"><a class="chip grey darken-2 hover white-text border-flat">{{comment.created | date:'yyyy년 MM월 dd일 h:mma'}}</a>&nbsp;
 		    	<sec:authorize access="isAuthenticated()">
 		    	<span ng-if="boardContent.selected == 0 && boardContent.user.id == ${user.id} && ${user.id} != comment.user.id">
-		    		<a class="green-text hover" data-ng-click="selectedComment(comment, $index);">선택</a>
+		    		<a class="chip green lighten-2 hover white-text border-flat" data-ng-click="selectedComment(comment, $index);">선택</a>
 		    	</span>
-		    	<span ng-if="comment.user.id == ${user.id}">
-		    		<a class="blue-text hover" data-ng-click="requestUpdateComment(comment, $index);">수정</a>&nbsp;
-		    		<a class="blue-text hover" data-ng-click="requestDeleteComment(comment);">삭제</a>
+		    	<span ng-if="boardContent.selected == comment.id && boardContent.user.id == ${user.id} && ${user.id} != comment.user.id">
+		    		<a class="chip green lighten-2 hover white-text border-flat" data-ng-click="selectedComment(comment, $index);">선택 취소</a>
+		    	</span>
+		    	<span ng-if="(comment.user.id == ${user.id} || ${user.role} == 'ROLE_ADMIN')">
+		    		<a class="chip blue lighten-2 hover white-text border-flat" data-ng-click="requestUpdateComment(comment, $index);">수정</a>&nbsp;
+		    		<a class="chip red lighten-2 hover white-text border-flat" data-ng-click="requestDeleteComment(comment);">삭제</a>
 		    	</span>
 		    	</sec:authorize>
 		    	</span>
@@ -173,15 +198,17 @@
 					<img ng-src="{{comment.user.thumbnail}}" alt="Contact Person">
 					    {{comment.user.nickname}}
 				</span>
-				<br>
+				<hr>
 				<div class="">
 					<p class="collection-title" ng-bind-html="trustHtml(comment.description)"></p>
 				</div>
-						    <div class="" ng-if="comment.tags != '[]'">
-		    <span class="tags" ng-init="tags=parseJson(comment.tags)">
-								<span ng-repeat="tag in tags"><span class="chip red lighten-2 hover white-text" style="border-radius:0;">{{tag}} </span></span>
-				</span>
-		    </div>
+				
+					<div class="" ng-if="comment.tags != '[]'">
+					<hr>
+	    				<span class="tags" ng-init="tags=parseJson(comment.tags)">
+							<span ng-repeat="tag in tags"><span class="chip red lighten-2 hover white-text" style="border-radius:0;">{{tag}} </span></span>
+						</span>
+		    	</div>
 		    </div>
 
 		    </div>
@@ -210,15 +237,19 @@
 			<div class="collection-item">
 		    	<span class="chip transparent">
 					<img src="${user.thumbnail}" alt="Contact Person">
-					    ${user.nickname}
+					    <b>${user.nickname}</b>
 				</span>
 				<div class="row">
+				<div class="col s12">
+				</div>
 			<div class="col s12">
+				<b>내용</b>
 				<div id="c_description" class="materialize-textarea contentbox"></div>
 			</div>
 			<div class="col s12">
 			</div>
 			<div class="col s12">
+				<b>태그</b>
 				<div id="c_tags" class="tags form-control" data-tags-input-name="tag"></div>
 			</div>
 			<div class="col s12">

@@ -14,13 +14,14 @@
 <link rel="stylesheet" href="http://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.2/summernote.css">
 <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/tether.min.css">
 <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/style.css">
-<style>
-header, article, footer {
-	padding-left: 0;
-}
-</style>
 </head>
 <body>
+	<!-- 헤더 영역 -->
+		<header>
+			<c:import url="/sidenav" />
+		</header>
+				<!-- 아티클 영역 -->
+		<article>
 	<div class="valign-wrapper" style="width: 100%; height: 100%;">
 		<div class="valign center" style="margin: auto;">
 			<form class="container col s12" onsubmit="false;">
@@ -54,11 +55,20 @@ header, article, footer {
 				</div>
 				<div class="flex-box right-align">
 					<a class="waves-effect waves-light btn blue lighten-2 white-text btn-full" onclick="userProfileUpdate()">수정하기 </a>
-					<a class="waves-effect waves-light btn red lighten-2 white-text btn-full" onclick="location.href='${pageContext.request.contextPath}/'">취소 </a>
+					   <c:if test="${user.role ne 'ROLE_ADMIN'}">
+    
+					<a class="waves-effect waves-light btn red lighten-2 white-text btn-full" onclick="withdraw(${user.id});">회원탈퇴 </a>
+					</c:if>
 				</div>
 			</form>
 		</div>
 	</div>
+	</article>
+
+				<div class="fixed-action-btn click-to-toggle">
+					<a class="btn-floating btn-large red button-collapse hide-on-large-only" data-activates="nav-mobile"><i class="material-icons">web</i>
+					</a>
+				</div>
 	<!-- Compiled and minified JavaScript -->
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.8/js/materialize.min.js"></script>
@@ -67,6 +77,8 @@ header, article, footer {
 		var token = '${_csrf.token}';
 		var header = '${_csrf.headerName}';
 		$(function() {
+			$(".button-collapse").sideNav();
+			
 			$(document).ajaxSend(function(e, xhr, options) {
 				xhr.setRequestHeader(header, token);
 			});

@@ -31,7 +31,7 @@ import com.kdev.app.domain.vo.UserVO;
 
 @RestController
 @RequestMapping(value="/upload")
-@Secured("ROLE_USER")
+@Secured({"ROLE_USER","ROLE_ADMIN"})
 public class UploadController {
 	
 	private static final Logger logger = LoggerFactory.getLogger(UploadController.class);
@@ -76,7 +76,7 @@ public class UploadController {
 	        // 파일 저장명 처리 (사용자 식별 아이디-20150702091941.확장자)
 	        SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMddHHmmss");
 	        String today= formatter.format(new Date());
-	        String modifyName = userVO.getId()+ "-" + today + "." + originalNameExtension;
+	        String modifyName = userVO.getId()+ "-" + today + "-" + originalName;
 	         
 	        // 임시저장된 파일을 서버에 저장한다
 	        multipartFile.transferTo(new File(path + modifyName));

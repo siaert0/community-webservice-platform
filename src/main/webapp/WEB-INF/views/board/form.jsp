@@ -36,22 +36,33 @@
 			<div class="col s12">
 				<select id="q_category" class="browser-default form-control">
 			      <option value="" disabled selected>카테고리를 선택해주세요</option>
-			      <option value="질문">질문</option>
-			      <option value="정보">정보</option>
+			      <option value="자바">자바</option>
+			      <option value="닷넷">닷넷</option>
+			      <option value="파이썬">파이썬</option>
+			      <option value="HTML5">HTML5</option>
+			      <option value="자바스크립트">자바스크립트</option>
+			      <option value="앵귤러JS">앵귤러JS</option>
+			      <option value="리액트JS">리액트JS</option>
+			      <option value="데이터베이스">데이터베이스</option>
+			      <option value="기타">기타</option>
 			    </select>
 			</div>
 			<div class="col s12"></div>
 			<div class="input-field col s12">
+				<b>제목</b>
 				<input id="q_title" name="q_title" type="text" class="form-control" placeholder="제목을 입력해주세요" autofocus/>
 			</div>
 			<div class="col s12"></div>
 			<div class="input-field col s12">
+				<b>내용</b>
 				<textarea id="q_content" name="q_content" class="form-control"></textarea>
 			</div>
 			<div class="col s12"></div>
 			<div class="input-field col s12">
+				<b>태그</b>
 				<div data-tags-input-name="tag" id="q_tags" class="tags form-control"></div>
 			</div>
+			<div class="col s12"></div>
 			<div class="input-field col s12 right-align">
 				<a class="waves-effect waves-light btn btn-flat" onclick="history.back();">뒤로가기</a>
 				<a class="waves-effect waves-light btn btn-flat" onclick="board_post();"><i class="material-icons">send</i></a>
@@ -62,7 +73,7 @@
 	</div>
 	</article>
 		<div class="fixed-action-btn click-to-toggle">
-		<a class="btn-floating btn-large red button-collapse hide-on-large-only" data-activates="nav-mobile">
+		<a class="btn-floating btn-large red waves-effect waves-light button-collapse hide-on-large-only" data-activates="nav-mobile">
 			<i class="material-icons">web</i>
 		</a>
 	</div>
@@ -152,7 +163,9 @@ $(function() {
 		lang: 'ko-KR',
 		callbacks: {
 		    onImageUpload: function(files) {
-		    	sendImage(files[0],this);
+		    	for(var i=0; i<files.length; i++){
+		    		sendImage(files[i], $(this));
+		    	}
 		      },
 		    onMediaDelete: function(target){
 		    	deleteImage(target[0].src);
@@ -267,7 +280,7 @@ function deleteImage(file){
       beforeSubmit: function(){
       },
       success: function(response){
-			Materialize.toast("정상적으로 업로드되었습니다.",3000,'green',function(){
+			Materialize.toast("정상적으로 삭제되었습니다.",3000,'green',function(){
 				
 			});
       },error: function(response){

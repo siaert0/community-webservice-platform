@@ -49,11 +49,15 @@ public class HomeController {
 			/**
 			 *  리다이렉트 되면 안되는 경우를 체크
 			 */
-			if(!(path.equals("/connect/kakao") || path.equals("/connect/facebook") || path.equals("/user"))){
+			if(!(path.equals("/connect/kakao") 
+					|| path.equals("/connect/facebook") 
+					|| path.equals("/user") 
+					|| path.equals("/signin/facebook") 
+					|| path.equals("/signin/kakao")
+					|| path.equals("/login"))){
 				session.setAttribute("redirectUrl", referer);
 			}
 		}
 		return "login";
 	}
-
 }

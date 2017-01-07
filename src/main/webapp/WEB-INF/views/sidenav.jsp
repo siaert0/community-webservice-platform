@@ -21,24 +21,33 @@
       </sec:authorize>
     </div></li>
     <li><a href="/"><i class="material-icons">home</i>홈</a></li>
+    <sec:authorize access="hasRole('ROLE_ADMIN')">
+    <li><a href="/admin" class="waves-effect"><i class="material-icons">settings</i>관리페이지</a></li>
+    </sec:authorize>
     <sec:authorize access="isAuthenticated()">
-    <c:if test="${user.nickname != '게스트'}">
-    <li><a href="/user/${user.id}"><i class="material-icons">account_box</i>회원정보수정</a></li>
-    <li><a href="#회원탈퇴" onclick="withdraw(${user.id});"><i class="material-icons">account_box</i>회원탈퇴</a></li>
-    </c:if>
-    <li><a href="/board/scrap"><i class="material-icons">share</i>스크랩</a></li>
-    <li><a href="/board"><i class="material-icons">create</i>글쓰기</a></li>
+    <li><a href="/user/${user.id}" class="waves-effect"><i class="material-icons">account_box</i>회원정보수정</a></li>
+    <li><a href="/board/scrap" class="waves-effect"><i class="material-icons">share</i>스크랩</a></li>
+    <li><a href="/board" class="waves-effect"><i class="material-icons">create</i>글쓰기</a></li>
     </sec:authorize>
     <li><div class="divider"></div></li>
     <li><a class="subheader">게시판</a></li>
-    <li><a href="/board/category/질문"><i class="material-icons">folder</i>질문</a></li>
-    <li><a href="/board/category/정보"><i class="material-icons">folder</i>정보</a></li>
+    <!-- 게시판 카테고리 영역  -->
+    <li><a href="/board/category/자바" class="waves-effect"><i class="material-icons">folder</i>자바</a></li>
+    <li><a href="/board/category/닷넷" class="waves-effect"><i class="material-icons">folder</i>닷넷</a></li>
+    <li><a href="/board/category/파이썬" class="waves-effect"><i class="material-icons">folder</i>파이썬</a></li>
+    <li><a href="/board/category/HTML5" class="waves-effect"><i class="material-icons">folder</i>HTML5</a></li>
+    <li><a href="/board/category/자바스크립트" class="waves-effect"><i class="material-icons">folder</i>자바스크립트</a></li>
+    <li><a href="/board/category/앵귤러JS" class="waves-effect"><i class="material-icons">folder</i>앵귤러JS</a></li>
+    <li><a href="/board/category/리액트JS" class="waves-effect"><i class="material-icons">folder</i>리액트JS</a></li>
+    <li><a href="/board/category/데이터베이스" class="waves-effect"><i class="material-icons">folder</i>데이터베이스</a></li>
+    <li><a href="/board/category/기타" class="waves-effect"><i class="material-icons">folder</i>기타</a></li>
+    <!--  -->
     <li><div class="divider"></div></li>
-    <li><a class="subheader">IT 관련 사이트</a></li>
-    <li><a href="http://stackoverflow.com/" target="_blank"><i class="material-icons">link</i>스택 오버플로우</a></li>
-    <li><a href="http://okky.kr/" target="_blank"><i class="material-icons">link</i>OKKY</a></li>
+    <li><a class="subheader" class="waves-effect">IT 관련 사이트</a></li>
+    <li><a href="http://stackoverflow.com/" target="_blank" class="waves-effect"><i class="material-icons">link</i>스택 오버플로우</a></li>
+    <li><a href="http://okky.kr/" target="_blank" class="waves-effect"><i class="material-icons">link</i>OKKY</a></li>
     <li><a class="subheader">개발 기록</a></li>
-    <li><a href="http://kdevkr.tistory.com/" target="_blank"><i class="material-icons">room</i>개발자 블로그</a></li>
+    <li><a href="http://kdevkr.tistory.com/" target="_blank" class="waves-effect"><i class="material-icons">room</i>개발자 블로그</a></li>
 </ul>
 <script	src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
 <script src="/assets/js/sockjs-0.3.4.min.js"></script>

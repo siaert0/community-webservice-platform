@@ -44,7 +44,7 @@
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-logging</artifactId>
 		</dependency>
-		
+
 		<!-- Spring Social -->
 		<dependency>
 			<groupId>org.springframework.social</groupId>

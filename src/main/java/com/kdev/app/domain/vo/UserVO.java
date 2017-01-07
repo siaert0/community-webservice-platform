@@ -54,6 +54,10 @@ public class UserVO {
 	@Temporal(TemporalType.TIMESTAMP) // 컬럼을 Timestamp 형식으로 지정하면서 현재 시간을 넣는다.
 	@Column(name="USER_JOINED", insertable=false, updatable=false, columnDefinition="TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
 	private Date joined;
+	
+	public boolean isRoleAdmin(){
+		return this.role.equals(Role.ROLE_ADMIN);
+	}
 }
 
 

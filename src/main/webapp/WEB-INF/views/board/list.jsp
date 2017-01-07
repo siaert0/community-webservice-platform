@@ -48,7 +48,7 @@
 				<div class="row">
 				<div dir-paginate="x in search_contents = (boardContents | orderBy:-index) | itemsPerPage:pagesize" pagination-id="boardpage" total-items="totalElements">
 					<div class="col s12">
-						<div class="card sticky-action hoverable hover border-flat" data-ng-click="move(x.id)" ng-class="{selectedBoard:x.selected != 0, commentedBoard:x.selected == 0 && x.comments.length > 0}">
+						<div class="card sticky-action hoverable hover border-flat" data-ng-click="move(x.id)" ng-class="{selectedBoard:x.selected != 0, commentedBoard:x.selected == 0 && x.comments.length > 0}" style="margin:0;">
 							<div class="card-content">
 								<span class="chip white left">
 							      <img style="height:100%;" ng-src="{{x.user.thumbnail}}">
@@ -87,13 +87,13 @@
 			<!-- 인증되지 않은 사용자의 메뉴 영역 -->
 			<sec:authorize access="isAnonymous()">
 				<div class="fixed-action-btn click-to-toggle">
-					<a class="btn-floating btn-large red">
+					<a class="btn-floating btn-large red waves-effect waves-light">
 						<i class="material-icons">menu</i>
 					</a>
 					<ul>
-					    <li><a class="btn-floating btn-large red button-collapse hide-on-large-only" data-activates="nav-mobile"><i class="material-icons">web</i>
+					    <li><a class="btn-floating btn-large red waves-effect waves-light button-collapse hide-on-large-only" data-activates="nav-mobile"><i class="material-icons">web</i>
 					</a></li>
-						<li><a class="btn-floating blue btn-large" href="${pageContext.request.contextPath}/login"><i class="material-icons">power</i></a></li>
+						<li><a class="btn-floating blue waves-effect waves-light btn-large" href="${pageContext.request.contextPath}/login"><i class="material-icons">power</i></a></li>
 					</ul>
 				</div>
 			</sec:authorize>
@@ -101,11 +101,11 @@
 			<!-- 인증된 사용자의 메뉴 영역 -->
 			<sec:authorize access="isAuthenticated()">
 				<div class="fixed-action-btn click-to-toggle">
-					<a class="btn-floating btn-large red"> <i class="material-icons">menu</i>
+					<a class="btn-floating btn-large red waves-effect waves-light" > <i class="material-icons">menu</i>
 					</a>
 					<ul>
-						<li><a href="#" data-activates="nav-mobile" class="btn-floating btn-large red button-collapse hide-on-large-only"><i class="material-icons">web</i></a></li>
-						<li><a class="btn-floating blue btn-large" href="/board/"><i class="material-icons">add</i></a></li>
+						<li><a href="#" data-activates="nav-mobile" class="btn-floating btn-large red waves-effect waves-light button-collapse hide-on-large-only"><i class="material-icons">web</i></a></li>
+						<li><a class="btn-floating blue btn-large waves-effect waves-light" href="/board/"><i class="material-icons">add</i></a></li>
 					</ul>
 	
 				</div>

@@ -64,7 +64,7 @@ public class BoardController {
 	 * @method		: board_form
 	 * @description	: 게시물 작성 페이지 호출, 로그인된 유저만 접근
 	 */
-	@Secured(value="ROLE_USER")
+	@Secured({"ROLE_USER","ROLE_ADMIN"})
 	@RequestMapping(value="/board", method=RequestMethod.GET)
 	public String board_form(Model model){
 		return "board/form";
@@ -105,7 +105,7 @@ public class BoardController {
 	 * @method		: createBoard
 	 * @description	: 게시물 작성 서비스
 	 */
-	@Secured(value="ROLE_USER")
+	@Secured({"ROLE_USER","ROLE_ADMIN"})
 	@RequestMapping(value="/board", method=RequestMethod.POST, produces=MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Object> createBoard(@RequestBody @Valid BoardDTO.Create createBoard, BindingResult result, Authentication authentication){
 		
@@ -162,7 +162,7 @@ public class BoardController {
 	 * @method		: updateBoard
 	 * @description	: 게시물 수정하기 서비스
 	 */
-	@Secured(value="ROLE_USER")
+	@Secured({"ROLE_USER","ROLE_ADMIN"})
 	@RequestMapping(value="/board/{id}", method=RequestMethod.POST, produces=MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Object> updateBoard(@PathVariable int id, @RequestBody @Valid BoardDTO.Update update, BindingResult result, Authentication authentication){
 		
@@ -182,7 +182,10 @@ public class BoardController {
 		
 		Board boardVO = boardRepositoryService.findBoardOne(id);
 		
-		if(!(boardVO.getUser().getId().equals(userVO.getId())))
+		//관리자일 경우 수정처리
+		if(userVO.isRoleAdmin()){
+
+		}else if(!(boardVO.getUser().getId().equals(userVO.getId())))
 			throw new UserNotEqualException();
 		
 		boardVO.setCategory(update.getCategory());
@@ -200,7 +203,7 @@ public class BoardController {
 	 * @method		: deleteBoard
 	 * @description	: 게시물 삭제 서비스, 관련된 댓글, 스크랩, 추천 모두 삭제
 	 */
-	@Secured(value="ROLE_USER")
+	@Secured({"ROLE_USER","ROLE_ADMIN"})
 	@RequestMapping(value="/board/{id}", method=RequestMethod.DELETE, produces=MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Object> deleteBoard(@PathVariable int id, Authentication authentication){
 		
@@ -208,6 +211,12 @@ public class BoardController {
 		UserVO userVO = modelMapper.map(userDetails, UserVO.class);
 		Board boardVO = boardRepositoryService.findBoardOne(id);
 		
+		//관리자일 경우 삭제처리
+		if(userVO.isRoleAdmin()){
+			boardRepositoryService.deleteBoard(id);
+			return new ResponseEntity<Object>(boardVO, HttpStatus.ACCEPTED);
+		}
+			
 		// 작성자 여부 체크
 		if(!(boardVO.getUser().getId().equals(userVO.getId())))
 			throw new UserNotEqualException();
@@ -227,7 +236,7 @@ public class BoardController {
 	 * @method		: createComment
 	 * @description	: 댓글 작성 서비스
 	 */
-	@Secured(value="ROLE_USER")
+	@Secured({"ROLE_USER","ROLE_ADMIN"})
 	@RequestMapping(value="/comment", method=RequestMethod.POST, produces=MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Object> createComment(@RequestBody @Valid CommentDTO.Create createComment, BindingResult result, Authentication authentication){
 		if(result.hasErrors()){
@@ -258,15 +267,17 @@ public class BoardController {
 	 * @method		: updateComment
 	 * @description	: 댓글 수정하기 서비스 [검증 부분 추가 필요]
 	 */
-	@Secured(value="ROLE_USER")
+	@Secured({"ROLE_USER","ROLE_ADMIN"})
 	@RequestMapping(value="/comment/{id}", method=RequestMethod.POST, produces=MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Object> updateComment(@PathVariable int id, @RequestBody CommentDTO.Update update, Authentication authentication){
 		UserDetailsVO userDetails = (UserDetailsVO)authentication.getPrincipal();
 		UserVO userVO = modelMapper.map(userDetails, UserVO.class);
 		Comment commentVO = boardRepositoryService.findCommentOne(id);
 		
-		// 작성자 여부 체크
-		if(!(commentVO.getUser().getId().equals(userVO.getId())))
+		//관리자일 경우 수정처리
+		if(userVO.isRoleAdmin()){
+
+		}else if(!(commentVO.getUser().getId().equals(userVO.getId())))
 			throw new UserNotEqualException();
 		
 		commentVO.setDescription(update.getDescription());
@@ -280,12 +291,18 @@ public class BoardController {
 	 * @method		: deleteComment
 	 * @description	: 댓글 삭제하기 서비스
 	 */
-	@Secured(value="ROLE_USER")
+	@Secured({"ROLE_USER","ROLE_ADMIN"})
 	@RequestMapping(value="/comment/{id}", method=RequestMethod.DELETE, produces=MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Object> deleteComment(@PathVariable int id, Authentication authentication){
 		UserDetailsVO userDetails = (UserDetailsVO)authentication.getPrincipal();
 		UserVO userVO = modelMapper.map(userDetails, UserVO.class);
 		Comment commentVO = boardRepositoryService.findCommentOne(id);
+		
+		//관리자일 경우 삭제처리
+		if(userVO.isRoleAdmin()){
+			boardRepositoryService.deleteComment(id);
+			return new ResponseEntity<Object>(commentVO, HttpStatus.ACCEPTED);
+		}
 		
 		// 작성자 여부 체크
 		if(!(commentVO.getUser().getId().equals(userVO.getId())))
@@ -306,7 +323,7 @@ public class BoardController {
 	 * @method		: checkThumb
 	 * @description	: 게시물 추천 및 취소 서비스
 	 */
-	@Secured("ROLE_USER")
+	@Secured({"ROLE_USER","ROLE_ADMIN"})
 	@RequestMapping(value="/board/thumb", method=RequestMethod.POST, produces=MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Object> checkThumb(@RequestBody BOARD_USER_CP_ID BOARD_USER_CP_ID, Authentication authentication){
 		UserDetailsVO userDetails = (UserDetailsVO)authentication.getPrincipal();
@@ -328,7 +345,7 @@ public class BoardController {
 	 * @method		: checkScrap
 	 * @description	: 게시물 스크랩 서비스
 	 */
-	@Secured("ROLE_USER")
+	@Secured({"ROLE_USER","ROLE_ADMIN"})
 	@RequestMapping(value="/board/scrap", method=RequestMethod.POST, produces=MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Object> checkScrap(@RequestBody BOARD_USER_CP_ID BOARD_USER_CP_ID, Authentication authentication){
 		UserDetailsVO userDetails = (UserDetailsVO)authentication.getPrincipal();
@@ -343,7 +360,7 @@ public class BoardController {
 	 * @method		: deleteScrap
 	 * @description	: 게시물 스크랩 취소 서비스
 	 */
-	@Secured("ROLE_USER")
+	@Secured({"ROLE_USER","ROLE_ADMIN"})
 	@RequestMapping(value="/board/scrap", method=RequestMethod.DELETE, produces=MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Object> deleteScrap(@RequestBody BOARD_USER_CP_ID scrapId, Authentication authentication){
 		UserDetailsVO userDetails = (UserDetailsVO)authentication.getPrincipal();
@@ -358,7 +375,7 @@ public class BoardController {
 	 * @method		: findScrapUser
 	 * @description	: 사용자가 스크랩한 게시물 페이지 호출
 	 */
-	@Secured("ROLE_USER")
+	@Secured({"ROLE_USER","ROLE_ADMIN"})
 	@RequestMapping(value="/board/scrap", method=RequestMethod.GET)
 	public String findScrapUser(Model model, Authentication authentication){
 		UserDetailsVO userDetails = (UserDetailsVO)authentication.getPrincipal();
@@ -372,7 +389,7 @@ public class BoardController {
 	 * @method		: findBoard
 	 * @description	: 스크랩 게시물 가져오기 & 페이징
 	 */
-	@Secured("ROLE_USER")
+	@Secured({"ROLE_USER","ROLE_ADMIN"})
 	@RequestMapping(value="/board/scrap/{user}", method=RequestMethod.GET, produces=MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Object> findScrap(@PathVariable String user, @PageableDefault(sort = { "board" }, direction = Direction.DESC, size = 5) Pageable pageable, Authentication authentication){
 		Page<Scrap> page = null;

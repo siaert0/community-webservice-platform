@@ -39,14 +39,19 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.SessionAttributes;
 
+import com.kdev.app.domain.dto.RestrictionDTO;
 import com.kdev.app.domain.dto.UserDTO;
+import com.kdev.app.domain.pk.PROVIDER_USER_CP_ID;
+import com.kdev.app.domain.vo.Restriction;
 import com.kdev.app.domain.vo.UserDetailsVO;
 import com.kdev.app.domain.vo.UserVO;
 import com.kdev.app.enums.SocialProvider;
 import com.kdev.app.exception.badgateway.ValidErrorException;
 import com.kdev.app.exception.forbidden.UserNotEqualException;
 import com.kdev.app.exception.notacceptable.EmailDuplicatedException;
+import com.kdev.app.exception.notfound.UserNotFoundException;
 import com.kdev.app.intercepter.LoginAuthenticationSuccessHandler;
+import com.kdev.app.repository.RestrictionRepository;
 import com.kdev.app.service.UserRepositoryService;
 
 /**
@@ -73,6 +78,8 @@ public class UserController {
 	private PasswordEncoder passwordEncoder;
 	@Autowired 
 	private ModelMapper modelMapper;
+	@Autowired
+	private RestrictionRepository restrictionRepository;
 	
 	@RequestMapping(value="/signin/facebook", method= RequestMethod.GET)
 	public String FacebookUserView(HttpServletRequest request, HttpServletResponse response, Model model, HttpSession session) throws Exception{
@@ -84,8 +91,18 @@ public class UserController {
 		org.springframework.social.facebook.api.User facebookUser = facebook.fetchObject("me", org.springframework.social.facebook.api.User.class, fields);
 		
 		connectionRepository.removeConnection(connection.getKey());
-
+		
+		//제재여부 확인
+		PROVIDER_USER_CP_ID PROVIDER_USER_CP_ID = new PROVIDER_USER_CP_ID();
+		PROVIDER_USER_CP_ID.setUserid(facebookUser.getId());
+		PROVIDER_USER_CP_ID.setProvider(SocialProvider.Facebook);
+		Restriction restriction = restrictionRepository.findOne(PROVIDER_USER_CP_ID);
+		
+		if(restriction != null)
+			return "user/restriction";
+		
 		UserVO userVO = userRepositroyService.findUserById(facebookUser.getId());
+		//가입여부 확인
 		if(userVO != null){
 			UserDetailsVO userDetailsVO = new UserDetailsVO(userVO);
 			Authentication authentication = new UsernamePasswordAuthenticationToken(userDetailsVO, null, userDetailsVO.getAuthorities());
@@ -113,9 +130,18 @@ public class UserController {
 			
 		KakaoProfile KakaoUser = kakao.userOperation().getUserProfile();
 		connectionRepository.removeConnection(connection.getKey());
-
-		UserVO userVO = userRepositroyService.findUserById(String.valueOf(KakaoUser.getId()));
 		
+		//제재여부 확인
+		PROVIDER_USER_CP_ID PROVIDER_USER_CP_ID = new PROVIDER_USER_CP_ID();
+		PROVIDER_USER_CP_ID.setUserid(String.valueOf(KakaoUser.getId()));
+		PROVIDER_USER_CP_ID.setProvider(SocialProvider.Kakao);
+		Restriction restriction = restrictionRepository.findOne(PROVIDER_USER_CP_ID);
+		
+		if(restriction != null)
+			return "user/restriction";
+		
+		UserVO userVO = userRepositroyService.findUserById(String.valueOf(KakaoUser.getId()));
+		//가입여부 확인
 		if(userVO != null){
 			UserDetailsVO userDetailsVO = new UserDetailsVO(userVO);
 			Authentication authentication = new UsernamePasswordAuthenticationToken(userDetailsVO, null, userDetailsVO.getAuthorities());
@@ -148,11 +174,14 @@ public class UserController {
 			throw new ValidErrorException(errors.toString());
 		}
 		UserVO newUser = userRepositroyService.signInUser(user);
+		UserDetailsVO userDetailsVO = new UserDetailsVO(newUser);
+		Authentication authentication = new UsernamePasswordAuthenticationToken(userDetailsVO, null, userDetailsVO.getAuthorities());
+		SecurityContextHolder.getContext().setAuthentication(authentication);
 		return new ResponseEntity<Object>(newUser, HttpStatus.CREATED);
 	}
 	
 	// 회원정보 수정 폼
-	@Secured("ROLE_USER")
+	@Secured({"ROLE_USER","ROLE_ADMIN"})
 	@RequestMapping(value="/user/{id}", method = RequestMethod.GET)
 	public String updateForm(@PathVariable String id, Authentication authentication){
 		UserDetailsVO userDetails = (UserDetailsVO)authentication.getPrincipal();
@@ -164,7 +193,7 @@ public class UserController {
 	}
 	
 	// 회원정보 수정
-	@Secured("ROLE_USER")
+	@Secured({"ROLE_USER","ROLE_ADMIN"})
 	@RequestMapping(value="/user/{id}", method= RequestMethod.POST, produces=MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Object> updateUser(@PathVariable String id, @Valid UserDTO.Update user, BindingResult result, Authentication authentication){
 
@@ -175,8 +204,9 @@ public class UserController {
 				map.put("ErrorField", error.getField());
 				map.put("ErrorMessage", error.getDefaultMessage());
 				errors.add(map);
-			}
+				
 			throw new ValidErrorException(errors.toString());
+			}
 		}
 		
 		UserDetailsVO userDetails = (UserDetailsVO)authentication.getPrincipal();
@@ -232,5 +262,10 @@ public class UserController {
 		userRepositroyService.withDraw(id);
 		SecurityContextHolder.getContext().setAuthentication(null);
 		return new ResponseEntity<Object>(HttpStatus.OK);
+	}
+	
+	@RequestMapping(value = "/user/restriction", method = RequestMethod.GET)
+	public String restriction(Model model) {
+		return "user/restriction";
 	}
 }

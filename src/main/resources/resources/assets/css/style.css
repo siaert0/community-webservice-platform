@@ -7693,3 +7693,7 @@ select.form-control:not([size]):not([multiple]){
 a:hover{
 	text-decoration: none;
 }
+p img{
+	max-width:100%;
+	height:auto;
+}

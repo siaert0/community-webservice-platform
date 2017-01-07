@@ -132,11 +132,15 @@ header, article, footer {
 
 		function register() {
 			if (isEmail == false) {
-				alert("이메일 중복 확인을 하셔야 합니다.");
+	  			Materialize.toast("이메일 중복확인을 하셔야합니다",3000,'red',function(){
+	
+				});
 				return;
 			}
 			if ($('#password').val() == "" || $('#password').val() == null) {
-				alert("패스워드를 반드시 입력해주세요.");
+	  			Materialize.toast("패스워드를 입력해주세요 (8자 이상)",3000,'red',function(){
+					
+				});
 				$('#password').focus();
 				return;
 			}
@@ -150,12 +154,15 @@ header, article, footer {
 				data : AuthObject,
 				dataType : 'JSON',
 				success : function(response) {
-					alert("회원가입 되었습니다.");
-					location.href = "${pageContext.request.contextPath}/login"
+		  			Materialize.toast("회원가입 되었습니다.",3000,'red',function(){
+						
+					});
+		  			location.href="/";
 				},
 				error : function(response) {
-					console.log(response);
-					alert("이메일 형식과 비밀번호 8자리 이상 입력해주세요");
+		  			Materialize.toast("오류가 발생하였습니다. 개발자 도구를 통해 확인해주세요",3000,'red',function(){
+						console.log(response);
+					});
 				}
 			});
 		}

@@ -31,66 +31,24 @@
 			<div class="container-fluid">
 				<!-- 게시물 페이지네이션 영역 -->
 				<div class="row center-align">
-				<p></p>
-				<blockquote>
-					<div class="col s12 m6">
-						<span class="chip red lighten-2 hover white-text" style="border-radius:0;">사용자 등록수</span>
-						<span class="chip grey darken-2 hover white-text" style="border-radius:0;">${userCount}명</span>
-					</div>
-					<div class="col s12 m6">
-						<span class="chip red lighten-2 hover white-text" style="border-radius:0;">현재 메모리 사용량</span>
-						<span class="chip grey darken-2 hover white-text" style="border-radius:0;">${systemMemory}MB</span>
-					</div>
-				</blockquote>
+				<h3 style="margin-top:50px;">사용자 제재  안내</h3>	
 				</div>
 				
 				<!-- 게시물 영역 -->
 				<div class="container">
 					<div class="collection">
 						<div class="collection-item">
-							<p><b>구현 및 적용</b></p>
-							<p>Spring Boot 1.4.3</p>
-							<p>Spring Security</p>
-							<p>Spring Social Facebook, Kakao</p>
-							<p>Spring Data JPA & Hibernate</p>
-							<p>Spring Websocket - Sockjs - Stomp : <span class="red-text lighten-2-text"> 구독자수 표현방법이 있나?...</span></p>
-							<p>Lombok : Getter Setter</p>
-							<p>ModelMapper</p>
-							<hr>
-							<p><b>추가 요구사항</b></p>
-							<p>1. 비즈니스 로직 에러처리 개선 필요..... [임시적 개선 완료]</p>
-							<p>2. 관리자 (게시물 수정 삭제 및 회원 제재 기능 적용)</p>
+							<p class="center"><b>죄송합니다. 해당계정은 다음과 같은 사유로 인하여 제재 되었음을 알려드립니다.</b></p>
+							<p>제재 사유 : 미구현</p>
+							<p>제재 해제일자 : 미구현</p>
 						</div>
 					</div>
 				</div>
-			</div>
-			<!-- 인증되지 않은 사용자의 메뉴 영역 -->
-			<sec:authorize access="isAnonymous()">
+			</div>		
 				<div class="fixed-action-btn click-to-toggle">
-					<a class="btn-floating btn-large red waves-effect waves-light">
-						<i class="material-icons">menu</i>
+					<a class="btn-floating btn-large red button-collapse hide-on-large-only" data-activates="nav-mobile"><i class="material-icons">web</i>
 					</a>
-					<ul>
-					    <li><a class="btn-floating btn-large red waves-effect waves-light button-collapse hide-on-large-only" data-activates="nav-mobile"><i class="material-icons">web</i>
-					</a></li>
-						<li><a class="btn-floating blue btn-large waves-effect waves-light" href="${pageContext.request.contextPath}/login"><i class="material-icons">power</i></a></li>
-					</ul>
 				</div>
-			</sec:authorize>
-			
-			<!-- 인증된 사용자의 메뉴 영역 -->
-			<sec:authorize access="isAuthenticated()">
-				<div class="fixed-action-btn click-to-toggle">
-					<a class="btn-floating btn-large red waves-effect waves-light">
-						<i class="material-icons">menu</i>
-					</a>
-					<ul>
-					    <li><a class="btn-floating waves-effect waves-light btn-large red button-collapse hide-on-large-only" data-activates="nav-mobile"><i class="material-icons">web</i>
-					</a></li>
-						<li><a class="btn-floating waves-effect waves-light blue btn-large" href="/board/"><i class="material-icons">add</i></a></li>
-					</ul>
-				</div>
-			</sec:authorize>
 		</article>
 		
 		<!-- 푸터 영역 -->
