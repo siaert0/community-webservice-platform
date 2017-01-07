@@ -227,6 +227,7 @@ public class UserController {
 	public @ResponseBody ResponseEntity<Object> checkByEmail(
 			@Valid UserDTO.EmailCheck email,
 			BindingResult result) {
+		
 		if(result.hasErrors()){
 			List<Object> errors = new LinkedList<Object>();
 			for(FieldError error : result.getFieldErrors()){

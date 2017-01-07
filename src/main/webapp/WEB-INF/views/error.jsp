@@ -8,7 +8,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport"
 	content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<title>IT Stacks</title>
+<title>스프링 웹 애플리케이션</title>
 <!--Import Google Icon Font-->
 <link href="http://fonts.googleapis.com/icon?family=Material+Icons"
 	rel="stylesheet">
@@ -24,17 +24,17 @@
 	<article>
 		<div class="valign-wrapper" style="width: 100%; height: 100%;">
 			<div class="valign center" style="margin: auto;">
-					<c:if test="${empty errorcode}">
+					<c:if test="${empty ExceptionResponse}">
 						<h5>ERROR : 404</h5>
 						<h5>Exception : 잘못된 접근</h5>
 					</c:if>
-					<c:if test="${not empty errorcode}">
-						<h5>ERROR : ${errorcode}</h5>
-						<h5>Exception : ${exception}</h5>
+					<c:if test="${not empty ExceptionResponse}">
+						<h5>ERROR : ${request}</h5>
+						<h5>Exception : ${reason}</h5>
 					</c:if>
 					<p>
 				<a href="/"
-					class="btn-large red waves-effect waves-light">되돌아가기
+					class="btn-large red waves-effect waves-light white-text">되돌아가기
 				</a>
 				</p>
 			</div>

@@ -33,13 +33,8 @@
 				<div class="row center-align">
 				<p></p>
 				<blockquote>
-					<div class="col s12 m6">
-						<span class="chip red lighten-2 hover white-text" style="border-radius:0;">사용자 등록수</span>
-						<span class="chip grey darken-2 hover white-text" style="border-radius:0;">${userCount}명</span>
-					</div>
-					<div class="col s12 m6">
-						<span class="chip red lighten-2 hover white-text" style="border-radius:0;">현재 메모리 사용량</span>
-						<span class="chip grey darken-2 hover white-text" style="border-radius:0;">${systemMemory}MB</span>
+					<div class="col s12">
+						<span class="chip red lighten-2 white-text" style="border-radius:0; width:100%;">현재 개발 및 적용 현황은 다음과 같습니다.</span>
 					</div>
 				</blockquote>
 				</div>
@@ -48,18 +43,25 @@
 				<div class="container">
 					<div class="collection">
 						<div class="collection-item">
-							<p><b>구현 및 적용</b></p>
+							<p><b>시스템 구성</b></p>
 							<p>Spring Boot 1.4.3</p>
 							<p>Spring Security</p>
 							<p>Spring Social Facebook, Kakao</p>
 							<p>Spring Data JPA & Hibernate</p>
-							<p>Spring Websocket - Sockjs - Stomp : <span class="red-text lighten-2-text"> 구독자수 표현방법이 있나?...</span></p>
+							<p>Spring Websocket - Sockjs - Stomp</p>
 							<p>Lombok : Getter Setter</p>
-							<p>ModelMapper</p>
+							<p>ModelMapper : Object Mapping</p>
 							<hr>
-							<p><b>추가 요구사항</b></p>
-							<p>1. 비즈니스 로직 에러처리 개선 필요..... [임시적 개선 완료]</p>
-							<p>2. 관리자 (게시물 수정 삭제 및 회원 제재 기능 적용)</p>
+							<p><b>구현 및 적용 현황</b></p>
+							<p>1. 회원가입 및 로그인 - Spring Security & Social(Facebook, Kakao)</p>
+							<p>2. 회원정보 수정 및 탈퇴 - 탈퇴 시 모든 데이터 삭제</p>
+							<p>3. 게시판 엔터티 및 페이징 기능 - JPA & AngularJS dirPagination</p>
+							<p>4. 게시물 스크랩 및 추천 기능</p>
+							<p>5. 게시판 에디터 적용 - Summernote</p>
+							<p>6. 이미지 업로드 기능 - Summernote & Multipart</p>
+							<p>7. 관리자 기능 부여 - 게시물 수정 및 삭제</p>
+							<p>8. 관리자 기능 추가 - 회원 제재</p>
+							<p>9. 게시물 단위 실시간 메시지 구독 - Spring Websocket & sockjs & stomp</p>
 						</div>
 					</div>
 				</div>

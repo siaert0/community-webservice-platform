@@ -73,6 +73,7 @@ public class AdminController {
 		model.addAttribute("facebookUser", userRepositroy.findBySocialProvider(SocialProvider.Facebook).size());
 		model.addAttribute("kakaoUser", userRepositroy.findBySocialProvider(SocialProvider.Kakao).size());
 		model.addAttribute("systemMemory", (Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory())/(1024*1024));
+		model.addAttribute("restrictCount", restrictionRepository.findAll().size());
 		model.addAttribute("boardCount", boardRepository.findAll().size());
 		model.addAttribute("commentCount", commentRepository.findAll().size());
 		model.addAttribute("thumbCount", thumbRepository.findAll().size());

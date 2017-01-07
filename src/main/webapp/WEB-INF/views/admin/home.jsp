@@ -34,32 +34,32 @@
 				<h3 style="margin-top:50px;"></h3>
 				<blockquote>
 					<div class="col s12 m6 l3">
-						<span class="chip red lighten-2 hover white-text" style="border-radius:0; padding-right:0; width:100%;">전체 사용자수
+						<span class="chip green lighten-2 hover white-text" style="border-radius:0; padding-right:0; width:100%;">전체 사용자수
 							<span class="chip grey darken-2 hover white-text right" style="border-radius:0; margin-right:0;">${userCount}명</span>
 						</span>
 					</div>
 					<div class="col s12 m6 l3">
-						<span class="chip red lighten-2 hover white-text" style="border-radius:0; padding-right:0; width:100%;">페이스북 사용자
+						<span class="chip blue lighten-2 hover white-text" style="border-radius:0; padding-right:0; width:100%;">페이스북 사용자
 							<span class="chip grey darken-2 hover white-text right" style="border-radius:0; margin-right:0;">${facebookUser}명</span>
 						</span>
 					</div>
 					<div class="col s12 m6 l3">
-						<span class="chip red lighten-2 hover white-text" style="border-radius:0; padding-right:0; width:100%;">카카오톡 사용자
+						<span class="chip orange lighten-2 hover white-text" style="border-radius:0; padding-right:0; width:100%;">카카오톡 사용자
 							<span class="chip grey darken-2 hover white-text right" style="border-radius:0; margin-right:0;">${kakaoUser}명</span>
 						</span>
 					</div>
 					<div class="col s12 m6 l3">
-						<span class="chip red lighten-2 hover white-text" style="border-radius:0; padding-right:0; width:100%;">제재 사용자
-							<span class="chip grey darken-2 hover white-text right" style="border-radius:0; margin-right:0;">${kakaoUser}명</span>
+						<span class="chip purple lighten-2 hover white-text" style="border-radius:0; padding-right:0; width:100%;">제재 사용자
+							<span class="chip grey darken-2 hover white-text right" style="border-radius:0; margin-right:0;">${restrictCount}명</span>
 						</span>
 					</div>
 					<div class="col s12 m6 l3">
-						<span class="chip red lighten-2 hover white-text" style="border-radius:0; padding-right:0; width:100%;">현재 세션수
-							<span class="chip grey darken-2 hover white-text right" style="border-radius:0; margin-right:0;">${currentSessionCount}명</span>
+						<span class="chip pink lighten-2 hover white-text" style="border-radius:0; padding-right:0; width:100%;">전체 게시물수
+							<span class="chip grey darken-2 hover white-text right" style="border-radius:0; margin-right:0;">${boardCount}개</span>
 						</span>
 					</div>
 					<div class="col s12 m6 l3">
-						<span class="chip red lighten-2 hover white-text" style="border-radius:0; padding-right:0; width:100%;">제재 사용자
+						<span class="chip teal lighten-2 hover white-text" style="border-radius:0; padding-right:0; width:100%;">현재 세션수
 							<span class="chip grey darken-2 hover white-text right" style="border-radius:0; margin-right:0;">${currentSessionCount}명</span>
 						</span>
 					</div>
@@ -107,7 +107,7 @@
 					<div class="col s12 m6">
 					<div class="collection">
 						<div class="collection-item">
-							<b>영구 제재 리스트 {{totalRestrictList}}개</b>
+							<b>제재된 리스트 {{totalRestrictList}}개</b>
 						</div>
 							<div class="collection-item">
 							<p dir-paginate="x in search_contents = (restrictList) | itemsPerPage:pagesize" pagination-id="restrictpage" total-items="totalRestrictList">
