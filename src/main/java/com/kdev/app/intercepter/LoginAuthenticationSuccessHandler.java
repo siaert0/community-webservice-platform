@@ -53,7 +53,7 @@ public class LoginAuthenticationSuccessHandler extends SavedRequestAwareAuthenti
 		try{
 		if(restrictionRepository.findOne(PROVIDER_USER_CP_ID) != null){
 			SecurityContextHolder.getContext().setAuthentication(null);
-			response.sendRedirect("/user/restriction");
+			response.sendRedirect("/user/restriction/"+userDetails.getId());
 			return;
 		}
 		}catch(NullPointerException e){

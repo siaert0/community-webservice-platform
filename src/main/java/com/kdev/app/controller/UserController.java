@@ -93,13 +93,10 @@ public class UserController {
 		connectionRepository.removeConnection(connection.getKey());
 		
 		//제재여부 확인
-		PROVIDER_USER_CP_ID PROVIDER_USER_CP_ID = new PROVIDER_USER_CP_ID();
-		PROVIDER_USER_CP_ID.setUserid(facebookUser.getId());
-		PROVIDER_USER_CP_ID.setProvider(SocialProvider.Facebook);
-		Restriction restriction = restrictionRepository.findOne(PROVIDER_USER_CP_ID);
+		Restriction restriction = restrictionRepository.findOne(new PROVIDER_USER_CP_ID(SocialProvider.Facebook, facebookUser.getId()));
 		
 		if(restriction != null)
-			return "user/restriction";
+			return "redirect:/user/restriction/"+facebookUser.getId();
 		
 		UserVO userVO = userRepositroyService.findUserById(facebookUser.getId());
 		//가입여부 확인
@@ -132,13 +129,10 @@ public class UserController {
 		connectionRepository.removeConnection(connection.getKey());
 		
 		//제재여부 확인
-		PROVIDER_USER_CP_ID PROVIDER_USER_CP_ID = new PROVIDER_USER_CP_ID();
-		PROVIDER_USER_CP_ID.setUserid(String.valueOf(KakaoUser.getId()));
-		PROVIDER_USER_CP_ID.setProvider(SocialProvider.Kakao);
-		Restriction restriction = restrictionRepository.findOne(PROVIDER_USER_CP_ID);
+		Restriction restriction = restrictionRepository.findOne(new PROVIDER_USER_CP_ID(SocialProvider.Kakao, String.valueOf(KakaoUser.getId())));
 		
 		if(restriction != null)
-			return "user/restriction";
+			return "redirect:/user/restriction/"+String.valueOf(KakaoUser.getId());
 		
 		UserVO userVO = userRepositroyService.findUserById(String.valueOf(KakaoUser.getId()));
 		//가입여부 확인
@@ -264,8 +258,21 @@ public class UserController {
 		return new ResponseEntity<Object>(HttpStatus.OK);
 	}
 	
-	@RequestMapping(value = "/user/restriction", method = RequestMethod.GET)
-	public String restriction(Model model) {
+	@RequestMapping(value = "/user/restriction/{id}", method = RequestMethod.GET)
+	public String restriction(Model model, @PathVariable String id) {
+		UserVO userVO = userRepositroyService.findUserById(id);
+		if(userVO == null)
+			throw new UserNotFoundException("");
+		Restriction restriction = null;
+		try{
+			restriction = restrictionRepository.findOne(new PROVIDER_USER_CP_ID(userVO.getSocialProvider(), userVO.getId()));
+		}catch(NullPointerException e){
+			return "error";
+		}
+		
+		if(restriction != null)
+			model.addAttribute("restriction", restriction);
+		
 		return "user/restriction";
 	}
 }

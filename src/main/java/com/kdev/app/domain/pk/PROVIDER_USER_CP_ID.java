@@ -22,4 +22,12 @@ public class PROVIDER_USER_CP_ID implements Serializable {
 
 	@Column(name = "USER_ID")
 	private String userid;
+
+	public PROVIDER_USER_CP_ID(SocialProvider provider, String userid) {
+		this.provider = provider;
+		this.userid = userid;
+	}
+
+	public PROVIDER_USER_CP_ID() {
+	}
 }

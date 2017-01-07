@@ -39,8 +39,8 @@
 					<div class="collection">
 						<div class="collection-item">
 							<p class="center"><b>죄송합니다. 해당계정은 다음과 같은 사유로 인하여 제재 되었음을 알려드립니다.</b></p>
-							<p>제재 사유 : 미구현</p>
-							<p>제재 해제일자 : 미구현</p>
+							<p>제재 사유 : ${restriction.reason}</p>
+							<p>제재 해제일자 : ${restriction.released}</p>
 						</div>
 					</div>
 				</div>
