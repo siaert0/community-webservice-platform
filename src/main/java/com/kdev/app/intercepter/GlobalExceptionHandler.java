@@ -1,5 +1,7 @@
 package com.kdev.app.intercepter;
 
+import java.util.Date;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -39,9 +41,11 @@ public class GlobalExceptionHandler {
 		String reason = annotation.reason();
 		
 		ExceptionResponse exceptionResponse = new ExceptionResponse();
-		exceptionResponse.setRequest(request.getRequestURI());
+		exceptionResponse.setPath(request.getRequestURI());
 		exceptionResponse.setStatus(httpStatus.name());
-		exceptionResponse.setReason(reason);
+		exceptionResponse.setError(reason);
+		exceptionResponse.setException(exception.getClass().getName());
+		exceptionResponse.setTimestamp(new Date().toString());
 		
 		ModelAndView mav = new ModelAndView(DEFAULT_VIEW);
 		mav.setStatus(httpStatus);
@@ -55,9 +59,11 @@ public class GlobalExceptionHandler {
 		String reason = annotation.reason();
 		
 		ExceptionResponse exceptionResponse = new ExceptionResponse();
-		exceptionResponse.setRequest(request.getRequestURI());
+		exceptionResponse.setPath(request.getRequestURI());
 		exceptionResponse.setStatus(httpStatus.name());
-		exceptionResponse.setReason(reason);
+		exceptionResponse.setError(reason);
+		exceptionResponse.setException(exception.getClass().getName());
+		exceptionResponse.setTimestamp(new Date().toString());
 		return new ResponseEntity<Object>(exceptionResponse, httpStatus);
 	}
 	
@@ -67,11 +73,11 @@ public class GlobalExceptionHandler {
 		,NotCreatedException.class, NotUpdatedException.class
 		,EmailDuplicatedException.class})
 	public Object runtimeException(HttpServletRequest request, HttpServletResponse response, RuntimeException exception){
-		String RequestType = request.getHeader("X-Requested-With");	
-		if(RequestType != null && !RequestType.equals("XMLHttpRequest")){
-			return this.defaultExceptionHandler(request, exception);
-		}else{
+		String RequestType = request.getHeader("X-Requested-With");
+		if(RequestType != null && RequestType.equals("XMLHttpRequest")){
 			return ajaxExceptionHandler(request, exception);
+		}else{
+			return this.defaultExceptionHandler(request, exception);
 		}
 	}
 	
@@ -82,9 +88,11 @@ public class GlobalExceptionHandler {
 			ModelAndView mav = new ModelAndView(DEFAULT_VIEW);
 			mav.setStatus(HttpStatus.BAD_GATEWAY);
 			ExceptionResponse exceptionResponse = new ExceptionResponse();
-			exceptionResponse.setRequest(request.getRequestURI());
+			exceptionResponse.setPath(request.getRequestURI());
 			exceptionResponse.setStatus(HttpStatus.BAD_GATEWAY.name());
-			exceptionResponse.setReason(exception.getValid());
+			exceptionResponse.setError(exception.getValid());
+			exceptionResponse.setException(exception.getClass().getName());
+			exceptionResponse.setTimestamp(new Date().toString());
 			mav.addObject(exceptionResponse);
 			return mav;
 		}else{

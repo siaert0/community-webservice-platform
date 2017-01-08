@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
+import com.kdev.app.exception.notacceptable.EmailDuplicatedException;
 import com.kdev.app.repository.UserRepository;
 
 @Controller
@@ -59,5 +60,10 @@ public class HomeController {
 			}
 		}
 		return "login";
+	}
+	
+	@RequestMapping(value = "/e1", method = RequestMethod.GET)
+	public String exeption(Model model) {
+		throw new EmailDuplicatedException();
 	}
 }

@@ -177,7 +177,6 @@ app.controller('BoardController', function($scope, $http, $log, $sce){
 		}
 		return 0;	
 	}
-	
 	getInformation(category, 0, $scope.pagesize, $scope.searchKeyword);
 });
 
@@ -483,8 +482,9 @@ function getInformation(value, page, size, search){
 		success	: function(response){
 			if(response != "" && response != null){
 				scope.$apply(function () {
-					scope.totalElements = response.totalElements;
-					scope.updateModel(response.content);
+					scope.totalElements = response.page.totalElements;
+					scope.updateModel(response.page.content);
+					scope.tagList = response.tags;
 				});
 			}
 		},

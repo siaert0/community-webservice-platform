@@ -83,6 +83,15 @@
 						    >
 						</dir-pagination-controls>
 					</div>
+					<div class="row">
+						<div class="col s12">
+							<p>관련 키워드 (게시물 및 댓글 포함)</p>
+							<span ng-repeat="tag in tagList">
+								<span class="chip red lighten-2 white-text border-flat" style="">{{tag}} </span>
+							</span>
+						</div>
+					</div>
+					
 			</div>
 			<!-- 인증되지 않은 사용자의 메뉴 영역 -->
 			<sec:authorize access="isAnonymous()">

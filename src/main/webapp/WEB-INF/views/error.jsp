@@ -24,19 +24,41 @@
 	<article>
 		<div class="valign-wrapper" style="width: 100%; height: 100%;">
 			<div class="valign center" style="margin: auto;">
-					<c:if test="${empty ExceptionResponse}">
-						<h5>ERROR : 404</h5>
-						<h5>Exception : 잘못된 접근</h5>
-					</c:if>
-					<c:if test="${not empty ExceptionResponse}">
-						<h5>ERROR : ${request}</h5>
-						<h5>Exception : ${reason}</h5>
-					</c:if>
-					<p>
-				<a href="/"
-					class="btn-large red waves-effect waves-light white-text">되돌아가기
-				</a>
-				</p>
+			<h3>오류 안내</h3>
+				<div class="collection">
+					<div class="collection-item left-align">
+						<!-- 
+							스프링 부트 기본 오류 설정
+							path
+							status
+							exception
+							message
+							errors
+							trace
+							timestamp
+						 -->
+						<c:if test="${empty exceptionResponse}">
+							<h5>요청 경로 : ${path}</h5>
+							<h5>HTTP 응답 코드 : ${status}</h5>
+							<h5>오류 원인 : ${error}</h5>
+							<h5>오류 발생 시각 : ${timestamp}</h5>
+						</c:if>
+						<!-- 
+							커스텀 오류 설정
+							path
+							status
+							exception
+							error
+							timestamp
+						 -->
+						<c:if test="${not empty exceptionResponse}">
+							<h5>요청 경로 : ${exceptionResponse.path}</h5>
+							<h5>HTTP 응답 코드 : ${exceptionResponse.status}</h5>
+							<h5>오류 내용 : ${exceptionResponse.error}</h5>
+							<h5>오류 발생 시각 : ${exceptionResponse.timestamp}</h5>
+						</c:if>
+					</div>
+				</div>
 			</div>
 		</div>
 	</article>

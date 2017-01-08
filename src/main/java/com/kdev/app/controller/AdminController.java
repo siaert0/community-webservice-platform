@@ -23,7 +23,6 @@ import com.kdev.app.domain.pk.PROVIDER_USER_CP_ID;
 import com.kdev.app.domain.vo.Restriction;
 import com.kdev.app.enums.SocialProvider;
 import com.kdev.app.exception.notfound.UserNotFoundException;
-import com.kdev.app.intercepter.HttpSessionHandler;
 import com.kdev.app.repository.BoardRepository;
 import com.kdev.app.repository.CommentRepository;
 import com.kdev.app.repository.RestrictionRepository;
@@ -63,13 +62,10 @@ public class AdminController {
 	@Autowired 
 	private ModelMapper modelMapper;
 	
-	@Autowired
-	private HttpSessionHandler httpSessionHandler;
-	
 	@RequestMapping(value="/admin", method = RequestMethod.GET)
 	public String home(Model model){
 		model.addAttribute("userCount", userRepositroy.count());
-		model.addAttribute("currentSessionCount", httpSessionHandler.sessions.size());
+		model.addAttribute("currentSessionCount", "NONE");
 		model.addAttribute("facebookUser", userRepositroy.findBySocialProvider(SocialProvider.Facebook).size());
 		model.addAttribute("kakaoUser", userRepositroy.findBySocialProvider(SocialProvider.Kakao).size());
 		model.addAttribute("systemMemory", (Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory())/(1024*1024));

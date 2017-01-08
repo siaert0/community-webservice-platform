@@ -1,14 +1,21 @@
 package com.kdev.app.controller;
 
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import javax.validation.Valid;
 
 import org.modelmapper.ModelMapper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -45,6 +52,7 @@ import com.kdev.app.service.BoardRepositoryService;
 
 @Controller
 public class BoardController {
+	private static Logger logger = LoggerFactory.getLogger(BoardController.class);
 	
 	@Autowired
 	private BoardRepositoryService boardRepositoryService;
@@ -139,8 +147,40 @@ public class BoardController {
 	public ResponseEntity<Object> findBoard(@RequestParam(value="category", required=false, defaultValue="") String category, 
 			@RequestParam(value="search", required=false, defaultValue="") String search,
 			@PageableDefault(sort = { "id" }, direction = Direction.DESC, size = 5) Pageable pageable){
-		Page<Board> page = boardRepositoryService.findAllByCategoryAndTitleContainingOrTagsContaining(category, search, search, pageable);
-		return new ResponseEntity<Object>(page, HttpStatus.ACCEPTED);
+		Page<Board> page = boardRepositoryService.findByTitleContainingOrTagsContainingAndCategory(category, search, search, pageable);
+
+		/**
+		 *  자바 8 스트림 : 컬렉션의 저장 요소를 하나씩 참조해서 람다식으로 처리할 수 있도록 해주는 반복자
+		 *  게시물과 댓글의 태그분석
+		 */
+		Stream<Board> parallelStream = page.getContent().parallelStream();
+		Set<String> sets = new HashSet<String>();
+		parallelStream.forEach(board -> {
+			String btags = board.getTags();
+			btags = btags.replaceAll("\\[", "");
+			btags = btags.replaceAll("\\]", "");
+			btags = btags.replaceAll("\"", "");
+			Arrays.asList(btags.split(",")).parallelStream().forEach(tag->{
+				sets.add(tag);
+			});;
+			
+			board.getComments().parallelStream().map(Comment ::getTags).forEach(tags ->{
+				tags = tags.replaceAll("\\[", "");
+				tags = tags.replaceAll("\\]", "");
+				tags = tags.replaceAll("\"", "");
+				Arrays.asList(tags.split(",")).parallelStream().forEach(tag->{
+					sets.add(tag);
+				});;
+				
+			});
+		});
+		
+		
+		Map<String, Object> map = new HashMap<String, Object>();
+		map.put("page", page);
+		map.put("tags", sets);
+		
+		return new ResponseEntity<Object>(map, HttpStatus.ACCEPTED);
 	}
 	
 	/**
