@@ -1,7 +1,10 @@
 package com.kdev.app.service;
 
+import static org.springframework.data.jpa.domain.Specifications.*;
+import static com.kdev.app.domain.vo.SearchSpec.*;
 import java.util.List;
 
+import org.hibernate.annotations.Where;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -65,8 +68,12 @@ public class BoardRepositoryService {
 	public Page<Board> findAllBoard(Pageable pageable){
 		 return boardRepository.findAll(pageable);
 	}
-	public Page<Board> findByTitleContainingOrTagsContainingAndCategory(String category, String title, String tags, Pageable pageable){
-		return boardRepository.findByTitleContainingOrTagsContainingAndCategory(category, title, tags, pageable);
+	/**
+	 * #검색 및 페이징 기능 개선
+	 * And Or연산을 중첩시키는 방법 : Specification
+	 */
+	public Page<Board> findAll(String search, String category, Pageable pageable){
+		return boardRepository.findAll(where(containTitle(search)).or(containTags(search)).and(category(category)), pageable);
 	}
 	
 	public Page<Board> findAllBoardByCategory(String category, Pageable pageable){

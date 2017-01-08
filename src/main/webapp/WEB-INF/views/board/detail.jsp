@@ -23,15 +23,6 @@
 </head>
 <body id="DetailController" ng-controller="DetailController" ng-cloak>
 <header>
-		<div class="navbar-fixed">
-			<nav class="z-depth-0">
-				<div class="nav-wrapper blue lighten-1">
-					<form class="" style="margin-bottom: 0;" autocomplete="off">
-							<input id="search" type="search" placeholder="원하는 댓글찾기 ^ㅡ^" required ng-model="searchKeyword" class="form-control" kr-input style="height:inherit; padding:0rem .75rem;">
-					</form>
-				</div>
-			</nav>
-		</div>
 		<c:import url="/sidenav" />
 	</header>
 	<article style="margin-top:0px;">
@@ -176,7 +167,10 @@
 		
 		</div>
 		<div class="container-fluid">
-		
+		<div class="collection">
+			<input id="search" type="text" placeholder="원하는 댓글찾기 ^ㅡ^" required ng-model="searchKeyword" class="form-control" kr-input style="width:100%; height:inherit; padding:1rem .75rem;">	
+		</div>
+
 		<!-- 게시물 답변 리스트 영역 -->
 		<div id="comment-list" class="collection" ng-class="{selectedComment:boardContent.selected == comment.id}" dir-paginate="comment in search_contents = (boardContent.comments | filter:searchKeyword | orderBy:'-$$hashkey') | itemsPerPage:5" pagination-id="commentpage" ng-show="!isCommentUpdate">
 			<div class="collection-item">

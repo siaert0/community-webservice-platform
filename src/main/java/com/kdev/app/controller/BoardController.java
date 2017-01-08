@@ -105,6 +105,7 @@ public class BoardController {
 		if(boardVO == null){
 			throw new BoardNotFoundException();
 		}
+		
 		return new ResponseEntity<Object>(boardVO, HttpStatus.OK);
 	}
 	
@@ -147,7 +148,7 @@ public class BoardController {
 	public ResponseEntity<Object> findBoard(@RequestParam(value="category", required=false, defaultValue="") String category, 
 			@RequestParam(value="search", required=false, defaultValue="") String search,
 			@PageableDefault(sort = { "id" }, direction = Direction.DESC, size = 5) Pageable pageable){
-		Page<Board> page = boardRepositoryService.findByTitleContainingOrTagsContainingAndCategory(category, search, search, pageable);
+		Page<Board> page = boardRepositoryService.findAll(search, category, pageable);
 
 		/**
 		 *  자바 8 스트림 : 컬렉션의 저장 요소를 하나씩 참조해서 람다식으로 처리할 수 있도록 해주는 반복자
@@ -164,7 +165,9 @@ public class BoardController {
 				sets.add(tag);
 			});;
 			
-			board.getComments().parallelStream().map(Comment ::getTags).forEach(tags ->{
+			
+			/*
+			  board.getComments().parallelStream().map(Comment ::getTags).forEach(tags ->{
 				tags = tags.replaceAll("\\[", "");
 				tags = tags.replaceAll("\\]", "");
 				tags = tags.replaceAll("\"", "");
@@ -173,6 +176,7 @@ public class BoardController {
 				});;
 				
 			});
+			*/
 		});
 		
 		

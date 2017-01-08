@@ -19,15 +19,6 @@
 	<body id="BoardController" ng-controller="BoardController" ng-cloak>
 	<!-- 헤더 영역 -->
 		<header>
-			<div class="navbar-fixed">
-				<nav class="z-depth-0">
-					<div class="nav-wrapper blue lighten-1">
-						<form class="" style="margin-bottom: 0;" autocomplete="off" >
-								<input id="search" type="search" placeholder="제목 및 태그로 검색가능" required class="form-control" ng-enter="searchKeywordChange()" ng-model="searchText" kr-input style="height:inherit; padding:0rem .75rem;">
-						</form>
-					</div>
-				</nav>
-			</div>
 			<c:import url="/sidenav" />
 		</header>
 		<!-- 아티클 영역 -->
@@ -42,10 +33,23 @@
 						<span class="chip grey darken-2 hover white-text" style="border-radius:0;">{{totalElements}}개</span>
 						</div>
 				</blockquote>
+
 				</div>
-				
+				<div class="row">
+						<div class="col s12">
+							<p>관련 키워드</p>
+							<span ng-repeat="tag in tagList">
+								<span class="chip red lighten-2 white-text border-flat" style="">{{tag}} </span>
+							</span>
+						</div>
+					</div>
 				<!-- 게시물 영역 -->
 				<div class="row">
+						<div class="collection">
+						<form class="" style="margin-bottom: 0;" autocomplete="off" >
+								<input id="search" type="text" placeholder="제목 및 태그로 검색가능" required class="form-control" ng-enter="searchKeywordChange()" ng-model="searchText" kr-input style="height:inherit; padding:1rem .75rem;">
+						</form>
+						</div>
 				<div dir-paginate="x in search_contents = (boardContents | orderBy:-index) | itemsPerPage:pagesize" pagination-id="boardpage" total-items="totalElements">
 					<div class="col s12">
 						<div class="card sticky-action hoverable hover border-flat" data-ng-click="move(x.id)" ng-class="{selectedBoard:x.selected != 0, commentedBoard:x.selected == 0 && x.comments.length > 0}" style="margin:0;">
@@ -83,14 +87,7 @@
 						    >
 						</dir-pagination-controls>
 					</div>
-					<div class="row">
-						<div class="col s12">
-							<p>관련 키워드 (게시물 및 댓글 포함)</p>
-							<span ng-repeat="tag in tagList">
-								<span class="chip red lighten-2 white-text border-flat" style="">{{tag}} </span>
-							</span>
-						</div>
-					</div>
+
 					
 			</div>
 			<!-- 인증되지 않은 사용자의 메뉴 영역 -->

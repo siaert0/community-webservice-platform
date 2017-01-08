@@ -152,8 +152,10 @@ app.controller('BoardController', function($scope, $http, $log, $sce){
 		getInformation(category, page, $scope.pagesize, $scope.searchKeyword);
 	}
 	$scope.searchKeywordChange = function(){
+		
 		$scope.searchKeyword = $scope.searchText;
 		getInformation(category, 0, $scope.pagesize, $scope.searchKeyword);
+		console.log($scope.searchKeyword);
 	}
 	$scope.trustHtml = function(html){
 		return $sce.trustAsHtml(html);
@@ -481,6 +483,7 @@ function getInformation(value, page, size, search){
 		dataType	: 'JSON',
 		success	: function(response){
 			if(response != "" && response != null){
+				console.log(response);
 				scope.$apply(function () {
 					scope.totalElements = response.page.totalElements;
 					scope.updateModel(response.page.content);
