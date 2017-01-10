@@ -263,7 +263,7 @@ app.controller('ScrapController', function($scope, $http){
 
 app.controller('DetailController', function($scope, $http, $log, $sce){
 	$scope.messages = new Array();
-	$scope.messageUserTotal = 0;
+	//$scope.messageUserTotal = 0;
 	$scope.isBoardUpdate = false;
 	$scope.isCommentUpdate = false;
 	$scope.updateCommentIndex = -1;
@@ -281,7 +281,7 @@ app.controller('DetailController', function($scope, $http, $log, $sce){
 		var scope = angular.element(document.getElementById("DetailController")).scope();
 		check_scrap(id, null, scope);
 	}
-	$scope.messageUser = function(id){
+	/*$scope.messageUser = function(id){
 		$.ajax({
 			type	: 'GET',
 			url		: '/subscribe/board/'+id,
@@ -299,7 +299,7 @@ app.controller('DetailController', function($scope, $http, $log, $sce){
 				});
 			}
 		});
-	}
+	}*/
 	$scope.checkThumb = function(){
 		if($scope.boardContent.thumbs.length > 0){
 			var is = false;

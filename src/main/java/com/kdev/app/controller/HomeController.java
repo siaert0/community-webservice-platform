@@ -79,4 +79,9 @@ public class HomeController {
 	public String exeption(Model model) {
 		throw new EmailDuplicatedException();
 	}
+	
+	@RequestMapping(value = "/test", method = RequestMethod.GET)
+	public String test(Model model) {
+		return "test";
+	}
 }

@@ -25,7 +25,7 @@
 <header>
 			 <nav>
 			    <div class="nav-wrapper blue lighten-1">
-					<a class="brand-logo right waves-effect waves-light button-collapse hide-on-large-only" data-activates="nav-mobile"><i class="material-icons">menu</i></a>
+					<a class="brand-logo right waves-effect waves-light button-collapse hide-on-large-only blue lighten-1" data-activates="nav-mobile"><i class="material-icons">menu</i></a>
 			      <ul class="list-none-style left">
 			      <!-- 인증된 사용자의 메뉴 영역 -->
 					<sec:authorize access="isAuthenticated()">
@@ -78,7 +78,8 @@
 		 </span>
 		</div>
 	</div>
-	<div class="collection" style="margin-bottom:0;">
+	
+	<%-- <div class="collection" style="margin-bottom:0;">
 			<div class="collection-item center-align">
 				<b>채팅 시스템 (실시간)</b> <span class="right">{{messageUserTotal}}명 참여중</span>
 			</div>
@@ -99,7 +100,7 @@
 				<input id="message" type="text" class="form-control" style="margin:0;" placeholder="메시지 입력" onkeypress="if(event.keyCode==13) {sendMessage(this); return false;}"/>
 			</sec:authorize>
 			</div>
-		</div>
+		</div> --%>
 	</div>
 	
 	</div>
@@ -179,7 +180,7 @@
 		<!-- 게시물 답변 리스트 영역 -->
 		<div id="comment-list" class="collection" ng-class="{selectedComment:boardContent.selected == comment.id}" dir-paginate="comment in search_contents = (boardContent.comments | filter:searchKeyword | orderBy:'-$$hashkey') | itemsPerPage:5" pagination-id="commentpage" ng-show="!isCommentUpdate">
 			<div class="collection-item">
-		    	<span class="chip transparent right"><a class="chip grey darken-2 hover white-text border-flat">{{comment.created | date:'yyyy년 MM월 dd일 h:mma'}}</a>&nbsp;
+		    	<span class="chip transparent right"><a class="chip black-text transparent border-flat">{{comment.created | date:'yyyy년 MM월 dd일 h:mma'}}</a>&nbsp;
 		    	<sec:authorize access="isAuthenticated()">
 		    	<span ng-if="boardContent.selected == 0 && boardContent.user.id == ${user.id} && ${user.id} != comment.user.id">
 		    		<a class="chip green lighten-2 hover white-text border-flat" data-ng-click="selectedComment(comment, $index);">선택</a>
@@ -197,7 +198,6 @@
 					<img ng-src="{{comment.user.thumbnail}}" alt="Contact Person">
 					    {{comment.user.nickname}}
 				</span>
-				<hr>
 				<div class="">
 					<p class="collection-title" ng-bind-html="trustHtml(comment.description)"></p>
 				</div>
@@ -205,7 +205,7 @@
 					<div class="" ng-if="comment.tags != '[]'">
 					<hr>
 	    				<span class="tags" ng-init="tags=parseJson(comment.tags)">
-							<span ng-repeat="tag in tags"><span class="chip red lighten-2 hover white-text" style="border-radius:0;">{{tag}} </span></span>
+							<span ng-repeat="tag in tags"><span class="chip transparent hover red-text text-lighten-2" style="border-radius:0;">{{tag}} </span></span>
 						</span>
 		    	</div>
 		    </div>
@@ -328,16 +328,6 @@
 <script	src="https://code.angularjs.org/1.6.1/angular-sanitize.js"></script>
 <script	src="/assets/js/dirPagination.js"></script>
 <script src="/assets/js/app.js"></script>
-<sec:authorize access="isAuthenticated()">
-<script>
-$(function() {
-	var scope = angular.element(document.getElementById("DetailController")).scope();
-	scope.$apply(function(){
-		scope.USERID = '${user.id}';
-	});
-});
-</script>
-</sec:authorize>
 <script type="text/javascript">
 var token = '${_csrf.token}';
 var header = '${_csrf.headerName}';
@@ -367,7 +357,7 @@ $(function() {
 /**
  * 단순 메시지 전송을 위함.
  */
-var stompClient = null;
+/* var stompClient = null;
 
 function sendMessage(message){
 	var scope = angular.element(document.getElementById("DetailController")).scope();
@@ -376,15 +366,15 @@ function sendMessage(message){
 		stompClient.send("/message/notify/"+scope.boardContent.id, {}, JSON.stringify({'message':$(message).val()}));
 	
 	$(message).val('');
-}
+} */
 
 $(function() {
-	if(document.getElementById("DetailController") != null){
+	/* if(document.getElementById("DetailController") != null){
 		var scope = angular.element(document.getElementById("DetailController")).scope();
 		var socket = new SockJS("/websocket");
 		stompClient = Stomp.over(socket);
 		stompClient.debug = null;
-		stompClient.connect({}, function(frame) {
+		stompClient.connect('','',function(frame) {
 			if(stompClient != null)
 				stompClient.send("/message/notify/"+scope.boardContent.id, {}, JSON.stringify({'message':"님이 채팅에 참여하였습니다"}));
 			stompClient.subscribe('/board/'+scope.boardContent.id, function(response){
@@ -401,7 +391,7 @@ $(function() {
 			$('#message').attr("placeholder","서버와 연결이 끊어짐");
 			$('#message').attr("readonly",true);
 		});
-	}
+	} */
 });
 </script>
 		<sec:authorize access="isAuthenticated()">

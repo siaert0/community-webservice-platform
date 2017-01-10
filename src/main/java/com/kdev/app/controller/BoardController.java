@@ -140,7 +140,7 @@ public class BoardController {
 	}
 	
 	@RequestMapping(value="/top", method = RequestMethod.GET, produces=MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<Object> topData(Model model, @PageableDefault(direction = Direction.DESC, size = 10) Pageable pageable){
+	public ResponseEntity<Object> topData(Model model, @PageableDefault(sort="created", direction = Direction.DESC, size = 10) Pageable pageable){
 		List<Board> QA = boardRepositoryService.findAllBoardByCategory("QA", pageable).getContent();
 		List<Board> REQURIT = boardRepositoryService.findAllBoardByCategory("신입공채", pageable).getContent();
 		List<Comment> COMMENT = boardRepositoryService.findCommentAll(pageable).getContent();
