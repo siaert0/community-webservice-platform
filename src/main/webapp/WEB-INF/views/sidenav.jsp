@@ -32,15 +32,8 @@
     <li><div class="divider"></div></li>
     <li><a class="subheader">게시판</a></li>
     <!-- 게시판 카테고리 영역  -->
-    <li><a href="/board/category/자바" class="waves-effect"><i class="material-icons">folder</i>자바</a></li>
-    <li><a href="/board/category/닷넷" class="waves-effect"><i class="material-icons">folder</i>닷넷</a></li>
-    <li><a href="/board/category/파이썬" class="waves-effect"><i class="material-icons">folder</i>파이썬</a></li>
-    <li><a href="/board/category/HTML5" class="waves-effect"><i class="material-icons">folder</i>HTML5</a></li>
-    <li><a href="/board/category/자바스크립트" class="waves-effect"><i class="material-icons">folder</i>자바스크립트</a></li>
-    <li><a href="/board/category/앵귤러JS" class="waves-effect"><i class="material-icons">folder</i>앵귤러JS</a></li>
-    <li><a href="/board/category/리액트JS" class="waves-effect"><i class="material-icons">folder</i>리액트JS</a></li>
-    <li><a href="/board/category/데이터베이스" class="waves-effect"><i class="material-icons">folder</i>데이터베이스</a></li>
-    <li><a href="/board/category/기타" class="waves-effect"><i class="material-icons">folder</i>기타</a></li>
+    <li><a href="/board/category/QA" class="waves-effect"><i class="material-icons">folder</i>QA</a></li>
+    <li><a href="/board/category/신입공채" class="waves-effect"><i class="material-icons">folder</i>신입공채</a></li>
     <!--  -->
     <li><div class="divider"></div></li>
     <li><a class="subheader" class="waves-effect">IT 관련 사이트</a></li>

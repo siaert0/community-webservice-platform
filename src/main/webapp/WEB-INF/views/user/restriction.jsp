@@ -24,6 +24,20 @@
 	<body id="HomeController" ng-controller="HomeController" ng-cloak>
 	<!-- 헤더 영역 -->
 		<header>
+					 <nav>
+			    <div class="nav-wrapper blue lighten-1">
+					<a class="brand-logo right waves-effect waves-light button-collapse hide-on-large-only" data-activates="nav-mobile"><i class="material-icons">menu</i></a>
+			      <ul class="list-none-style left">
+			      <!-- 인증된 사용자의 메뉴 영역 -->
+					<sec:authorize access="isAuthenticated()">
+					    <li><a href="#">IT STACKS - 신입 개발자를 위한 질문 서비스</a></li>
+					</sec:authorize>
+					<sec:authorize access="isAnonymous()">
+						 <li><a href="/login">IT STACKS를 이용하기 위해서는 로그인 하셔야 합니다.</a></li>
+					</sec:authorize>
+			      </ul>
+			    </div>
+			  </nav>
 			<c:import url="/sidenav" />
 		</header>
 		<!-- 아티클 영역 -->

@@ -9,4 +9,5 @@ import com.kdev.app.domain.vo.Comment;
 public interface CommentRepository extends JpaRepository<Comment, Integer> {
 	public void deleteByBoard(int boardid);
 	public Page<Comment> findByBoard(Pageable pageable, int boardid);
+	
 }

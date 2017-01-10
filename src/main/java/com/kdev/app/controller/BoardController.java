@@ -138,6 +138,19 @@ public class BoardController {
 		boardRepositoryService.checkScrap(scrapId);
 		return new ResponseEntity<Object>(createdBoard, HttpStatus.CREATED);
 	}
+	
+	@RequestMapping(value="/top", method = RequestMethod.GET, produces=MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<Object> topData(Model model, @PageableDefault(direction = Direction.DESC, size = 10) Pageable pageable){
+		List<Board> QA = boardRepositoryService.findAllBoardByCategory("QA", pageable).getContent();
+		List<Board> REQURIT = boardRepositoryService.findAllBoardByCategory("신입공채", pageable).getContent();
+		List<Comment> COMMENT = boardRepositoryService.findCommentAll(pageable).getContent();
+		Map<String, Object> map = new HashMap<String, Object>();
+		
+		map.put("QA", QA);
+		map.put("REQURIT", REQURIT);
+		map.put("COMMENT", COMMENT);
+		return new ResponseEntity<Object>(map,HttpStatus.ACCEPTED);
+	}
 		
 	/**
 	 * @author		: K

@@ -65,6 +65,4 @@ public class Board {
     @JsonBackReference
 	@OneToMany(mappedBy="board", fetch=FetchType.LAZY, cascade=CascadeType.REMOVE)
 	private Collection<Scrap> scraps;
-    
-    
 }

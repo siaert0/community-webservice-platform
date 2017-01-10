@@ -23,13 +23,27 @@
 </head>
 <body id="DetailController" ng-controller="DetailController" ng-cloak>
 <header>
+			 <nav>
+			    <div class="nav-wrapper blue lighten-1">
+					<a class="brand-logo right waves-effect waves-light button-collapse hide-on-large-only" data-activates="nav-mobile"><i class="material-icons">menu</i></a>
+			      <ul class="list-none-style left">
+			      <!-- 인증된 사용자의 메뉴 영역 -->
+					<sec:authorize access="isAuthenticated()">
+					    <li><a href="#">IT STACKS - 신입 개발자를 위한 질문 서비스</a></li>
+					</sec:authorize>
+					<sec:authorize access="isAnonymous()">
+						 <li><a href="/login">IT STACKS를 이용하기 위해서는 로그인 하셔야 합니다.</a></li>
+					</sec:authorize>
+			      </ul>
+			    </div>
+			  </nav>
 		<c:import url="/sidenav" />
 	</header>
 	<article style="margin-top:0px;">
 	<!-- 게시물 컨트롤러 만들기 -->
 	<div class="container-fluid">
 	<div class="row">
-	<div class="col s12">
+	<div class="col s12" style="padding:0;">
 	<div class="card sticky-action z-depth-0" ng-if="boardContent != null" id="board-div">
 		<div class="card-content right-align" style="border-bottom:1px solid #EEE">
 		      <span class="chip white left">
@@ -52,30 +66,6 @@
 				<p class="" style="font-weight:700; font-size:18px;">{{boardContent.title}}</p>
 				<p class="collection-title" ng-bind-html="trustHtml(boardContent.description)"></p>
 				</div>
-				<!-- 실시간 구독 영역 -->
-				<hr>
-		<div class="collection">
-			<div class="collection-item center-align">
-				<b>실시간으로 물어보세요</b>
-			</div>
-			<div id="messagebox" class="collection-item" style="min-height:100px; max-height:100px; overflow:auto; padding-left:10px; padding-right:10px; overflow-wrap:break-word;">
-				<p class="" ng-repeat="message in messages">
-						      <span class="chip white left">
-			    <img style="height:100%;" ng-src="{{message.user.thumbnail}}">
-			    {{message.user.nickname}}
-			  </span>
-				  <span class="chip white border-flat">{{message.message}}</span>
-				</p>
-			</div>
-			<div class="collection-item" style="padding:0.5rem;">
-			<sec:authorize access="isAnonymous()">
-				<div class="center-align"><a href="/login">로그인</a> 하고 대화에 참여하기</div>
-			</sec:authorize>
-			<sec:authorize access="isAuthenticated()">
-				<input id="message" type="text" class="form-control" style="margin:0;" placeholder="메시지 입력" onkeypress="if(event.keyCode==13) {sendMessage(this); return false;}"/>
-			</sec:authorize>
-			</div>
-		</div>
 			</div>
 		</div>
 		<div class="card-action left-align">
@@ -88,6 +78,28 @@
 		 </span>
 		</div>
 	</div>
+	<div class="collection" style="margin-bottom:0;">
+			<div class="collection-item center-align">
+				<b>채팅 시스템 (실시간)</b> <span class="right">{{messageUserTotal}}명 참여중</span>
+			</div>
+			<div id="messagebox" class="collection-item" style="min-height:100px; max-height:100px; overflow:auto; padding-left:10px; padding-right:10px; overflow-wrap:break-word;">
+				<p class="" ng-repeat="message in messages">
+						      <span class="chip white left">
+			    <img style="height:100%;" ng-src="{{message.user.thumbnail}}">
+			    {{message.user.nickname}}
+			  </span>
+				  <span class="chip white border-flat">{{message.message}}</span>
+				</p>
+			</div>
+			<div class="collection-item" style="padding:0.5rem;">
+			<sec:authorize access="isAnonymous()">
+				<div class="center-align"><a class="hover-black" href="/login">로그인</a> 하고 대화에 참여하기</div>
+			</sec:authorize>
+			<sec:authorize access="isAuthenticated()">
+				<input id="message" type="text" class="form-control" style="margin:0;" placeholder="메시지 입력" onkeypress="if(event.keyCode==13) {sendMessage(this); return false;}"/>
+			</sec:authorize>
+			</div>
+		</div>
 	</div>
 	
 	</div>
@@ -104,15 +116,8 @@
 								<div class="col s12">
 				<select id="u_b_category" class="browser-default form-control">
 			      <option value="" disabled selected>카테고리를 선택해주세요</option>
-			      <option value="자바" ng-selected="boardContent.category=='JAVA/SPRING'">자바</option>
-			      <option value="닷넷" ng-selected="boardContent.category=='닷넷'">닷넷</option>
-			      <option value="파이썬" ng-selected="boardContent.category=='파이썬'">파이썬</option>
-			      <option value="HTML5" ng-selected="boardContent.category=='HTML5'">HTML5</option>
-			      <option value="자바스크립트" ng-selected="boardContent.category=='자바스크립트'">자바스크립트</option>
-			      <option value="앵귤러JS" ng-selected="boardContent.category=='앵귤러JS'">앵귤러JS</option>
-			      <option value="리액트JS" ng-selected="boardContent.category=='리액트JS'">리액트JS</option>
-			      <option value="데이터베이스" ng-selected="boardContent.category=='데이터베이스'">데이터베이스</option>
-			      <option value="기타" ng-selected="boardContent.category=='기타'">기타</option>
+			      <option value="QA" ng-selected="boardContent.category=='QA'">QA</option>
+			      <option value="신입공채" ng-selected="boardContent.category=='신입공채'">신입공채</option>
 			    </select>
 			</div>
 						<div class="input-field col s12">
@@ -167,7 +172,7 @@
 		
 		</div>
 		<div class="container-fluid">
-		<div class="collection">
+		<div class="collection" style="border:0;">
 			<input id="search" type="text" placeholder="원하는 댓글찾기 ^ㅡ^" required ng-model="searchKeyword" class="form-control" kr-input style="width:100%; height:inherit; padding:1rem .75rem;">	
 		</div>
 
@@ -220,7 +225,7 @@
 		  <sec:authorize access="isAnonymous()">
 		  	<div class="collection">
 			<div class="collection-item center">
-				<a href="${pageContext.request.contextPath}/login">로그인</a> 하셔야 답변을 다실 수 있습니다.
+				<a class="hover-black" href="${pageContext.request.contextPath}/login">로그인</a> 하셔야 답변을 다실 수 있습니다.
 			</div>
 			</div>
 		  </sec:authorize>
@@ -266,11 +271,6 @@
 	</article>
 	
 	<!-- 버튼 및 로딩 영역 -->
-	<div class="fixed-action-btn click-to-toggle">
-		<a class="btn-floating btn-large red button-collapse hide-on-large-only" data-activates="nav-mobile">
-			<i class="material-icons">web</i>
-		</a>
-	</div>
 	<div id="preloader" class="fixed-action-btn" style="z-index:99999; left:0; padding-left:20px;">
 		<div class="preloader-wrapper active">
 	      <div class="spinner-layer spinner-blue">
@@ -385,14 +385,18 @@ $(function() {
 		stompClient = Stomp.over(socket);
 		stompClient.debug = null;
 		stompClient.connect({}, function(frame) {
+			if(stompClient != null)
+				stompClient.send("/message/notify/"+scope.boardContent.id, {}, JSON.stringify({'message':"님이 채팅에 참여하였습니다"}));
 			stompClient.subscribe('/board/'+scope.boardContent.id, function(response){
+				console.log(response);
 				var json = JSON.parse(response.body);
 				scope.$apply(function(){
 					scope.messages.push(json);
+					scope.messageUserTotal = json.total;
 				});
 				$("#messagebox").scrollTop($("#messagebox")[0].scrollHeight);
-				
 			});
+			
 		}, function(message){
 			$('#message').attr("placeholder","서버와 연결이 끊어짐");
 			$('#message').attr("readonly",true);

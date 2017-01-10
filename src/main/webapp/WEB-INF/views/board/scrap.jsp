@@ -20,6 +20,20 @@
 	<body id="ScrapController" ng-controller="ScrapController" ng-cloak>
 	<!-- 헤더 영역 -->
 		<header>
+			 <nav>
+			    <div class="nav-wrapper blue lighten-1">
+					<a class="brand-logo right waves-effect waves-light button-collapse hide-on-large-only" data-activates="nav-mobile"><i class="material-icons">menu</i></a>
+			      <ul class="list-none-style left">
+			      <!-- 인증된 사용자의 메뉴 영역 -->
+					<sec:authorize access="isAuthenticated()">
+					    <li><a href="#">IT STACKS - 신입 개발자를 위한 질문 서비스</a></li>
+					</sec:authorize>
+					<sec:authorize access="isAnonymous()">
+						 <li><a href="/login">IT STACKS를 이용하기 위해서는 로그인 하셔야 합니다.</a></li>
+					</sec:authorize>
+			      </ul>
+			    </div>
+			  </nav>
 			<c:import url="/sidenav" />
 		</header>
 		<!-- 아티클 영역 -->
@@ -74,32 +88,6 @@
 						</dir-pagination-controls>
 					</div>
 			</div>
-			<!-- 인증되지 않은 사용자의 메뉴 영역 -->
-			<sec:authorize access="isAnonymous()">
-				<div class="fixed-action-btn click-to-toggle">
-					<a class="btn-floating btn-large red">
-						<i class="material-icons">menu</i>
-					</a>
-					<ul>
-					    <li><a class="btn-floating btn-large red button-collapse hide-on-large-only" data-activates="nav-mobile"><i class="material-icons">web</i>
-					</a></li>
-						<li><a class="btn-floating blue btn-large" href="${pageContext.request.contextPath}/login"><i class="material-icons">power</i></a></li>
-					</ul>
-				</div>
-			</sec:authorize>
-			
-			<!-- 인증된 사용자의 메뉴 영역 -->
-			<sec:authorize access="isAuthenticated()">
-				<div class="fixed-action-btn click-to-toggle">
-					<a class="btn-floating btn-large red"> <i class="material-icons">menu</i>
-					</a>
-					<ul>
-						<li><a href="#" data-activates="nav-mobile" class="btn-floating btn-large red button-collapse hide-on-large-only"><i class="material-icons">web</i></a></li>
-						<li><a class="btn-floating blue btn-large" href="/board/"><i class="material-icons">add</i></a></li>
-					</ul>
-	
-				</div>
-			</sec:authorize>
 		</article>
 		
 		<!-- 푸터 영역 -->

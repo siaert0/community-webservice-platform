@@ -22,6 +22,20 @@
 </head>
 <body>
 	<header>
+				 <nav>
+			    <div class="nav-wrapper blue lighten-1">
+					<a class="brand-logo right waves-effect waves-light button-collapse hide-on-large-only" data-activates="nav-mobile"><i class="material-icons">menu</i></a>
+			      <ul class="list-none-style left">
+			      <!-- 인증된 사용자의 메뉴 영역 -->
+					<sec:authorize access="isAuthenticated()">
+					    <li><a href="#">IT STACKS - 신입 개발자를 위한 질문 서비스</a></li>
+					</sec:authorize>
+					<sec:authorize access="isAnonymous()">
+						 <li><a href="/login">IT STACKS를 이용하기 위해서는 로그인 하셔야 합니다.</a></li>
+					</sec:authorize>
+			      </ul>
+			    </div>
+			  </nav>
 		<c:import url="/sidenav" />
 	</header>
 	<article>
@@ -36,15 +50,8 @@
 			<div class="col s12">
 				<select id="q_category" class="browser-default form-control">
 			      <option value="" disabled selected>카테고리를 선택해주세요</option>
-			      <option value="자바">자바</option>
-			      <option value="닷넷">닷넷</option>
-			      <option value="파이썬">파이썬</option>
-			      <option value="HTML5">HTML5</option>
-			      <option value="자바스크립트">자바스크립트</option>
-			      <option value="앵귤러JS">앵귤러JS</option>
-			      <option value="리액트JS">리액트JS</option>
-			      <option value="데이터베이스">데이터베이스</option>
-			      <option value="기타">기타</option>
+			      <option value="QA">QA</option>
+			      <option value="신입공채">신입공채</option>
 			    </select>
 			</div>
 			<div class="col s12"></div>
@@ -72,11 +79,6 @@
 	</div>
 	</div>
 	</article>
-		<div class="fixed-action-btn click-to-toggle">
-		<a class="btn-floating btn-large red waves-effect waves-light button-collapse hide-on-large-only" data-activates="nav-mobile">
-			<i class="material-icons">web</i>
-		</a>
-	</div>
 	<div id="preloader" class="fixed-action-btn">
 	<div class="preloader-wrapper active">
       <div class="spinner-layer spinner-blue">

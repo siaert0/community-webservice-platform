@@ -143,6 +143,11 @@ public class BoardRepositoryService {
 		return page;
 	}
 	
+	public Page<Comment> findCommentAll(Pageable pageable){
+		Page<Comment> page = commentRepository.findAll(pageable);
+		return page;
+	}
+	
 	/** 
 	 *  ===============================================================
 	 *  	ThumbRepository

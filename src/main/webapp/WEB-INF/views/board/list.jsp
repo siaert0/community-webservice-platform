@@ -19,6 +19,20 @@
 	<body id="BoardController" ng-controller="BoardController" ng-cloak>
 	<!-- 헤더 영역 -->
 		<header>
+			 <nav>
+			    <div class="nav-wrapper blue lighten-1">
+					<a class="brand-logo right waves-effect waves-light button-collapse hide-on-large-only" data-activates="nav-mobile"><i class="material-icons">menu</i></a>
+			      <ul class="list-none-style left">
+			      <!-- 인증된 사용자의 메뉴 영역 -->
+					<sec:authorize access="isAuthenticated()">
+					    <li><a href="#">IT STACKS - 신입 개발자를 위한 질문 서비스</a></li>
+					</sec:authorize>
+					<sec:authorize access="isAnonymous()">
+						 <li><a href="/login">IT STACKS를 이용하기 위해서는 로그인 하셔야 합니다.</a></li>
+					</sec:authorize>
+			      </ul>
+			    </div>
+			  </nav>
 			<c:import url="/sidenav" />
 		</header>
 		<!-- 아티클 영역 -->
@@ -26,49 +40,43 @@
 			<div class="container-fluid">
 				<!-- 게시물 페이지네이션 영역 -->
 				<div class="row left-align">
-				<p></p>
-				<blockquote>
-					<div class="col s12 m4 l4">
-						<span class="chip red lighten-2 hover white-text" style="border-radius:0;">${category} 게시물수</span>
-						<span class="chip grey darken-2 hover white-text" style="border-radius:0;">{{totalElements}}개</span>
-						</div>
-				</blockquote>
 
 				</div>
 				<div class="row">
-						<div class="col s12">
-							<p>관련 키워드</p>
-							<span ng-repeat="tag in tagList">
-								<span class="chip red lighten-2 white-text border-flat" style="">{{tag}} </span>
-							</span>
-						</div>
+				<div class="col s12">
+						<span class="chip grey darken-2 hover white-text" style="border-radius:0;">${category} 에는 {{totalElements}}개의 게시물이 있습니다</span>
+				</div>
 					</div>
 				<!-- 게시물 영역 -->
 				<div class="row">
-						<div class="collection">
+				<div class="col s12">
+						<div class="collection" ng-if="totalElements > 0" style="border:0;">
 						<form class="" style="margin-bottom: 0;" autocomplete="off" >
 								<input id="search" type="text" placeholder="제목 및 태그로 검색가능" required class="form-control" ng-enter="searchKeywordChange()" ng-model="searchText" kr-input style="height:inherit; padding:1rem .75rem;">
 						</form>
 						</div>
+				</div>
 				<div dir-paginate="x in search_contents = (boardContents | orderBy:-index) | itemsPerPage:pagesize" pagination-id="boardpage" total-items="totalElements">
 					<div class="col s12">
-						<div class="card sticky-action hoverable hover border-flat" data-ng-click="move(x.id)" ng-class="{selectedBoard:x.selected != 0, commentedBoard:x.selected == 0 && x.comments.length > 0}" style="margin:0;">
-							<div class="card-content">
+						<div class="card sticky-action border-flat" ng-class="{selectedBoard:x.selected != 0, commentedBoard:x.selected == 0 && x.comments.length > 0}" style="margin:0; margin-top:5px;">
+							<div class="card-content" style="padding:10px; padding-top:15px;">
 								<span class="chip white left">
 							      <img style="height:100%;" ng-src="{{x.user.thumbnail}}">
 								   {{x.user.nickname}}
 								  </span>
-								<span style="font-weight:700; font-size:18px;">{{x.title}}</span>
+								  <span class="chip transparent teal-text border-flat left">	{{x.category}}</span>
+								<span class="chip transparent blue-text border-flat left">댓글 {{x.comments.length}}</span>
+								<span class="chip transparent red-text border-flat left">추천 {{x.thumbs.length}}</span>
+								<span class="chip transparent black-text border-flat">{{x.created | date:'yyyy년 MM월 dd일 h:mma'}}</span>
+								</div>
+							<div class="card-content" style="padding-top:0;">
+								<a class="hover-black hover" ng-href="/board/{{x.id}}" style="color:#444; font-weight:700; font-size:15px;">{{x.title}}</a>
 							</div>
-							<div class="card-action right-align">
-								<span class="chip teal lighten-2 hover white-text border-flat left">	{{x.category}}</span>
-							<span class="chip lighten-2 hover white-text border-flat left" ng-class="{blue:x.selected == 0 && x.comments.length > 0, red:x.selected == 0 && x.comments.length == 0, green:x.selected != 0}">댓글 {{x.comments.length}}</span>
-								  <span class="chip lighten-2 hover white-text border-flat left" ng-class="{red:checkThumb({{x}})==0, green:checkThumb({{x}})==1, blue:checkThumb({{x}})==2}">추천 {{x.thumbs.length}}</span>
-								  <span class="tags" ng-init="tags=parseJson(x.tags)">
-									<span ng-repeat="tag in tags"><span class="chip red lighten-2 hover white-text border-flat" style="">{{tag}} </span>
+							<div class="card-action" style="padding:5px 10px;">
+								<span class="tags" ng-init="tags=parseJson(x.tags)">
+									<span ng-repeat="tag in tags"><span class="chip transparent red-text hover border-flat" style="margin:0;">{{tag}} </span>
 								  </span>
 								</span>
-								<span class="chip grey darken-2 white-text border-flat">{{x.created | date:'yyyy년 MM월 dd일 h:mma'}}</span>
 							</div>
 						</div>
 					</div>
@@ -87,35 +95,15 @@
 						    >
 						</dir-pagination-controls>
 					</div>
-
-					
+					<div class="row">
+					<div class="col s12" ng-if="totalElements > 0">
+					<p>관련 키워드로 검색하실 수 있습니다.</p>
+							<span ng-repeat="tag in tagList">
+								<span class="chip red lighten-2 white-text hover border-flat" style="">{{tag}} </span>
+							</span>
+					</div>
+					</div>
 			</div>
-			<!-- 인증되지 않은 사용자의 메뉴 영역 -->
-			<sec:authorize access="isAnonymous()">
-				<div class="fixed-action-btn click-to-toggle">
-					<a class="btn-floating btn-large red waves-effect waves-light">
-						<i class="material-icons">menu</i>
-					</a>
-					<ul>
-					    <li><a class="btn-floating btn-large red waves-effect waves-light button-collapse hide-on-large-only" data-activates="nav-mobile"><i class="material-icons">web</i>
-					</a></li>
-						<li><a class="btn-floating blue waves-effect waves-light btn-large" href="${pageContext.request.contextPath}/login"><i class="material-icons">power</i></a></li>
-					</ul>
-				</div>
-			</sec:authorize>
-			
-			<!-- 인증된 사용자의 메뉴 영역 -->
-			<sec:authorize access="isAuthenticated()">
-				<div class="fixed-action-btn click-to-toggle">
-					<a class="btn-floating btn-large red waves-effect waves-light" > <i class="material-icons">menu</i>
-					</a>
-					<ul>
-						<li><a href="#" data-activates="nav-mobile" class="btn-floating btn-large red waves-effect waves-light button-collapse hide-on-large-only"><i class="material-icons">web</i></a></li>
-						<li><a class="btn-floating blue btn-large waves-effect waves-light" href="/board/"><i class="material-icons">add</i></a></li>
-					</ul>
-	
-				</div>
-			</sec:authorize>
 		</article>
 		
 		<!-- 푸터 영역 -->

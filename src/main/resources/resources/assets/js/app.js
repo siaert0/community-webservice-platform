@@ -12,8 +12,36 @@ app.directive('krInput', [ '$parse', function($parse) {
     };
 } ]);
 app.controller('HomeController', function($scope){
-	
+	$scope.parseJson = function (json) {
+        return JSON.parse(json);
+    }
+	getTopInformation();
 });
+
+function getTopInformation(){
+	var scope = angular.element(document.getElementById("HomeController")).scope();
+
+	$.ajax({
+		type	: 'GET',
+		url		: '/top',
+		dataType	: 'JSON',
+		success	: function(response){
+			if(response != "" && response != null){
+				scope.$apply(function () {
+					console.log(response);
+					scope.QATopList = response.QA;
+					scope.REQURITTopList = response.REQURIT;
+					scope.COMMENTTopList = response.COMMENT;
+				});
+			}
+		},
+		error	: function(response){
+			Materialize.toast("오류가 발생하였습니다. 개발자 도구를 확인해주세요",3000,'red',function(){
+				console.log(response);
+			});
+		}
+	});
+}
 
 app.directive('ngEnter', function () {
     return function (scope, element, attrs) {
@@ -235,6 +263,7 @@ app.controller('ScrapController', function($scope, $http){
 
 app.controller('DetailController', function($scope, $http, $log, $sce){
 	$scope.messages = new Array();
+	$scope.messageUserTotal = 0;
 	$scope.isBoardUpdate = false;
 	$scope.isCommentUpdate = false;
 	$scope.updateCommentIndex = -1;
@@ -251,6 +280,25 @@ app.controller('DetailController', function($scope, $http, $log, $sce){
 	$scope.scrap = function(id){
 		var scope = angular.element(document.getElementById("DetailController")).scope();
 		check_scrap(id, null, scope);
+	}
+	$scope.messageUser = function(id){
+		$.ajax({
+			type	: 'GET',
+			url		: '/subscribe/board/'+id,
+			contentType: 'application/json',
+			dataType	: 'JSON',
+			success	: function(response){
+				console.log(response);
+				$scope.$apply(function(){
+					$scope.messageUserTotal = response.length;
+				});
+			},
+			error	: function(response){
+				Materialize.toast("오류가 발생하였습니다. 개발자 도구를 확인하세요",3000,'red',function(){
+
+				});
+			}
+		});
 	}
 	$scope.checkThumb = function(){
 		if($scope.boardContent.thumbs.length > 0){

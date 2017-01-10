@@ -12,7 +12,6 @@ public interface BoardRepository extends JpaRepository<Board, Integer>, JpaSpeci
 	public void deleteByUser(UserVO userVO);
 	public Page<Board> findAllByUser(UserVO userVO, Pageable pageable);
 	public Page<Board> findAllByCategory(String category, Pageable pageable);
-	
 	/**
 	 * # And Or 연산 오류로 인해 JpaSpecification으로 대체함
 	 * 기존 where title like = ? or tags like = ? and category = ?

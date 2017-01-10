@@ -87,6 +87,7 @@ public class UserController {
 		if (connection == null) {
 			return "redirect:/connect/facebook";
 		}
+		// 페이스북 사용자의 정보를 가져온다
 		String [] fields = { "id","name","birthday","email","location","hometown","gender","first_name","last_name"};
 		org.springframework.social.facebook.api.User facebookUser = facebook.fetchObject("me", org.springframework.social.facebook.api.User.class, fields);
 		
@@ -94,12 +95,11 @@ public class UserController {
 		
 		//제재여부 확인
 		Restriction restriction = restrictionRepository.findOne(new PROVIDER_USER_CP_ID(SocialProvider.Facebook, facebookUser.getId()));
-		
 		if(restriction != null)
 			return "redirect:/user/restriction/"+facebookUser.getId();
 		
+		//가입여부를 확인해서 로그인 처리한다.
 		UserVO userVO = userRepositroyService.findUserById(facebookUser.getId());
-		//가입여부 확인
 		if(userVO != null){
 			UserDetailsVO userDetailsVO = new UserDetailsVO(userVO);
 			Authentication authentication = new UsernamePasswordAuthenticationToken(userDetailsVO, null, userDetailsVO.getAuthorities());
@@ -107,6 +107,7 @@ public class UserController {
 			LoginAuthenticationSuccessHandler handler = new LoginAuthenticationSuccessHandler("/");
 			handler.onAuthenticationSuccess(request, response, authentication);
 		}
+		
 		UserDTO.Create user = new UserDTO.Create();
 		user.setId(facebookUser.getId());
 		user.setNickname(facebookUser.getName());
@@ -124,18 +125,18 @@ public class UserController {
 		if (connection == null) {
 			return "redirect:/connect/kakao";
 		}
-			
+		
+		// 카카오 사용자의 정보를 가져온다 (카카오톡 연동자만 가능)
 		KakaoProfile KakaoUser = kakao.userOperation().getUserProfile();
 		connectionRepository.removeConnection(connection.getKey());
 		
 		//제재여부 확인
 		Restriction restriction = restrictionRepository.findOne(new PROVIDER_USER_CP_ID(SocialProvider.Kakao, String.valueOf(KakaoUser.getId())));
-		
 		if(restriction != null)
 			return "redirect:/user/restriction/"+String.valueOf(KakaoUser.getId());
 		
-		UserVO userVO = userRepositroyService.findUserById(String.valueOf(KakaoUser.getId()));
 		//가입여부 확인
+		UserVO userVO = userRepositroyService.findUserById(String.valueOf(KakaoUser.getId()));
 		if(userVO != null){
 			UserDetailsVO userDetailsVO = new UserDetailsVO(userVO);
 			Authentication authentication = new UsernamePasswordAuthenticationToken(userDetailsVO, null, userDetailsVO.getAuthorities());
@@ -143,6 +144,7 @@ public class UserController {
 			LoginAuthenticationSuccessHandler handler = new LoginAuthenticationSuccessHandler("/");
 			handler.onAuthenticationSuccess(request, response, authentication);
 		}	
+		
 		UserDTO.Create user = new UserDTO.Create();
 		user.setId(String.valueOf(KakaoUser.getId()));
 		user.setNickname(KakaoUser.getProperties().getNickname());
