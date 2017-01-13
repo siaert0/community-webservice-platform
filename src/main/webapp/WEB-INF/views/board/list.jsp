@@ -16,7 +16,7 @@
 		<!-- Compiled and minified CSS -->
 		<link rel="stylesheet"  href="${pageContext.request.contextPath}/assets/css/style.css">
 	</head>
-	<body id="BoardController" ng-controller="BoardController" ng-cloak>
+	<body>
 	<!-- 헤더 영역 -->
 		<header>
 			 <nav>
@@ -33,10 +33,48 @@
 			      </ul>
 			    </div>
 			  </nav>
-			<c:import url="/sidenav" />
+			  <ul id="nav-mobile" class="side-nav fixed tabs-transparent">
+    <li><div class="userView center">
+      <div class="background blue lighten-1">
+      </div>
+      <sec:authorize access="isAnonymous()">
+      	  <a href="#"><img class="circle" src="/assets/img/user-star.png" style="margin:0 auto;"></a>
+	      <a href="${pageContext.request.contextPath}/login"><span class="white-text name">로그인</span></a><br>
+	  </sec:authorize>
+      <sec:authorize access="isAuthenticated()">
+      	  <a><img class="circle" src="${user.thumbnail}" style="margin:0 auto;"></a>
+	      <a><span class="white-text name">${user.nickname}</span></a>
+	      <form name="logoutform" action="/logout"	method="post">
+    		<input type="hidden"  name="${_csrf.parameterName}"	value="${_csrf.token}"/>
+    	  </form>
+	      <a href="#" onclick="logoutform.submit();"><span class="white-text email">로그아웃</span></a>
+      </sec:authorize>
+    </div></li>
+    <li><a href="/"><i class="material-icons">home</i>홈</a></li>
+    <sec:authorize access="hasRole('ROLE_ADMIN')">
+    <li><a href="/admin" class="waves-effect"><i class="material-icons">settings</i>관리페이지</a></li>
+    </sec:authorize>
+    <sec:authorize access="isAuthenticated()">
+    <li><a href="/user/${user.id}" class="waves-effect"><i class="material-icons">account_box</i>회원정보수정</a></li>
+    <li><a href="/board/scrap" class="waves-effect"><i class="material-icons">share</i>스크랩</a></li>
+    <li><a href="/board" class="waves-effect"><i class="material-icons">create</i>글쓰기</a></li>
+    </sec:authorize>
+    <li><div class="divider"></div></li>
+    <li><a class="subheader">게시판</a></li>
+    <!-- 게시판 카테고리 영역  -->
+    <li><a href="/board/category/QA" class="waves-effect"><i class="material-icons">folder</i>QA</a></li>
+    <li><a href="/board/category/신입공채" class="waves-effect"><i class="material-icons">folder</i>신입공채</a></li>
+    <!--  -->
+    <li><div class="divider"></div></li>
+    <li><a class="subheader" class="waves-effect">IT 관련 사이트</a></li>
+    <li><a href="http://stackoverflow.com/" target="_blank" class="waves-effect"><i class="material-icons">link</i>스택 오버플로우</a></li>
+    <li><a href="http://okky.kr/" target="_blank" class="waves-effect"><i class="material-icons">link</i>OKKY</a></li>
+    <li><a class="subheader">개발 기록</a></li>
+    <li><a href="http://kdevkr.tistory.com/" target="_blank" class="waves-effect"><i class="material-icons">room</i>개발자 블로그</a></li>
+</ul>
 		</header>
 		<!-- 아티클 영역 -->
-		<article>
+		<article id="BoardController" ng-controller="BoardController" ng-cloak>
 			<div class="container-fluid">
 				<!-- 게시물 페이지네이션 영역 -->
 				<div class="row left-align">
@@ -72,7 +110,7 @@
 							<div class="card-content" style="padding-top:0;">
 								<a class="hover-black hover" ng-href="/board/{{x.id}}" style="color:#444; font-weight:700; font-size:15px;">{{x.title}}</a>
 							</div>
-							<div class="card-action" style="padding:5px 10px;">
+							<div class="card-action" style="padding:5px 10px;" ng-if="x.tags != '[]'">
 								<span class="tags" ng-init="tags=parseJson(x.tags)">
 									<span ng-repeat="tag in tags"><span class="chip transparent red-text hover border-flat" style="margin:0;">{{tag}} </span>
 								  </span>
@@ -91,7 +129,7 @@
 						    direction-links="true"
 	   						boundary-links="true"
 						    pagination-id="boardpage"
-						    on-page-change=""
+						    on-page-change="pageChange(newPageNumber-1)"
 						    >
 						</dir-pagination-controls>
 					</div>
@@ -99,7 +137,7 @@
 					<div class="col s12" ng-if="totalElements > 0">
 					<p>관련 키워드로 검색하실 수 있습니다.</p>
 							<span ng-repeat="tag in tagList">
-								<span class="chip red lighten-2 white-text hover border-flat" style="">{{tag}} </span>
+								<span class="chip red lighten-2 white-text hover border-flat" style="" ng-if="tag != ''">{{tag}} </span>
 							</span>
 					</div>
 					</div>
@@ -115,36 +153,83 @@
 			</div>
 		</footer>
 
-		<!-- Compiled and minified JavaScript -->
-		
-		<script	src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.8/js/materialize.min.js"></script>
-		
-		<script	src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.7/angular.min.js"></script>
-		<script	src="https://code.angularjs.org/1.5.7/angular-sanitize.js"></script>
-		<script	src="/assets/js/dirPagination.js"></script>
-		<script src="/assets/js/app.js"></script>
-		<script type="text/javascript">
-			var category = "${category}";
-			var token = '${_csrf.token}';
-			var header = '${_csrf.headerName}';
-			
-			$(function() {
-				$(".button-collapse").sideNav();
-				$(document).ajaxSend(function(e, xhr, options) {
-					xhr.setRequestHeader(header, token);
-				});
-				
-			});
-		</script>
-		<sec:authorize access="isAuthenticated()">
-		<script>
-		$(function() {
-			var scope = angular.element(document.getElementById("BoardController")).scope();
-			scope.$apply(function(){
-				scope.USERID = '${user.id}';
+<!-- Compiled and minified JavaScript -->
+<script	src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+
+<script src="/assets/js/sockjs-0.3.4.min.js"></script>
+<script src="/assets/js/stomp.min.js"></script>
+
+<!-- Compiled and minified JavaScript -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.8/js/materialize.min.js"></script>
+<script src="/assets/js/tether.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.5/js/bootstrap.min.js" integrity="sha384-BLiI7JTZm+JWlgKa0M0kGRpJbF2J8q+qreVrKBC47e3K6BW78kGLrCkeRX6I9RoK" crossorigin="anonymous"></script>
+<script src="http://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.2/summernote.js"></script>
+<script src="/assets/js/tagging.js"></script>
+<script src="/assets/js/summernote-ko-KR.min.js"></script>
+<script	src="/assets/js/angular.min.js"></script>
+<script	src="/assets/js/dirPagination.js"></script>
+<script	src="/assets/js/angular-sanitize.min.js"></script>
+
+<script type="text/javascript">
+$(function() {			
+	$(document).ajaxSend(function(e, xhr, options) {
+		xhr.setRequestHeader('${_csrf.headerName}', '${_csrf.token}');
+	});
+	$(".button-collapse").sideNav();
+});
+</script>
+
+<script>
+function withdraw(id){
+	if(!confirm("정말로 탈퇴하시겠습니까?"))
+		return;
+	
+	$.ajax({
+		type	: 'DELETE',
+		url		: '/user/'+id,
+		success	: function(response){
+			Materialize.toast("정상적으로 탈퇴되었습니다.", 3000);
+			location.href="/";
+		},
+		error	: function(response){
+			console.log(response);
+			Materialize.toast("탈퇴하지 못했습니다", 3000);
+		}
+	});
+}
+
+/**
+ *  게시물 작성 알림 시스템
+ */
+ var stompClient = null;
+ 
+function sendMessage(message){
+	if(stompClient != null)
+		stompClient.send("/message/notify/", {}, JSON.stringify({'message':message}));
+}
+
+$(function() {
+	var socket = new SockJS("/websocket");
+	stompClient = Stomp.over(socket);
+	stompClient.debug = null;
+	stompClient.connect({},function(frame) {
+		stompClient.subscribe('/board', function(response){
+			Materialize.toast("알림 전송. 개발자 도구를 확인하세요",3000,'green',function(){
+				console.log(message);
 			});
 		});
+		
+	}, function(message){
+		Materialize.toast("오류가 발생하였습니다. 개발자 도구를 확인하세요",3000,'red',function(){
+			console.log(message);
+		});
+	});
+});
+</script>
+		
+		<script type="text/javascript">
+			var category = "${category}";
 		</script>
-		</sec:authorize>
+<script src="/assets/js/app.js"></script>
 	</body>
 </html>

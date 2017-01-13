@@ -16,10 +16,11 @@
 <title>게시판 자세히 보기</title>
 
 <link href="http://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+<link rel="stylesheet"  href="${pageContext.request.contextPath}/assets/css/tether.min.css">
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.5/css/bootstrap.min.css">
 <link href="http://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.2/summernote.css" rel="stylesheet">
-<link rel="stylesheet"  href="${pageContext.request.contextPath}/assets/css/tether.min.css">
 <link rel="stylesheet"	href="${pageContext.request.contextPath}/assets/css/style.css">
+
 </head>
 <body id="DetailController" ng-controller="DetailController" ng-cloak>
 <header>
@@ -37,7 +38,46 @@
 			      </ul>
 			    </div>
 			  </nav>
-		<c:import url="/sidenav" />
+			  
+			  <ul id="nav-mobile" class="side-nav fixed tabs-transparent">
+    <li><div class="userView center">
+      <div class="background blue lighten-1">
+      </div>
+      <sec:authorize access="isAnonymous()">
+      	  <a href="#"><img class="circle" src="/assets/img/user-star.png" style="margin:0 auto;"></a>
+	      <a href="${pageContext.request.contextPath}/login"><span class="white-text name">로그인</span></a><br>
+	  </sec:authorize>
+      <sec:authorize access="isAuthenticated()">
+      	  <a><img class="circle" src="${user.thumbnail}" style="margin:0 auto;"></a>
+	      <a><span class="white-text name">${user.nickname}</span></a>
+	      <form name="logoutform" action="/logout"	method="post">
+    		<input type="hidden"  name="${_csrf.parameterName}"	value="${_csrf.token}"/>
+    	  </form>
+	      <a href="#" onclick="logoutform.submit();"><span class="white-text email">로그아웃</span></a>
+      </sec:authorize>
+    </div></li>
+    <li><a href="/"><i class="material-icons">home</i>홈</a></li>
+    <sec:authorize access="hasRole('ROLE_ADMIN')">
+    <li><a href="/admin" class="waves-effect"><i class="material-icons">settings</i>관리페이지</a></li>
+    </sec:authorize>
+    <sec:authorize access="isAuthenticated()">
+    <li><a href="/user/${user.id}" class="waves-effect"><i class="material-icons">account_box</i>회원정보수정</a></li>
+    <li><a href="/board/scrap" class="waves-effect"><i class="material-icons">share</i>스크랩</a></li>
+    <li><a href="/board" class="waves-effect"><i class="material-icons">create</i>글쓰기</a></li>
+    </sec:authorize>
+    <li><div class="divider"></div></li>
+    <li><a class="subheader">게시판</a></li>
+    <!-- 게시판 카테고리 영역  -->
+    <li><a href="/board/category/QA" class="waves-effect"><i class="material-icons">folder</i>QA</a></li>
+    <li><a href="/board/category/신입공채" class="waves-effect"><i class="material-icons">folder</i>신입공채</a></li>
+    <!--  -->
+    <li><div class="divider"></div></li>
+    <li><a class="subheader" class="waves-effect">IT 관련 사이트</a></li>
+    <li><a href="http://stackoverflow.com/" target="_blank" class="waves-effect"><i class="material-icons">link</i>스택 오버플로우</a></li>
+    <li><a href="http://okky.kr/" target="_blank" class="waves-effect"><i class="material-icons">link</i>OKKY</a></li>
+    <li><a class="subheader">개발 기록</a></li>
+    <li><a href="http://kdevkr.tistory.com/" target="_blank" class="waves-effect"><i class="material-icons">room</i>개발자 블로그</a></li>
+</ul>
 	</header>
 	<article style="margin-top:0px;">
 	<!-- 게시물 컨트롤러 만들기 -->
@@ -78,29 +118,6 @@
 		 </span>
 		</div>
 	</div>
-	
-	<%-- <div class="collection" style="margin-bottom:0;">
-			<div class="collection-item center-align">
-				<b>채팅 시스템 (실시간)</b> <span class="right">{{messageUserTotal}}명 참여중</span>
-			</div>
-			<div id="messagebox" class="collection-item" style="min-height:100px; max-height:100px; overflow:auto; padding-left:10px; padding-right:10px; overflow-wrap:break-word;">
-				<p class="" ng-repeat="message in messages">
-						      <span class="chip white left">
-			    <img style="height:100%;" ng-src="{{message.user.thumbnail}}">
-			    {{message.user.nickname}}
-			  </span>
-				  <span class="chip white border-flat">{{message.message}}</span>
-				</p>
-			</div>
-			<div class="collection-item" style="padding:0.5rem;">
-			<sec:authorize access="isAnonymous()">
-				<div class="center-align"><a class="hover-black" href="/login">로그인</a> 하고 대화에 참여하기</div>
-			</sec:authorize>
-			<sec:authorize access="isAuthenticated()">
-				<input id="message" type="text" class="form-control" style="margin:0;" placeholder="메시지 입력" onkeypress="if(event.keyCode==13) {sendMessage(this); return false;}"/>
-			</sec:authorize>
-			</div>
-		</div> --%>
 	</div>
 	
 	</div>
@@ -131,7 +148,7 @@
 						</div>
 						<div class="input-field col s12">
 							<b>태그</b>
-								<div id="u_b_tags" class="tags form-control" data-tags-input-name="tag"></div>
+								<div id="u_b_tags" class="tagging form-control" data-tags-input-name="tag"></div>
 						</div>					
 					</div>
 				<div class="modal-footer white">
@@ -158,7 +175,7 @@
 								<div class="input-field col s12"></div>
 																<div class="input-field col s12">
 																<b>태그</b>
-								<div id="u_c_tags" class="tags form-control" data-tags-input-name="tag"></div>
+								<div id="u_c_tags" class="tagging form-control" data-tags-input-name="tag"></div>
 				</div>
 						</div>					
 					</div>
@@ -249,7 +266,7 @@
 			</div>
 			<div class="col s12">
 				<b>태그</b>
-				<div id="c_tags" class="tags form-control" data-tags-input-name="tag"></div>
+				<div id="c_tags" class="tagging form-control" data-tags-input-name="tag"></div>
 			</div>
 			<div class="col s12">
 			</div>
@@ -315,31 +332,78 @@
 	    </div>
 	</div>
 	
-<!-- Compiled and minified JavaScript -->
 <script	src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+<script src="/assets/js/sockjs-0.3.4.min.js"></script>
+<script src="/assets/js/stomp.min.js"></script>
+
+<!-- Compiled and minified JavaScript -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.8/js/materialize.min.js"></script>
 <script src="/assets/js/tether.min.js"></script>
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.5/js/bootstrap.min.js" integrity="sha384-BLiI7JTZm+JWlgKa0M0kGRpJbF2J8q+qreVrKBC47e3K6BW78kGLrCkeRX6I9RoK" crossorigin="anonymous"></script>
 <script src="http://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.2/summernote.js"></script>
 <script src="/assets/js/tagging.js"></script>
 <script src="/assets/js/summernote-ko-KR.min.js"></script>
-<script	src="https://code.angularjs.org/1.6.1/angular.min.js"></script>
-<script	src="https://code.angularjs.org/1.6.1/angular-loader.js"></script>
-<script	src="https://code.angularjs.org/1.6.1/angular-sanitize.js"></script>
+<script	src="/assets/js/angular.min.js"></script>
 <script	src="/assets/js/dirPagination.js"></script>
-<script src="/assets/js/app.js"></script>
+<script	src="/assets/js/angular-sanitize.min.js"></script>
 <script type="text/javascript">
-var token = '${_csrf.token}';
-var header = '${_csrf.headerName}';
+$(function() {			
+	$(document).ajaxSend(function(e, xhr, options) {
+		xhr.setRequestHeader('${_csrf.headerName}', '${_csrf.token}');
+	});
+	$(".button-collapse").sideNav();
+});
+</script>
+
+<script>
+function withdraw(id){
+	if(!confirm("정말로 탈퇴하시겠습니까?"))
+		return;
+	
+	$.ajax({
+		type	: 'DELETE',
+		url		: '/user/'+id,
+		success	: function(response){
+			Materialize.toast("정상적으로 탈퇴되었습니다.", 3000);
+			location.href="/";
+		},
+		error	: function(response){
+			console.log(response);
+			Materialize.toast("탈퇴하지 못했습니다", 3000);
+		}
+	});
+}
+
+/**
+ *  게시물 작성 알림 시스템
+ */
+ var stompClient = null;
 
 $(function() {
-	$(document).ajaxSend(function(e, xhr, options) {
-		xhr.setRequestHeader(header, token);
+	var socket = new SockJS("/websocket");
+	stompClient = Stomp.over(socket);
+	stompClient.debug = null;
+	stompClient.connect({},function(frame) {
+		console.log("Init Stomp");
+		stompClient.subscribe('/board', function(response){
+			console.log(response);
+			Materialize.toast("알림 전송. 개발자 도구를 확인하세요",3000,'green',function(){
+				
+			});
+		});
+		
+	}, function(message){
+		Materialize.toast("오류가 발생하였습니다. 개발자 도구를 확인하세요",3000,'red',function(){
+			console.log(message);
+		});
 	});
-	getBoardDetail('${content.id}');
-	$(".button-collapse").sideNav();
+});
+</script>
+
+<script type="text/javascript">
+$(function() {
 	$('#preloader').hide();
-	$('.tags').tagging({
+	$('.tagging').tagging({
 		"no-backspace": true,
 		"no-duplicate": true,
 	    "no-duplicate-callback": window.alert,
@@ -354,55 +418,7 @@ $(function() {
 	});
 	initSummernote();
 });
-/**
- * 단순 메시지 전송을 위함.
- */
-/* var stompClient = null;
-
-function sendMessage(message){
-	var scope = angular.element(document.getElementById("DetailController")).scope();
-	
-	if(stompClient != null)
-		stompClient.send("/message/notify/"+scope.boardContent.id, {}, JSON.stringify({'message':$(message).val()}));
-	
-	$(message).val('');
-} */
-
-$(function() {
-	/* if(document.getElementById("DetailController") != null){
-		var scope = angular.element(document.getElementById("DetailController")).scope();
-		var socket = new SockJS("/websocket");
-		stompClient = Stomp.over(socket);
-		stompClient.debug = null;
-		stompClient.connect('','',function(frame) {
-			if(stompClient != null)
-				stompClient.send("/message/notify/"+scope.boardContent.id, {}, JSON.stringify({'message':"님이 채팅에 참여하였습니다"}));
-			stompClient.subscribe('/board/'+scope.boardContent.id, function(response){
-				console.log(response);
-				var json = JSON.parse(response.body);
-				scope.$apply(function(){
-					scope.messages.push(json);
-					scope.messageUserTotal = json.total;
-				});
-				$("#messagebox").scrollTop($("#messagebox")[0].scrollHeight);
-			});
-			
-		}, function(message){
-			$('#message').attr("placeholder","서버와 연결이 끊어짐");
-			$('#message').attr("readonly",true);
-		});
-	} */
-});
 </script>
-		<sec:authorize access="isAuthenticated()">
-		<script>
-		$(function() {
-			var scope = angular.element(document.getElementById("DetailController")).scope();
-			scope.$apply(function(){
-				scope.USERID = '${user.id}';
-			});
-		});
-		</script>
-		</sec:authorize>
+<script src="/assets/js/app.js"></script>
 </body>
 </html>

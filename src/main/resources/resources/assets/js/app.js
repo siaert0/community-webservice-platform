@@ -11,6 +11,7 @@ app.directive('krInput', [ '$parse', function($parse) {
         },
     };
 } ]);
+
 app.controller('HomeController', function($scope){
 	$scope.parseJson = function (json) {
         return JSON.parse(json);
@@ -189,6 +190,7 @@ app.controller('BoardController', function($scope, $http, $log, $sce){
 		return $sce.trustAsHtml(html);
 	}
 	$scope.checkThumb = function(boardContent){
+		
 		if(boardContent.thumbs.length > 0){
 			var is = false;
 			if($scope.USERID == null){
@@ -207,53 +209,12 @@ app.controller('BoardController', function($scope, $http, $log, $sce){
 		}
 		return 0;	
 	}
+	
 	getInformation(category, 0, $scope.pagesize, $scope.searchKeyword);
 });
 
 
-/**
- * ####################
- * 스크랩 관련 컨트롤러
- * ####################
- */
 
-app.controller('ScrapController', function($scope, $http){
-	$scope.pagesize = 5;
-	$scope.totalElements = 0;
-	$scope.updateModel = function (data){
-		$scope.scraps = data;
-	}
-	$scope.scrap = function(id, index){
-		var scope = angular.element(document.getElementById("ScrapController")).scope();
-		delete_scrap(id, index, scope);
-	}
-	$scope.parseJson = function (json) {
-        return JSON.parse(json);
-    }
-	$scope.move = function (value){
-		location.href="/board/"+value;
-	}
-	$scope.checkThumb = function(boardContent){
-		if(boardContent.thumbs.length > 0){
-			var is = false;
-			if($scope.USERID == null){
-				return 1;
-			}
-			for(var i=0; i < boardContent.thumbs.length; i++){
-				if(boardContent.thumbs[i].board_USER_CP_ID.userid == $scope.USERID){
-					is = true
-					break;
-				}
-			}
-			if(is)
-				return 2;
-			else
-				return 1;
-		}
-		return 0;	
-	}
-	getScrap(scrapUser,0,$scope.pagesize);
-});
 
 /**
  * ####################
@@ -263,7 +224,6 @@ app.controller('ScrapController', function($scope, $http){
 
 app.controller('DetailController', function($scope, $http, $log, $sce){
 	$scope.messages = new Array();
-	//$scope.messageUserTotal = 0;
 	$scope.isBoardUpdate = false;
 	$scope.isCommentUpdate = false;
 	$scope.updateCommentIndex = -1;
@@ -278,36 +238,35 @@ app.controller('DetailController', function($scope, $http, $log, $sce){
 		return $sce.trustAsHtml(html);
 	}
 	$scope.scrap = function(id){
-		var scope = angular.element(document.getElementById("DetailController")).scope();
-		check_scrap(id, null, scope);
-	}
-	/*$scope.messageUser = function(id){
+		var dataObject = new Object();
+		dataObject.boardid = id;
 		$.ajax({
-			type	: 'GET',
-			url		: '/subscribe/board/'+id,
-			contentType: 'application/json',
-			dataType	: 'JSON',
-			success	: function(response){
-				console.log(response);
-				$scope.$apply(function(){
-					$scope.messageUserTotal = response.length;
+	        type: 'POST',
+	        url: '/board/scrap',
+	        contentType: 'application/json',
+	        data: JSON.stringify(dataObject),
+	        dataType: 'TEXT', //리턴되는 데이타 타입
+	        success: function(response){
+	  			Materialize.toast("스크랩 되었습니다.",3000,'green',function(){
+					
 				});
-			},
-			error	: function(response){
-				Materialize.toast("오류가 발생하였습니다. 개발자 도구를 확인하세요",3000,'red',function(){
-
+	        	
+	        },error: function(response){
+	  			Materialize.toast("오류가 발생하였습니다. 개발자 도구를 통해 확인해주세요",3000,'red',function(){
+					console.log(response);
 				});
-			}
-		});
-	}*/
+	        }
+	    });
+	}
+	
 	$scope.checkThumb = function(){
 		if($scope.boardContent.thumbs.length > 0){
 			var is = false;
-			if($scope.USERID == null){
+			if($scope.USER == ""){
 				return 1;
 			}
 			for(var i=0; i < $scope.boardContent.thumbs.length; i++){
-				if($scope.boardContent.thumbs[i].board_USER_CP_ID.userid == $scope.USERID){
+				if($scope.boardContent.thumbs[i].board_USER_CP_ID.userid == $scope.USER.id){
 					is = true
 					break;
 				}
@@ -321,7 +280,7 @@ app.controller('DetailController', function($scope, $http, $log, $sce){
 	}
 	
 	$scope.toggleThumb = function(){
-		if($scope.USERID == null){
+		if($scope.USER == ""){
 			return;
 		}
 		var dataObject = new Object();
@@ -484,6 +443,34 @@ app.controller('DetailController', function($scope, $http, $log, $sce){
 		Materialize.updateTextFields();
 		$scope.isCommentUpdate = false;
 	}
+	$scope.loadDataSet = function(){
+		$http({
+			method: "GET",
+			url : location.pathname
+		}).then(function(response){
+			$scope.boardContent = response.data;
+		},function(response){
+			Materialize.toast("오류가 발생하였습니다. 개발자 도구를 확인해주세요",3000,'red',function(){
+				console.log(response);
+			});
+		});
+	}
+	$scope.loadUser = function(){
+		$http({
+			method: "GET",
+			url : "/user"
+		}).then(function(response){
+			console.log(response);
+			$scope.USER = response.data;
+		},function(response){
+			Materialize.toast("오류가 발생하였습니다. 개발자 도구를 확인해주세요",3000,'red',function(){
+				console.log(response);
+			});
+		});
+	}
+	
+	$scope.loadUser();
+	$scope.loadDataSet();
 });
 
 function getRestrictList(page, size, search){
@@ -547,54 +534,7 @@ function getInformation(value, page, size, search){
 	});
 }
 
-function getScrap(value, page, size){
-	var scope = angular.element(document.getElementById("ScrapController")).scope();
-	var dataObject = {
-		page : page,
-		size : size,
-	};
-	
-	$.ajax({
-		type	: 'GET',
-		url		: '/board/scrap/'+value,
-		data	: dataObject,
-		dataType	: 'JSON',
-		success	: function(response){
-			if(response != "" && response != null){
-				scope.$apply(function () {
-					scope.totalElements = response.totalElements;
-					scope.updateModel(response.content);
-				});
-			}
-		},
-		error	: function(response){
-			Materialize.toast("오류가 발생하였습니다. 개발자 도구를 확인해주세요",3000,'red',function(){
-				console.log(response);
-			});
-		}
-	});
-}
 
-function getBoardDetail(value){
-	var scope = angular.element(document.getElementById("DetailController")).scope();
-	$.ajax({
-		type	: 'GET',
-		url		: '/board/'+value,
-		dataType	: 'JSON',
-		success	: function(response){
-			if(response != "" && response != null){
-				scope.$apply(function () {
-					scope.updateModel(response);
-				});
-			}
-		},
-		error	: function(response){
-			Materialize.toast("오류가 발생하였습니다. 개발자 도구를 확인해주세요",3000,'red',function(){
-				console.log(response);
-			});
-		}
-	});
-}
 
 function comment(board){
 	$('#preloader').show();
@@ -696,6 +636,9 @@ function updateBoard(board){
 	$('#preloader').hide();
 }
 
+/**
+ *  에디터 관련 스크립트
+ */
 
 function validation(fileName){
     var fileNameExtensionIndex = fileName.lastIndexOf('.') + 1; //.뒤부터 확장자
@@ -747,6 +690,7 @@ function sendImage(file, summernote){
           }
       });
     }
+
 function deleteImage(file){
 		$.ajax({
           type: 'DELETE',
@@ -765,52 +709,6 @@ function deleteImage(file){
           }
       });
     }
-
-function delete_scrap(id, index, scope){
-	var dataObject = new Object();
-	dataObject.boardid = id;
-	$.ajax({
-        type: 'DELETE',
-        url: '/board/scrap',
-        contentType: 'application/json',
-        data: JSON.stringify(dataObject),
-        dataType: 'TEXT', //리턴되는 데이타 타입
-        success: function(response){
-        	scope.$apply(function(){
-        		scope.scraps.splice(index, 1);
-        	});
-  			Materialize.toast("스크랩을 취소하였습니다.",3000,'green',function(){
-  				
-			});
-        	
-        },error: function(response){
-  			Materialize.toast("오류가 발생하였습니다. 개발자 도구를 통해 확인해주세요",3000,'red',function(){
-				console.log(response);
-			});
-        }
-    });
-}
-function check_scrap(id, index, scope){
-	var dataObject = new Object();
-	dataObject.boardid = id;
-	$.ajax({
-        type: 'POST',
-        url: '/board/scrap',
-        contentType: 'application/json',
-        data: JSON.stringify(dataObject),
-        dataType: 'TEXT', //리턴되는 데이타 타입
-        success: function(response){
-  			Materialize.toast("스크랩 되었습니다.",3000,'green',function(){
-				
-			});
-        	
-        },error: function(response){
-  			Materialize.toast("오류가 발생하였습니다. 개발자 도구를 통해 확인해주세요",3000,'red',function(){
-				console.log(response);
-			});
-        }
-    });
-}
 
 function initSummernote(){
 	$('.contentbox').summernote({

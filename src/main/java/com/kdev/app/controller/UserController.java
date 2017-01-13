@@ -41,6 +41,7 @@ import org.springframework.web.bind.annotation.SessionAttributes;
 
 import com.kdev.app.domain.dto.RestrictionDTO;
 import com.kdev.app.domain.dto.UserDTO;
+import com.kdev.app.domain.pk.BOARD_USER_CP_ID;
 import com.kdev.app.domain.pk.PROVIDER_USER_CP_ID;
 import com.kdev.app.domain.vo.Restriction;
 import com.kdev.app.domain.vo.UserDetailsVO;
@@ -277,5 +278,16 @@ public class UserController {
 			model.addAttribute("restriction", restriction);
 		
 		return "user/restriction";
+	}
+	
+	@RequestMapping(value="/user", method=RequestMethod.GET, produces=MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<Object> user(Authentication authentication){
+		if(authentication != null){
+			UserDetailsVO userDetails = (UserDetailsVO)authentication.getPrincipal();
+			UserVO userVO = modelMapper.map(userDetails, UserVO.class);
+			return new ResponseEntity<Object>(userVO, HttpStatus.ACCEPTED);
+		}
+		
+		return new ResponseEntity<Object>(null, HttpStatus.ACCEPTED);
 	}
 }

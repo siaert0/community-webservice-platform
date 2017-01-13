@@ -20,7 +20,59 @@
 <body>
 	<!-- 헤더 영역 -->
 		<header>
-			<c:import url="/sidenav" />
+			<nav>
+			    <div class="nav-wrapper blue lighten-1">
+					<a class="brand-logo right waves-effect waves-light button-collapse hide-on-large-only blue lighten-1" data-activates="nav-mobile"><i class="material-icons">menu</i></a>
+			      <ul class="list-none-style left">
+			      <!-- 인증된 사용자의 메뉴 영역 -->
+					<sec:authorize access="isAuthenticated()">
+					    <li><a href="#">IT STACKS - 신입 개발자를 위한 질문 서비스</a></li>
+					</sec:authorize>
+					<sec:authorize access="isAnonymous()">
+						 <li><a href="/login">IT STACKS를 이용하기 위해서는 로그인 하셔야 합니다.</a></li>
+					</sec:authorize>
+			      </ul>
+			    </div>
+			  </nav>
+			  <ul id="nav-mobile" class="side-nav fixed tabs-transparent">
+    <li><div class="userView center">
+      <div class="background blue lighten-1">
+      </div>
+      <sec:authorize access="isAnonymous()">
+      	  <a href="#"><img class="circle" src="/assets/img/user-star.png" style="margin:0 auto;"></a>
+	      <a href="${pageContext.request.contextPath}/login"><span class="white-text name">로그인</span></a><br>
+	  </sec:authorize>
+      <sec:authorize access="isAuthenticated()">
+      	  <a><img class="circle" src="${user.thumbnail}" style="margin:0 auto;"></a>
+	      <a><span class="white-text name">${user.nickname}</span></a>
+	      <form name="logoutform" action="/logout"	method="post">
+    		<input type="hidden"  name="${_csrf.parameterName}"	value="${_csrf.token}"/>
+    	  </form>
+	      <a href="#" onclick="logoutform.submit();"><span class="white-text email">로그아웃</span></a>
+      </sec:authorize>
+    </div></li>
+    <li><a href="/"><i class="material-icons">home</i>홈</a></li>
+    <sec:authorize access="hasRole('ROLE_ADMIN')">
+    <li><a href="/admin" class="waves-effect"><i class="material-icons">settings</i>관리페이지</a></li>
+    </sec:authorize>
+    <sec:authorize access="isAuthenticated()">
+    <li><a href="/user/${user.id}" class="waves-effect"><i class="material-icons">account_box</i>회원정보수정</a></li>
+    <li><a href="/board/scrap" class="waves-effect"><i class="material-icons">share</i>스크랩</a></li>
+    <li><a href="/board" class="waves-effect"><i class="material-icons">create</i>글쓰기</a></li>
+    </sec:authorize>
+    <li><div class="divider"></div></li>
+    <li><a class="subheader">게시판</a></li>
+    <!-- 게시판 카테고리 영역  -->
+    <li><a href="/board/category/QA" class="waves-effect"><i class="material-icons">folder</i>QA</a></li>
+    <li><a href="/board/category/신입공채" class="waves-effect"><i class="material-icons">folder</i>신입공채</a></li>
+    <!--  -->
+    <li><div class="divider"></div></li>
+    <li><a class="subheader" class="waves-effect">IT 관련 사이트</a></li>
+    <li><a href="http://stackoverflow.com/" target="_blank" class="waves-effect"><i class="material-icons">link</i>스택 오버플로우</a></li>
+    <li><a href="http://okky.kr/" target="_blank" class="waves-effect"><i class="material-icons">link</i>OKKY</a></li>
+    <li><a class="subheader">개발 기록</a></li>
+    <li><a href="http://kdevkr.tistory.com/" target="_blank" class="waves-effect"><i class="material-icons">room</i>개발자 블로그</a></li>
+</ul>
 		</header>
 				<!-- 아티클 영역 -->
 	<article>
@@ -65,18 +117,63 @@
 					<a class="btn-floating btn-large red button-collapse hide-on-large-only" data-activates="nav-mobile"><i class="material-icons">web</i>
 					</a>
 				</div>
-			
-			<script	src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.8/js/materialize.min.js"></script>
-			<script type="text/javascript">
-			$(".button-collapse").sideNav();
-			
-			var token = $("meta[name='_csrf']").attr("content");
-			var header = $("meta[name='_csrf_header']").attr("content");
-			$(function() {			
-				$(document).ajaxSend(function(e, xhr, options) {
-					xhr.setRequestHeader(header, token);
-				});
+				
+				<script type="text/javascript">
+$(function() {			
+	$(document).ajaxSend(function(e, xhr, options) {
+		xhr.setRequestHeader('${_csrf.headerName}', '${_csrf.token}');
+	});
+	$(".button-collapse").sideNav();
+});
+</script>
+
+<script>
+function withdraw(id){
+	if(!confirm("정말로 탈퇴하시겠습니까?"))
+		return;
+	
+	$.ajax({
+		type	: 'DELETE',
+		url		: '/user/'+id,
+		success	: function(response){
+			Materialize.toast("정상적으로 탈퇴되었습니다.", 3000);
+			location.href="/";
+		},
+		error	: function(response){
+			console.log(response);
+			Materialize.toast("탈퇴하지 못했습니다", 3000);
+		}
+	});
+}
+
+/**
+ *  게시물 작성 알림 시스템
+ */
+ var stompClient = null;
+ 
+function sendMessage(message){
+	if(stompClient != null)
+		stompClient.send("/message/notify/", {}, JSON.stringify({'message':message}));
+}
+
+$(function() {
+	var socket = new SockJS("/websocket");
+	stompClient = Stomp.over(socket);
+	stompClient.debug = null;
+	stompClient.connect({},function(frame) {
+		stompClient.subscribe('/board', function(response){
+			Materialize.toast("알림 전송. 개발자 도구를 확인하세요",3000,'green',function(){
+				console.log(message);
 			});
-		</script>
+		});
+		
+	}, function(message){
+		Materialize.toast("오류가 발생하였습니다. 개발자 도구를 확인하세요",3000,'red',function(){
+			console.log(message);
+		});
+	});
+});
+</script>
+			
 </body>
 </html>
