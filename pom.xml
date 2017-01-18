@@ -4,10 +4,10 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<groupId>com.kdev.app</groupId>
-	<artifactId>spring.boot.example.kdev</artifactId>
+	<artifactId>app</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>Spring-Boot-Example-Maven</name>
-	<description>Example project for Spring Boot</description>
+	<name>Community-Webservice-Platform</name>
+	<description>Community-Webservice-Platform project for Spring Boot</description>
 	<packaging>war</packaging>
 
 	<parent>
@@ -30,10 +30,12 @@
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-web</artifactId>
 		</dependency>
+		
 		<dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-websocket</artifactId>
         </dependency>
+        
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-tomcat</artifactId>
