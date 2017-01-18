@@ -9,11 +9,11 @@
 		<meta http-equiv="X-UA-Compatible" content="IE=edge" charset="utf-8">
 		<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
-		<title>스프링 부트 웹 애플리케이션</title>
+		<title>Community Webservice Platform</title>
 
 		<!--Import Google Icon Font-->
 		<link href="http://fonts.googleapis.com/icon?family=Material+Icons"	rel="stylesheet">
-		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.5/css/bootstrap.min.css">
+		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/css/bootstrap.min.css">
 		<!-- Compiled and minified CSS -->
 		<link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/style.css">
 	</head>
@@ -26,10 +26,10 @@
 			      <ul class="list-none-style left">
 			      <!-- 인증된 사용자의 메뉴 영역 -->
 					<sec:authorize access="isAuthenticated()">
-					    <li><a href="#">IT STACKS - 신입 개발자를 위한 질문 서비스</a></li>
+					    <li><a href="#">Community Webservice Platform</a></li>
 					</sec:authorize>
 					<sec:authorize access="isAnonymous()">
-						 <li><a href="/login">IT STACKS를 이용하기 위해서는 로그인 하셔야 합니다.</a></li>
+						 <li><a href="/login">Community Webservice Platform</a></li>
 					</sec:authorize>
 			      </ul>
 			    </div>
@@ -64,7 +64,7 @@
     <li><a class="subheader">게시판</a></li>
     <!-- 게시판 카테고리 영역  -->
     <li><a href="/board/category/QA" class="waves-effect"><i class="material-icons">folder</i>QA</a></li>
-    <li><a href="/board/category/신입공채" class="waves-effect"><i class="material-icons">folder</i>신입공채</a></li>
+    <li><a href="/board/category/Information" class="waves-effect"><i class="material-icons">folder</i>Information</a></li>
     <!--  -->
     <li><div class="divider"></div></li>
     <li><a class="subheader" class="waves-effect">IT 관련 사이트</a></li>
@@ -77,43 +77,44 @@
 		<!-- 아티클 영역 -->
 		<article>
 			<div class="container-fluid">
+			<p></p>
 				<!-- 게시물 페이지네이션 영역 -->
-				<div class="row left-align">
+				<div class="row">
 				<p></p>
-				<blockquote>
-					<div class="col s12">
-						<span class="chip red lighten-2 hover white-text" style="border-radius:0;">스크랩 수</span>
-						<span class="chip grey darken-2 hover white-text" style="border-radius:0;">{{totalElements}}개</span>
+					<div class="col-sm-12">
+						<span class="chip grey darken-2 hover white-text" style="border-radius:0;">스크랩 수 {{totalElements}}개</span>
 						</div>
-				</blockquote>
 				</div>
-				
-				<!-- 게시물 영역 -->
-				<div class="row">		
 				<div dir-paginate="x in search_contents = (scraps | filter:searchKeyword | orderBy:-index) | itemsPerPage:pagesize" pagination-id="scrappage" total-items="totalElements">
-					<div class="col s12">
-						<div class="card sticky-action hoverable border-flat" ng-class="{selectedBoard:x.board.selected != 0, commentedBoard:x.board.selected == 0 && x.board.comments.length > 0}">
-							<div class="card-content">
+						<div class="card sticky-action border-flat" ng-class="{selectedBoard:x.selected != 0, commentedBoard:x.selected == 0 && x.comments.length > 0}" style="margin:0; margin-top:5px;">
+							<div class="card-content" style="padding:10px; padding-top:15px;">
 								<span class="chip white left">
 							      <img style="height:100%;" ng-src="{{x.board.user.thumbnail}}">
 								   {{x.board.user.nickname}}
 								  </span>
-								<span style="font-weight:700; font-size:18px;">{{x.board.title}}</span>
+								  <span class="chip transparent teal-text border-flat left">	{{x.board.category}}</span>
+								<span class="chip transparent blue-text border-flat left">댓글 {{x.board.comments.length}}</span>
+								<span class="chip transparent red-text border-flat left">추천 {{x.board.thumbs.length}}</span>
+								<span class="chip transparent black-text border-flat">{{x.board.created | date:'yyyy년 MM월 dd일 h:mma'}}</span>
+								<span class="chip transparent pink-text waves-effect waves-light" data-ng-click="scrap(x.board.id, $index)">스크랩 취소</span>
+								</div>
+							<div class="card-content" style="padding-top:0;">
+								<a class="hover-black hover" ng-href="/board/{{x.board.id}}" style="color:#444; font-weight:700; font-size:15px;">{{x.board.title}}</a>
 							</div>
-							<div class="card-action right-align">
-								<span class="chip teal lighten-2 hover white-text border-flat left">{{x.board.category}}</span>
-							<span class="chip lighten-2 hover white-text border-flat left" ng-class="{blue:x.board.selected == 0 && x.board.comments.length > 0, grey:x.board.selected == 0 && x.board.comments.length == 0, green:x.board.selected != 0}">댓글 {{x.board.comments.length}}</span>
-								<span class="chip lighten-2 hover white-text border-flat left" ng-class="{red:checkThumb({{x.board}})==0, green:checkThumb({{x.board}})==1, blue:checkThumb({{x.board}})==2}">추천 {{x.board.thumbs.length}}</span>
-								<span class="chip green lighten-2 hover white-text border-flat" data-ng-click="move(x.board.id)">이동</span>
-								<span class="chip red lighten-2 hover white-text border-flat" data-ng-click="scrap(x.board.id, $index)">스크랩 취소</span>
+							<div class="card-action" style="padding:5px 10px;" ng-if="x.board.tags != '[]'">
+								<span class="tags" ng-init="tags=parseJson(x.board.tags)">
+									<span ng-repeat="tag in tags"><span class="chip transparent red-text hover border-flat" style="margin:0;">{{tag}} </span>
+								  </span>
+								</span>
 								
 							</div>
 						</div>
 					</div>
-					</div>
-				</div>
+				<!-- 게시물 영역 -->
+				<p></p>
 				
-				<!-- 게시물 페이지네이션 영역 -->
+			</div>
+			<!-- 게시물 페이지네이션 영역 -->
 					<div class="center-align">
 						<dir-pagination-controls
 						    max-size="5"
@@ -125,34 +126,21 @@
 						    >
 						</dir-pagination-controls>
 					</div>
-			</div>
 		</article>
-		
-		<!-- 푸터 영역 -->
-		<footer class="page-footer white">
-			<div class="footer-copyright">
-				<div class="container center black-text">
-					© 2016 Copyright <a href="http://materializecss.com/"
-						target="_blank">Materializecss</a> by <a
-						href="https://material.io/">Google Material Design</a>.
-				</div>
-			</div>
-		</footer>
 
-<!-- Compiled and minified JavaScript -->
+<!-- Compiled and minified JavaScript -->		
 <script	src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
-<script src="/assets/js/sockjs-0.3.4.min.js"></script>
-<script src="/assets/js/stomp.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.1.1/sockjs.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.8/js/materialize.min.js"></script>
-<script src="/assets/js/tether.min.js"></script>
-<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.5/js/bootstrap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/tether/1.4.0/js/tether.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/js/bootstrap.min.js"></script>
 <script src="http://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.2/summernote.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.2/lang/summernote-ko-KR.min.js"></script>
+<script	src="https://code.angularjs.org/1.6.1/angular.min.js"></script>
+<script	src="https://code.angularjs.org/1.6.1/angular-sanitize.min.js"></script>
 <script src="/assets/js/tagging.js"></script>
-<script src="/assets/js/summernote-ko-KR.min.js"></script>
-<script	src="/assets/js/angular.min.js"></script>
 <script	src="/assets/js/dirPagination.js"></script>
-
-
 <script type="text/javascript">
 $(function() {		
 	$(document).ajaxSend(function(e, xhr, options) {

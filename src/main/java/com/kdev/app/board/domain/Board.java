@@ -14,10 +14,11 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OrderBy;
-import javax.persistence.PrimaryKeyJoinColumn;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+
+import org.hibernate.validator.constraints.NotEmpty;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.kdev.app.user.domain.UserVO;
@@ -64,7 +65,34 @@ public class Board {
 	@OneToMany(mappedBy="board", fetch=FetchType.LAZY, cascade=CascadeType.REMOVE)
 	private Collection<Thumb> thumbs;
 	
+	//Infinity Recursion 방지
     @JsonBackReference
 	@OneToMany(mappedBy="board", fetch=FetchType.LAZY, cascade=CascadeType.REMOVE)
 	private Collection<Scrap> scraps;
+    
+    @Data
+	public static class Create{
+		@NotEmpty
+		private String title;
+		@NotEmpty
+		private String category;
+		private String description;
+		private String tags;
+		private UserVO user;
+	}
+	
+	@Data
+	public static class Update{
+		private int id;
+		@NotEmpty
+		private String title;
+		@NotEmpty
+		private String category;
+		private String description;
+		private String tags;
+		private UserVO user;
+		private int selected;
+		private Date created;
+		private Collection<Comment> comments;
+	}
 }

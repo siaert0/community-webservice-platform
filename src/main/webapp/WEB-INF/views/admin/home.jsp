@@ -12,13 +12,12 @@
 		<meta id="_csrf" name="_csrf" content="${_csrf.token}" />
 		<meta id="_csrf_header" name="_csrf_header" content="${_csrf.headerName}" />
 
-		<title>스프링 부트 웹 애플리케이션</title>
+		<title>Community Webservice Platform</title>
 
 		<!--Import Google Icon Font-->
 		<link href="http://fonts.googleapis.com/icon?family=Material+Icons"	rel="stylesheet">
 		<!-- Compiled and minified CSS -->
-		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.5/css/bootstrap.min.css">
-		<link rel="stylesheet"  href="${pageContext.request.contextPath}/assets/css/tether.min.css">
+		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/css/bootstrap.min.css">
 		<link rel="stylesheet" href="/assets/css/style.css">
 	</head>
 	<body id="AdminController" ng-controller="AdminController" ng-cloak>
@@ -30,10 +29,10 @@
 			      <ul class="list-none-style left">
 			      <!-- 인증된 사용자의 메뉴 영역 -->
 					<sec:authorize access="isAuthenticated()">
-					    <li><a href="#">IT STACKS - 신입 개발자를 위한 질문 서비스</a></li>
+					    <li><a href="#">Community Webservice Platform</a></li>
 					</sec:authorize>
 					<sec:authorize access="isAnonymous()">
-						 <li><a href="/login">IT STACKS를 이용하기 위해서는 로그인 하셔야 합니다.</a></li>
+						 <li><a href="/login">Community Webservice Platform</a></li>
 					</sec:authorize>
 			      </ul>
 			    </div>
@@ -69,7 +68,7 @@
     <li><a class="subheader">게시판</a></li>
     <!-- 게시판 카테고리 영역  -->
     <li><a href="/board/category/QA" class="waves-effect"><i class="material-icons">folder</i>QA</a></li>
-    <li><a href="/board/category/신입공채" class="waves-effect"><i class="material-icons">folder</i>신입공채</a></li>
+    <li><a href="/board/category/Information" class="waves-effect"><i class="material-icons">folder</i>Information</a></li>
     <!--  -->
     <li><div class="divider"></div></li>
     <li><a class="subheader" class="waves-effect">IT 관련 사이트</a></li>
@@ -83,86 +82,84 @@
 		<article>
 			<div class="container-fluid">
 				<!-- 게시물 페이지네이션 영역 -->
+				<p></p>
 				<div class="row center-align">
 				<h3 style="margin-top:50px;"></h3>
-				<blockquote>
-					<div class="col s12 m6 l3">
+					<div class="col-sm-12 col-md-6 col-lg-3">
 						<span class="chip green lighten-2 hover white-text" style="border-radius:0; padding-right:0; width:100%;">전체 사용자수
 							<span class="chip grey darken-2 hover white-text right" style="border-radius:0; margin-right:0;">${userCount}명</span>
 						</span>
 					</div>
-					<div class="col s12 m6 l3">
+					<div class="col-sm-12 col-md-6 col-lg-3">
 						<span class="chip blue lighten-2 hover white-text" style="border-radius:0; padding-right:0; width:100%;">페이스북 사용자
 							<span class="chip grey darken-2 hover white-text right" style="border-radius:0; margin-right:0;">${facebookUser}명</span>
 						</span>
 					</div>
-					<div class="col s12 m6 l3">
+					<div class="col-sm-12 col-md-6 col-lg-3">
 						<span class="chip orange lighten-2 hover white-text" style="border-radius:0; padding-right:0; width:100%;">카카오톡 사용자
 							<span class="chip grey darken-2 hover white-text right" style="border-radius:0; margin-right:0;">${kakaoUser}명</span>
 						</span>
 					</div>
-					<div class="col s12 m6 l3">
+					<div class="col-sm-12 col-md-6 col-lg-3">
 						<span class="chip purple lighten-2 hover white-text" style="border-radius:0; padding-right:0; width:100%;">제재 사용자
 							<span class="chip grey darken-2 hover white-text right" style="border-radius:0; margin-right:0;">${restrictCount}명</span>
 						</span>
 					</div>
-					<div class="col s12 m6 l3">
+					<div class="col-sm-12 col-md-6">
 						<span class="chip pink lighten-2 hover white-text" style="border-radius:0; padding-right:0; width:100%;">전체 게시물수
 							<span class="chip grey darken-2 hover white-text right" style="border-radius:0; margin-right:0;">${boardCount}개</span>
 						</span>
 					</div>
-					<div class="col s12 m6 l3">
-						<span class="chip teal lighten-2 hover white-text" style="border-radius:0; padding-right:0; width:100%;">현재 세션수
-							<span class="chip grey darken-2 hover white-text right" style="border-radius:0; margin-right:0;">${currentSessionCount}명</span>
-						</span>
-					</div>
-					<div class="col s12 m6">
+					<div class="col-sm-12 col-md-6">
 						<span class="chip red lighten-2 hover white-text" style="border-radius:0; padding-right:0; width:100%;">시스템 메모리
 							<span class="chip grey darken-2 hover white-text right" style="border-radius:0; margin-right:0;">${systemMemory}MB</span>
 						</span>
 					</div>
-				</blockquote>
 				</div>
 				
 				<!-- 게시물 영역 -->
 				<div class="row">
-				<div class="col s12 m6">
+				<div class="col-sm-12">
 					<div class="collection">
 						<div class="collection-item">
 							<div class="row">
-								<div class="col s6">
-								회원 소셜 타입
+								<div class="col-sm-12">
+							<b>회원 소셜 타입</b>
 									<select id="provider" class="browser-default form-control">
 								      <option value="" disabled selected>소셜 구분을 선택해주세요</option>
 								      <option value="Kakao">Kakao</option>
 								      <option value="Facebook">Facebook</option>
 								    </select>
+								    <p></p>
 								</div>
 								
-								<div class="col s6">
-									회원 번호 <input id="id" name="id" type="text" class="form-control validate"/>
-								</div>
-								<div class="col s12">
-									제재 사유 <input id="reason" name="reason" type="text" class="form-control validate"/>
-								</div>
-								<div class="col s12">
-									해제 일자 <input id="released" name="released" type="date" class="form-control validate"/>
+								<div class="col-sm-12">
+									<b>회원 번호</b><input id="id" name="id" type="text" class="form-control validate"/>
+								<p></p>
 								</div>
 								
-								<div class="col s12 right-align">
-								<br/>
-									<a class="waves-effect waves-light btn red white-text" data-ng-click="insertRestrict()">등록하기</a>
+								<div class="col-sm-12">
+									<b>제재 사유</b><input id="reason" name="reason" type="text" class="form-control validate"/>
+								<p></p>
+								</div>
+								<div class="col-sm-12">
+									<b>해제 일자</b><input id="released" name="released" type="date" class="form-control validate"/>
+								<p></p>
+								</div>
+								
+								<div class="col-sm-12 right-align flex-box">
+									<a class="btn blue lighten-2 white-text btn-full" data-ng-click="insertRestrict()">등록하기</a>
 								</div>
 							</div>
 						</div>
 					</div>
 					</div>
-					<div class="col s12 m6">
+					<div class="col-sm-12">
 					<div class="collection">
 						<div class="collection-item">
 							<b>제재된 리스트 {{totalRestrictList}}개</b>
 						</div>
-							<div class="collection-item">
+							<div class="collection-item" ng-if="{{totalRestrictList}}">
 							<p dir-paginate="x in search_contents = (restrictList) | itemsPerPage:pagesize" pagination-id="restrictpage" total-items="totalRestrictList">
 								{{x.provider}} - {{x.userid}} : {{x.reason}} - {{x.released | date:'yyyy년 MM월 dd일'}}까지 <a href="#" data-ng-click="cancelRestriction(x.provider, x.userid, $index)">해제</a>
 							</p>
@@ -182,48 +179,152 @@
 					</div>
 				</div>
 			</div>		
-			<!-- 인증된 사용자의 메뉴 영역 -->
-			<sec:authorize access="isAuthenticated()">
-				<div class="fixed-action-btn click-to-toggle">
-					<a class="btn-floating btn-large red">
-						<i class="material-icons">menu</i>
-					</a>
-					<ul>
-					    <li><a class="btn-floating btn-large red button-collapse hide-on-large-only waves-effect waves-light" data-activates="nav-mobile"><i class="material-icons">web</i>
-					</a></li>
-						<li><a class="btn-floating blue btn-large waves-effect waves-light" href="/board/"><i class="material-icons">add</i></a></li>
-					</ul>
-				</div>
-			</sec:authorize>
 		</article>
-		
-		<!-- 푸터 영역 -->
-		<footer class="page-footer white">
-			<div class="footer-copyright">
-				<div class="container center black-text">
-					Bootstrap 4 & Materialize
-				</div>
-			</div>
-		</footer>
 
-		<!-- Compiled and minified JavaScript -->
-		<script	src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
-		<script	src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.8/js/materialize.min.js"></script>
+<!-- Compiled and minified JavaScript -->		
+<script	src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.1.1/sockjs.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.8/js/materialize.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/tether/1.4.0/js/tether.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/js/bootstrap.min.js"></script>
+<script src="http://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.2/summernote.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.2/lang/summernote-ko-KR.min.js"></script>
+<script	src="https://code.angularjs.org/1.6.1/angular.min.js"></script>
+<script	src="https://code.angularjs.org/1.6.1/angular-sanitize.min.js"></script>
+<script src="/assets/js/tagging.js"></script>
+<script	src="/assets/js/dirPagination.js"></script>
+<script type="text/javascript">
+	$(".button-collapse").sideNav();
+	
+	var token = $("meta[name='_csrf']").attr("content");
+	var header = $("meta[name='_csrf_header']").attr("content");
+	$(function() {			
+		$(document).ajaxSend(function(e, xhr, options) {
+			xhr.setRequestHeader(header, token);
+		});
+	});
+	
+	var app = angular.module('myApp', ['ngSanitize','angularUtils.directives.dirPagination']);
+	
+	app.controller('AdminController', function($scope){
+		$scope.searchKeyword = '';
+		$scope.pagesize = 5;
+		$scope.totalRestrictList = 0;
 		
-		<script	src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.7/angular.min.js"></script>
-		<script	src="https://code.angularjs.org/1.5.7/angular-sanitize.js"></script>
-		<script	src="/assets/js/dirPagination.js"></script>
-		<script src="/assets/js/app.js"></script>
-		<script type="text/javascript">
-			$(".button-collapse").sideNav();
-			
-			var token = $("meta[name='_csrf']").attr("content");
-			var header = $("meta[name='_csrf_header']").attr("content");
-			$(function() {			
-				$(document).ajaxSend(function(e, xhr, options) {
-					xhr.setRequestHeader(header, token);
+		$scope.insertRestrict = function(){
+			if($('#provider').val() == "" || $('#provider').val() == null){
+				Materialize.toast("회원 소셜 타입를 선택해주세요",3000,'orange',function(){
+
 				});
+				$('#provider').focus();
+				return;
+			}
+			if($('#id').val() == "" || $('#id').val() == null){
+				Materialize.toast("회원 번호를 입력해주세요",3000,'orange',function(){
+					
+				});
+				$('#id').focus();
+				return;
+			}
+			if($('#reason').val() == "" || $('#reason').val() == null){
+				Materialize.toast("제재 사유를 입력해주세요",3000,'orange',function(){
+
+				});
+				$('#reason').focus();
+				return;
+			}
+			if($('#released').val() == "" || $('#released').val() == null){
+				Materialize.toast("해제 일자를 입력해주세요",3000,'orange',function(){
+
+				});
+				$('#released').focus();
+				return;
+			}
+			var dataObject = new Object();
+			
+			dataObject.provider = $('#provider').val();
+			dataObject.userid = $('#id').val();
+			dataObject.reason = $('#reason').val();
+			dataObject.released = $('#released').val();
+			
+			$.ajax({
+				type	: 'POST',
+				url		: '/restriction',		
+				data	: JSON.stringify(dataObject),
+				contentType: 'application/json',
+				dataType	: 'JSON',
+				success	: function(response){
+					Materialize.toast("제재 되었습니다.",3000,'green',function(){
+						
+					});
+					getRestrictList(0, $scope.pagesize, $scope.searchKeyword);
+					
+				},
+				error	: function(response){
+					Materialize.toast("오류가 발생하였습니다. 개발자 도구를 확인하세요",3000,'red',function(){
+						console.log(response);
+					});
+				}
 			});
-		</script>
-	</body>
+		}
+		
+		$scope.cancelRestriction = function(provider, userid, index){
+			var dataObject = new Object();
+			
+			dataObject.provider = provider;
+			dataObject.userid = userid;
+			
+			$.ajax({
+				type	: 'DELETE',
+				url		: '/restriction',		
+				data	: JSON.stringify(dataObject),
+				contentType: 'application/json',
+				dataType	: 'JSON',
+				success	: function(response){
+					Materialize.toast("해제되었습니다.",3000,'green',function(){
+						
+					});
+					$scope.$apply(function(){
+						$scope.restrictList.splice(index, 1);
+					});
+				},
+				error	: function(response){
+					Materialize.toast("오류가 발생하였습니다. 개발자 도구를 확인하세요",3000,'red',function(){
+						console.log(response);
+					});
+				}
+			});
+		}
+		$scope.loadDataSet = function(page, size, search){
+			var dataObject = {
+					page : page,
+					size : size,
+					search : search
+				};
+				
+				$.ajax({
+					type	: 'GET',
+					url		: '/restriction',
+					data	: dataObject,
+					dataType	: 'JSON',
+					success	: function(response){
+						if(response != "" && response != null){
+							$scope.$apply(function () {
+								$scope.totalRestrictList = response.totalElements;
+								$scope.restrictList = response.content;
+							});
+						}
+					},
+					error	: function(response){
+						Materialize.toast("오류가 발생하였습니다. 개발자 도구를 확인해주세요",3000,'red',function(){
+							console.log(response);
+						});
+					}
+				});
+		}
+		$scope.loadDataSet(0, $scope.pagesize, $scope.searchKeyword);
+	});
+</script>
+</body>
 </html>

@@ -1,4 +1,4 @@
-package com.kdev.app.social.service;
+package com.kdev.app.user.service;
 
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;

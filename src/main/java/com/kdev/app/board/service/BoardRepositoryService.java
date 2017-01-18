@@ -1,11 +1,12 @@
 package com.kdev.app.board.service;
 
-import static com.kdev.app.board.domain.SearchSpec.*;
-import static org.springframework.data.jpa.domain.Specifications.*;
+import static com.kdev.app.board.domain.SearchSpec.category;
+import static com.kdev.app.board.domain.SearchSpec.containTags;
+import static com.kdev.app.board.domain.SearchSpec.containTitle;
+import static org.springframework.data.jpa.domain.Specifications.where;
 
 import java.util.List;
 
-import org.hibernate.annotations.Where;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -15,7 +16,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.kdev.app.board.domain.BOARD_USER_CP_ID;
 import com.kdev.app.board.domain.Board;
-import com.kdev.app.board.domain.BoardDTO;
 import com.kdev.app.board.domain.Comment;
 import com.kdev.app.board.domain.CommentDTO;
 import com.kdev.app.board.domain.Scrap;
@@ -53,7 +53,7 @@ public class BoardRepositoryService {
 	 * ===============================================================
 	 */
 	
-	public Board createBoard(BoardDTO.Create createBoard){
+	public Board createBoard(Board.Create createBoard){
 		UserVO userVO = createBoard.getUser();
 		if(userVO == null)
 			throw new UserNotFoundException("Can't Found User");

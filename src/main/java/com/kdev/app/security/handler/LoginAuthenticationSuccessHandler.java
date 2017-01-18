@@ -13,11 +13,11 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.SavedRequestAwareAuthenticationSuccessHandler;
 import org.springframework.social.connect.ConnectionRepository;
 
-import com.kdev.app.board.repository.RestrictionRepository;
 import com.kdev.app.user.domain.PROVIDER_USER_CP_ID;
 import com.kdev.app.user.domain.Restriction;
 import com.kdev.app.user.domain.UserDetailsVO;
 import com.kdev.app.user.enums.SocialProvider;
+import com.kdev.app.user.repositroy.RestrictionRepository;
 
 /**
  * @package		: com.kdev.app

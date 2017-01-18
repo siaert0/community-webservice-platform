@@ -14,7 +14,7 @@ import org.springframework.security.web.authentication.AuthenticationSuccessHand
 import org.springframework.social.security.SocialUserDetailsService;
 
 import com.kdev.app.security.handler.LoginAuthenticationSuccessHandler;
-import com.kdev.app.social.service.SocialUserService;
+import com.kdev.app.user.service.SocialUserService;
 import com.kdev.app.user.service.UserRepositoryService;
 
 @Configuration

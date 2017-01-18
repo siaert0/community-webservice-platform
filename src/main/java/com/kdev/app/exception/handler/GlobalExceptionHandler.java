@@ -40,12 +40,13 @@ public class GlobalExceptionHandler {
 		HttpStatus httpStatus = HttpStatus.valueOf(annotation.value().value());
 		String reason = annotation.reason();
 		
-		ExceptionResponse exceptionResponse = new ExceptionResponse();
-		exceptionResponse.setPath(request.getRequestURI());
-		exceptionResponse.setStatus(httpStatus.name());
-		exceptionResponse.setError(reason);
-		exceptionResponse.setException(exception.getClass().getName());
-		exceptionResponse.setTimestamp(new Date().toString());
+		// 가독성을 위해 빌더패턴을 적용하는 방안
+		ExceptionResponse.Builder builder = new ExceptionResponse.Builder();
+		ExceptionResponse exceptionResponse = builder.path(request.getRequestURI())
+				 .error(reason)
+				 .status(httpStatus.name())
+				 .exception(exception.getClass().getName())
+				 .timestamp(new Date().toString()).build();
 		
 		ModelAndView mav = new ModelAndView(DEFAULT_VIEW);
 		mav.setStatus(httpStatus);
@@ -58,6 +59,7 @@ public class GlobalExceptionHandler {
 		HttpStatus httpStatus = HttpStatus.valueOf(annotation.value().value());
 		String reason = annotation.reason();
 		
+		// 빌더패턴을 사용하지 않을 경우
 		ExceptionResponse exceptionResponse = new ExceptionResponse();
 		exceptionResponse.setPath(request.getRequestURI());
 		exceptionResponse.setStatus(httpStatus.name());

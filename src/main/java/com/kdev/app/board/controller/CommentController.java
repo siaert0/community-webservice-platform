@@ -1,15 +1,6 @@
 package com.kdev.app.board.controller;
 
-import java.util.Arrays;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import javax.validation.Valid;
 
@@ -27,23 +18,15 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import com.kdev.app.board.domain.BOARD_USER_CP_ID;
-import com.kdev.app.board.domain.Board;
-import com.kdev.app.board.domain.BoardDTO;
 import com.kdev.app.board.domain.Comment;
 import com.kdev.app.board.domain.CommentDTO;
-import com.kdev.app.board.domain.Scrap;
-import com.kdev.app.board.domain.Thumb;
-import com.kdev.app.board.exception.BoardNotFoundException;
 import com.kdev.app.board.exception.ValidErrorException;
 import com.kdev.app.board.service.BoardRepositoryService;
 import com.kdev.app.user.domain.UserDetailsVO;

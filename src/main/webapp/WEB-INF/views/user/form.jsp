@@ -8,11 +8,10 @@
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<title>회원정보 수정 페이지</title>
+<title>Community Webservice Platform</title>
 <link rel="stylesheet" href="http://fonts.googleapis.com/icon?family=Material+Icons">
-<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.5/css/bootstrap.min.css">
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/css/bootstrap.min.css">
 <link rel="stylesheet" href="http://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.2/summernote.css">
-<link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/tether.min.css">
 <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/style.css">
 </head>
 <body>
@@ -24,10 +23,10 @@
 			      <ul class="list-none-style left">
 			      <!-- 인증된 사용자의 메뉴 영역 -->
 					<sec:authorize access="isAuthenticated()">
-					    <li><a href="#">IT STACKS - 신입 개발자를 위한 질문 서비스</a></li>
+					    <li><a href="#">Community Webservice Platform</a></li>
 					</sec:authorize>
 					<sec:authorize access="isAnonymous()">
-						 <li><a href="/login">IT STACKS를 이용하기 위해서는 로그인 하셔야 합니다.</a></li>
+						 <li><a href="/login">Community Webservice Platform</a></li>
 					</sec:authorize>
 			      </ul>
 			    </div>
@@ -76,40 +75,42 @@
 		<article>
 	<div class="valign-wrapper" style="width: 100%; height: 100%;">
 		<div class="valign center" style="margin: auto;">
-			<form class="container col s12" onsubmit="false;">
+			<form class="container-fluid" onsubmit="false;">
 				<p></p>
-				<h5 class="center"> 회원 정보 수정 페이지</h5>
+				<h5 class="center"><img class="responsive-img" src="${user.thumbnail}" /></h5>
 				<br>
 				<div class="row left-align">
-					<div class="col s12">
-						<div class="col s3 m2">
-							<img class="responsive-img" src="${user.thumbnail}" style="width: 50px; height: 50px; padding-bottom: 15px;" />
-						</div>
-						<div class="input-field col s9 m5">
+						<div class="col-sm-6">
+							<b>회원번호</b>
 							<input id="id" name="id" type="text" class="form-control validate" value="${user.id}" readonly>
+							<p></p>
 						</div>
-						<div class="input-field col s12 m5">
+						<div class="col-sm-6">
+							<b>회원이름</b>
 							<input id="nickname" type="text" class="form-control validate" value="${user.nickname}">
+							<p></p>
 						</div>
-					</div>
-					<div class="input-field col s12">
-						<div class="input-group">
+					<div class="col-sm-12">
+						<b>회원이메일</b>
 							<input id="email" name="email" type="email" class="form-control validate" placeholder="이메일 형식" value="${user.email}" readonly/> 
-						</div>
+						<p></p>
 					</div>
-					<div class="input-field col s12">
+					<div class="col-sm-12">
+						<b>비밀번호</b>
 						<input id="password" type="password" class="form-control validate" placeholder="비밀번호를 변경하실 경우에만 작성하세요">
+						<p></p>
 					</div>
-					<div class="input-field col s12"></div>
-					<div class="input-field col s12">
+					<div class="col-sm-12">
+					<b>태그</b>
 						<div id="tag" class="tags form-control" data-tags-input-name="tag"></div>
+					<p></p>
 					</div>
 				</div>
 				<div class="flex-box right-align">
-					<a class="waves-effect waves-light btn blue lighten-2 white-text btn-full" onclick="userProfileUpdate()">수정하기 </a>
+					<a class="btn blue lighten-2 white-text waves-effect waves-light btn-full" onclick="userProfileUpdate()">수정하기 </a>
 					   <c:if test="${user.role ne 'ROLE_ADMIN'}">
     
-					<a class="waves-effect waves-light btn red lighten-2 white-text btn-full" onclick="withdraw(${user.id});">회원탈퇴 </a>
+					<a class="btn red lighten-2 white-text waves-effect waves-light btn-full" onclick="withdraw(${user.id});">회원탈퇴 </a>
 					</c:if>
 				</div>
 			</form>
@@ -117,12 +118,19 @@
 	</div>
 	</article>
 
-	<!-- Compiled and minified JavaScript -->
-	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
-	<script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.8/js/materialize.min.js"></script>
-	<script src="${pageContext.request.contextPath}/assets/js/tagging.js"></script>
-	<script src="/assets/js/sockjs-0.3.4.min.js"></script>
-<script src="/assets/js/stomp.min.js"></script>
+<!-- Compiled and minified JavaScript -->		
+<script	src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.1.1/sockjs.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.8/js/materialize.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/tether/1.4.0/js/tether.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.5/js/bootstrap.min.js"></script>
+<script src="http://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.2/summernote.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.2/lang/summernote-ko-KR.min.js"></script>
+<script	src="https://code.angularjs.org/1.6.1/angular.min.js"></script>
+<script	src="https://code.angularjs.org/1.6.1/angular-sanitize.min.js"></script>
+<script src="/assets/js/tagging.js"></script>
+<script	src="/assets/js/dirPagination.js"></script>
 	<script type="text/javascript">
 $(function() {			
 	$(document).ajaxSend(function(e, xhr, options) {
@@ -130,9 +138,7 @@ $(function() {
 	});
 	$(".button-collapse").sideNav();
 });
-</script>
 
-<script>
 function withdraw(id){
 	if(!confirm("정말로 탈퇴하시겠습니까?"))
 		return;
@@ -167,8 +173,8 @@ $(function() {
 	stompClient.debug = null;
 	stompClient.connect({},function(frame) {
 		stompClient.subscribe('/board', function(response){
-			Materialize.toast("알림 전송. 개발자 도구를 확인하세요",3000,'green',function(){
-				console.log(message);
+			Materialize.toast(response.message,3000,'green',function(){
+				console.log(response);
 			});
 		});
 		
@@ -181,7 +187,6 @@ $(function() {
 </script>
 	<script type="text/javascript">
 		$(function() {
-			
 			$('.tags').tagging({
 				"no-backspace" : true,
 				"no-duplicate" : true,
@@ -193,7 +198,10 @@ $(function() {
 				"tags-limit" : 8,
 				"edit-on-delete" : false
 			});
-			var tags = JSON.parse('${user.tags}');
+			var usertags = '${user.tags}';
+			var tags = null;
+			if(usertags != "")
+				tags = JSON.parse(usertags);
 			$('.tags').tagging("add",tags);
 		});
 		

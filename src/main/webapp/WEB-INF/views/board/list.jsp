@@ -8,11 +8,11 @@
 		<meta http-equiv="X-UA-Compatible" content="IE=edge" charset="utf-8">
 		<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
-		<title>스프링 부트 웹 애플리케이션</title>
+		<title>Community Webservice Platform</title>
 
 		<!--Import Google Icon Font-->
 		<link href="http://fonts.googleapis.com/icon?family=Material+Icons"	rel="stylesheet">
-		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.5/css/bootstrap.min.css">
+		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/css/bootstrap.min.css">
 		<!-- Compiled and minified CSS -->
 		<link rel="stylesheet"  href="${pageContext.request.contextPath}/assets/css/style.css">
 	</head>
@@ -25,10 +25,10 @@
 			      <ul class="list-none-style left">
 			      <!-- 인증된 사용자의 메뉴 영역 -->
 					<sec:authorize access="isAuthenticated()">
-					    <li><a href="#">IT STACKS - 신입 개발자를 위한 질문 서비스</a></li>
+					    <li><a href="#">Community Webservice Platform</a></li>
 					</sec:authorize>
 					<sec:authorize access="isAnonymous()">
-						 <li><a href="/login">IT STACKS를 이용하기 위해서는 로그인 하셔야 합니다.</a></li>
+						 <li><a href="/login">Community Webservice Platform</a></li>
 					</sec:authorize>
 			      </ul>
 			    </div>
@@ -63,7 +63,7 @@
     <li><a class="subheader">게시판</a></li>
     <!-- 게시판 카테고리 영역  -->
     <li><a href="/board/category/QA" class="waves-effect"><i class="material-icons">folder</i>QA</a></li>
-    <li><a href="/board/category/신입공채" class="waves-effect"><i class="material-icons">folder</i>신입공채</a></li>
+    <li><a href="/board/category/Information" class="waves-effect"><i class="material-icons">folder</i>Information</a></li>
     <!--  -->
     <li><div class="divider"></div></li>
     <li><a class="subheader" class="waves-effect">IT 관련 사이트</a></li>
@@ -77,25 +77,16 @@
 		<article id="BoardController" ng-controller="BoardController" ng-cloak>
 			<div class="container-fluid">
 				<!-- 게시물 페이지네이션 영역 -->
-				<div class="row left-align">
-
-				</div>
-				<div class="row">
-				<div class="col s12">
+				<p></p>
 						<span class="chip grey darken-2 hover white-text" style="border-radius:0;">${category} 에는 {{totalElements}}개의 게시물이 있습니다</span>
-				</div>
-					</div>
+					
 				<!-- 게시물 영역 -->
-				<div class="row">
-				<div class="col s12">
 						<div class="collection" ng-if="totalElements > 0" style="border:0;">
 						<form class="" style="margin-bottom: 0;" autocomplete="off" >
 								<input id="search" type="text" placeholder="제목 및 태그로 검색가능" required class="form-control" ng-enter="searchKeywordChange()" ng-model="searchText" kr-input style="height:inherit; padding:1rem .75rem;">
 						</form>
-						</div>
 				</div>
 				<div dir-paginate="x in search_contents = (boardContents | orderBy:-index) | itemsPerPage:pagesize" pagination-id="boardpage" total-items="totalElements">
-					<div class="col s12">
 						<div class="card sticky-action border-flat" ng-class="{selectedBoard:x.selected != 0, commentedBoard:x.selected == 0 && x.comments.length > 0}" style="margin:0; margin-top:5px;">
 							<div class="card-content" style="padding:10px; padding-top:15px;">
 								<span class="chip white left">
@@ -118,9 +109,7 @@
 							</div>
 						</div>
 					</div>
-					</div>
-				</div>
-				
+				<p></p>
 				<!-- 게시물 페이지네이션 영역 -->
 					<div class="center-align">
 						<dir-pagination-controls
@@ -133,43 +122,28 @@
 						    >
 						</dir-pagination-controls>
 					</div>
-					<div class="row">
-					<div class="col s12" ng-if="totalElements > 0">
+					<div  ng-if="totalElements > 0">
 					<p>관련 키워드로 검색하실 수 있습니다.</p>
 							<span ng-repeat="tag in tagList">
 								<span class="chip red lighten-2 white-text hover border-flat" style="" ng-if="tag != ''">{{tag}} </span>
 							</span>
 					</div>
 					</div>
-			</div>
 		</article>
-		
-		<!-- 푸터 영역 -->
-		<footer class="page-footer white">
-			<div class="footer-copyright">
-				<div class="container center black-text">
-					Bootstrap 4 & Materialize
-				</div>
-			</div>
-		</footer>
 
-<!-- Compiled and minified JavaScript -->
+	<!-- Compiled and minified JavaScript -->		
 <script	src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
-
-<script src="/assets/js/sockjs-0.3.4.min.js"></script>
-<script src="/assets/js/stomp.min.js"></script>
-
-<!-- Compiled and minified JavaScript -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.1.1/sockjs.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.8/js/materialize.min.js"></script>
-<script src="/assets/js/tether.min.js"></script>
-<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.5/js/bootstrap.min.js" integrity="sha384-BLiI7JTZm+JWlgKa0M0kGRpJbF2J8q+qreVrKBC47e3K6BW78kGLrCkeRX6I9RoK" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/tether/1.4.0/js/tether.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/js/bootstrap.min.js"></script>
 <script src="http://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.2/summernote.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.2/lang/summernote-ko-KR.min.js"></script>
+<script	src="https://code.angularjs.org/1.6.1/angular.min.js"></script>
+<script	src="https://code.angularjs.org/1.6.1/angular-sanitize.min.js"></script>
 <script src="/assets/js/tagging.js"></script>
-<script src="/assets/js/summernote-ko-KR.min.js"></script>
-<script	src="/assets/js/angular.min.js"></script>
 <script	src="/assets/js/dirPagination.js"></script>
-<script	src="/assets/js/angular-sanitize.min.js"></script>
-
 <script type="text/javascript">
 $(function() {			
 	$(document).ajaxSend(function(e, xhr, options) {
@@ -227,9 +201,112 @@ $(function() {
 });
 </script>
 		
-		<script type="text/javascript">
-			var category = "${category}";
-		</script>
-<script src="/assets/js/app.js"></script>
+<script type="text/javascript">
+	var category = "${category}";
+	
+	var app = angular.module('myApp', ['ngSanitize','angularUtils.directives.dirPagination']);
+	
+	app.directive('ngEnter', function () {
+	    return function (scope, element, attrs) {
+	        element.bind("keydown keypress", function (event) {
+	            if(event.which === 13) {
+	                scope.$apply(function (){
+	                    scope.$eval(attrs.ngEnter);
+	                });
+	 
+	                event.preventDefault();
+	            }
+	        });
+	    };
+	});
+	
+	app.directive('krInput', [ '$parse', function($parse) {
+	    return {
+	        priority : 2,
+	        restrict : 'A',
+	        compile : function(element) {
+	            element.on('compositionstart', function(e) {
+	                e.stopImmediatePropagation();
+	            });
+	        },
+	    };
+	} ]);
+
+	app.controller('BoardController', function($scope, $http, $log, $sce){
+		$scope.searchKeyword = '';
+		$scope.pagesize = 5;
+		$scope.totalElements = 0;
+		
+		$scope.updateModel = function (data){
+			$scope.boardContents = data;
+		}
+		$scope.parseJson = function (json) {
+	        return JSON.parse(json);
+	    }
+		$scope.move = function (value){
+			location.href="/board/"+value;
+		}
+		$scope.pageChange = function(page){
+			$scope.loadDataSet(category, page, $scope.pagesize, $scope.searchKeyword);
+		}
+		$scope.searchKeywordChange = function(){
+			$scope.searchKeyword = $scope.searchText;
+			$scope.loadDataSet(category, 0, $scope.pagesize, $scope.searchKeyword);
+		}
+		$scope.trustHtml = function(html){
+			return $sce.trustAsHtml(html);
+		}
+		$scope.checkThumb = function(boardContent){
+			
+			if(boardContent.thumbs.length > 0){
+				var is = false;
+				if($scope.USERID == null){
+					return 1;
+				}
+				for(var i=0; i < boardContent.thumbs.length; i++){
+					if(boardContent.thumbs[i].board_USER_CP_ID.userid == $scope.USERID){
+						is = true
+						break;
+					}
+				}
+				if(is)
+					return 2;
+				else
+					return 1;
+			}
+			return 0;	
+		}
+		$scope.loadDataSet = function(category, page, size, search){
+			var dataObject = {
+					category : 	category,
+					page : page,
+					size : size,
+					search : search
+			};
+			$.ajax({
+				type	: 'GET',
+				url		: '/board',
+				data	: dataObject,
+				dataType	: 'JSON',
+				success	: function(response){
+					if(response != "" && response != null){
+						$scope.$apply(function () {
+							$scope.totalElements = response.page.totalElements;
+							$scope.updateModel(response.page.content);
+							$scope.tagList = response.tags;
+						});
+					}
+				},
+				error	: function(response){
+					Materialize.toast("오류가 발생하였습니다. 개발자 도구를 확인해주세요",3000,'red',function(){
+						console.log(response);
+					});
+				}
+			});
+		}
+		$scope.loadDataSet(category, 0, $scope.pagesize, $scope.searchKeyword);
+	});
+</script>
+
 	</body>
 </html>

@@ -8,13 +8,12 @@
 		<meta http-equiv="X-UA-Compatible" content="IE=edge" charset="utf-8">
 		<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
-		<title>스프링 부트 웹 애플리케이션</title>
+		<title>Community Webservice Platform</title>
 
 		<!--Import Google Icon Font-->
 		<link href="http://fonts.googleapis.com/icon?family=Material+Icons"	rel="stylesheet">
 		<!-- Compiled and minified CSS -->
-		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.5/css/bootstrap.min.css">
-		<link rel="stylesheet" href="/assets/css/tether.min.css">
+		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/css/bootstrap.min.css">
 		<link rel="stylesheet" href="/assets/css/style.css">
 	</head>
 	<body id="HomeController" ng-controller="HomeController" ng-cloak>
@@ -26,10 +25,10 @@
 			      <ul class="list-none-style left">
 			      <!-- 인증된 사용자의 메뉴 영역 -->
 					<sec:authorize access="isAuthenticated()">
-					    <li><a href="#">IT STACKS - 신입 개발자를 위한 질문 서비스</a></li>
+					    <li><a href="#">Community Webservice Platform</a></li>
 					</sec:authorize>
 					<sec:authorize access="isAnonymous()">
-						 <li><a href="/login">IT STACKS를 이용하기 위해서는 로그인 하셔야 합니다.</a></li>
+						 <li><a href="/login">Community Webservice Platform</a></li>
 					</sec:authorize>
 			      </ul>
 			    </div>
@@ -65,7 +64,7 @@
     <li><a class="subheader">게시판</a></li>
     <!-- 게시판 카테고리 영역  -->
     <li><a href="/board/category/QA" class="waves-effect"><i class="material-icons">folder</i>QA</a></li>
-    <li><a href="/board/category/신입공채" class="waves-effect"><i class="material-icons">folder</i>신입공채</a></li>
+    <li><a href="/board/category/신입공채" class="waves-effect"><i class="material-icons">folder</i>Information</a></li>
     <!--  -->
     <li><div class="divider"></div></li>
     <li><a class="subheader" class="waves-effect">IT 관련 사이트</a></li>
@@ -77,20 +76,12 @@
 		</header>
 		<!-- 아티클 영역 -->
 		<article>
-						
 			<div class="container-fluid">
-				<!-- 게시물 페이지네이션 영역 -->
-				<div class="row center-align">
-				<p></p>
-					<div class="col s12">
-						<span class="chip teal lighten-2 white-text" style="border-radius:0; width:100%;">IT Stacks는 IT 신입 개발자들을 위한 공간입니다.</span>
-					</div>
-				</div>
-				
+			<p></p>
 				<!-- 게시물 영역 -->
 				<div class="row">
-					<div class="col s12 l6">
-						<span class="chip pink lighten-2 white-text" style="border-radius:0; width:100%;">최근 QA 소식</span>
+					<div class="col-sm-12">
+						<span class="chip pink lighten-2 white-text" style="border-radius:0; width:100%;">QA</span>
 						<div class="collection" style="border:0;">
 							<div class="card sticky-action border-flat" ng-repeat="x in QATopList" ng-class="{selectedBoard:x.selected != 0, commentedBoard:x.selected == 0 && x.comments.length > 0}" style="margin:0; margin-top:5px;">
 							<div class="card-content" style="padding:10px; padding-top:15px;">
@@ -104,7 +95,7 @@
 								<span class="chip transparent black-text border-flat">{{x.created | date:'yyyy년 MM월 dd일 h:mma'}}</span>
 								</div>
 							<div class="card-content" style="padding-top:0;">
-								<a class="hover-black hover" ng-href="/board/{{x.id}}" style="color:#444; font-weight:700; font-size:15px;">{{x.title}}</a>
+								<a class="hover-black hover" ng-href="/board/{{x.id}}" style="color:#444; font-weight:700; font-size:15px; padding-left:20px;">{{x.title}}</a>
 							</div>
 							<div class="card-action" style="padding:5px 10px;" ng-if="x.tags != '[]'">
 								<span class="tags" ng-init="tags=parseJson(x.tags)">
@@ -116,8 +107,8 @@
 							</div>
 					</div>
 					
-					<div class="col s12 l6">
-						<span class="chip purple lighten-2 white-text" style="border-radius:0; width:100%;">최근 신입공채 소식</span>
+					<div class="col-sm-12">
+						<span class="chip purple lighten-2 white-text" style="border-radius:0; width:100%;">Information</span>
 						<div class="collection" style="border:0;">
 							<div class="card sticky-action border-flat" ng-repeat="x in REQURITTopList"  ng-class="{selectedBoard:x.selected != 0, commentedBoard:x.selected == 0 && x.comments.length > 0}" style="margin:0; margin-top:5px;">
 							<div class="card-content" style="padding:10px; padding-top:15px;">
@@ -143,8 +134,8 @@
 							</div>
 						</div>
 						
-						<div class="col s12">
-						<span class="chip deep-orange lighten-2 white-text" style="border-radius:0; width:100%;">최근 댓글 소식</span>
+						<div class="col-sm-12">
+						<span class="chip deep-orange lighten-2 white-text" style="border-radius:0; width:100%;">Comment</span>
 							
 							<div class="collection">
 								<div class="collection-item" ng-repeat="x in COMMENTTopList">
@@ -163,29 +154,19 @@
 				</div>
 		</article>
 		
-		<!-- 푸터 영역 -->
-		<footer class="page-footer white">
-			<div class="footer-copyright">
-				<div class="container center black-text">
-					Bootstrap 4 & Materialize
-				</div>
-			</div>
-		</footer>
-		
+<!-- Compiled and minified JavaScript -->		
 <script	src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
-<script src="/assets/js/sockjs-0.3.4.min.js"></script>
-<script src="/assets/js/stomp.min.js"></script>
-
-<!-- Compiled and minified JavaScript -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.1.1/sockjs.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.8/js/materialize.min.js"></script>
-<script src="/assets/js/tether.min.js"></script>
-<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.5/js/bootstrap.min.js" integrity="sha384-BLiI7JTZm+JWlgKa0M0kGRpJbF2J8q+qreVrKBC47e3K6BW78kGLrCkeRX6I9RoK" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/tether/1.4.0/js/tether.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/js/bootstrap.min.js"></script>
 <script src="http://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.2/summernote.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.2/lang/summernote-ko-KR.min.js"></script>
+<script	src="https://code.angularjs.org/1.6.1/angular.min.js"></script>
+<script	src="https://code.angularjs.org/1.6.1/angular-sanitize.min.js"></script>
 <script src="/assets/js/tagging.js"></script>
-<script src="/assets/js/summernote-ko-KR.min.js"></script>
-<script	src="/assets/js/angular.min.js"></script>
 <script	src="/assets/js/dirPagination.js"></script>
-<script	src="/assets/js/angular-sanitize.min.js"></script>
 
 <script type="text/javascript">
 $(function() {			
@@ -231,8 +212,8 @@ $(function() {
 	stompClient.debug = null;
 	stompClient.connect({},function(frame) {
 		stompClient.subscribe('/board', function(response){
-			Materialize.toast("알림 전송. 개발자 도구를 확인하세요",3000,'green',function(){
-				console.log(message);
+			Materialize.toast(response.message,3000,'green',function(){
+				console.log(response);
 			});
 		});
 		
@@ -243,6 +224,49 @@ $(function() {
 	});
 });
 </script>
-<script src="/assets/js/app.js"></script>
+<script>
+var app = angular.module('myApp', ['ngSanitize','angularUtils.directives.dirPagination']);
+
+app.directive('krInput', [ '$parse', function($parse) {
+    return {
+        priority : 2,
+        restrict : 'A',
+        compile : function(element) {
+            element.on('compositionstart', function(e) {
+                e.stopImmediatePropagation();
+            });
+        },
+    };
+} ]);
+
+app.controller('HomeController', function($scope){
+	$scope.parseJson = function (json) {
+        return JSON.parse(json);
+    }
+	
+	$scope.loadDataSet = function (){
+		$.ajax({
+			type	: 'GET',
+			url		: '/top',
+			dataType	: 'JSON',
+			success	: function(response){
+				if(response != "" && response != null){
+					$scope.$apply(function () {
+						$scope.QATopList = response.QA;
+						$scope.REQURITTopList = response.REQURIT;
+						$scope.COMMENTTopList = response.COMMENT;
+					});
+				}
+			},
+			error	: function(response){
+				Materialize.toast("오류가 발생하였습니다. 개발자 도구를 확인해주세요",3000,'red',function(){
+					console.log(response);
+				});
+			}
+		});
+	}
+	$scope.loadDataSet();
+});
+</script>
 	</body>
 </html>

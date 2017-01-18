@@ -1,4 +1,4 @@
-package com.kdev.app.social.config;
+package com.kdev.app.user.social.config;
 
 import org.apache.tomcat.jdbc.pool.DataSource;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,7 +22,7 @@ import org.springframework.social.kakao.api.Kakao;
 import org.springframework.social.kakao.connect.KakaoConnectionFactory;
 import org.springframework.social.security.AuthenticationNameUserIdSource;
 
-import com.kdev.app.social.controller.SocialConnectController;
+import com.kdev.app.user.controller.SocialConnectController;
 
 @Configuration
 public class SocialConfig implements SocialConfigurer {

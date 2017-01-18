@@ -1,4 +1,4 @@
-package com.kdev.app.social.controller;
+package com.kdev.app.user.controller;
 
 import org.springframework.social.connect.ConnectionFactoryLocator;
 import org.springframework.social.connect.ConnectionRepository;

@@ -41,7 +41,6 @@ import org.springframework.web.bind.annotation.SessionAttributes;
 
 import com.kdev.app.board.domain.BOARD_USER_CP_ID;
 import com.kdev.app.board.exception.ValidErrorException;
-import com.kdev.app.board.repository.RestrictionRepository;
 import com.kdev.app.security.handler.LoginAuthenticationSuccessHandler;
 import com.kdev.app.user.domain.PROVIDER_USER_CP_ID;
 import com.kdev.app.user.domain.Restriction;
@@ -55,6 +54,7 @@ import com.kdev.app.user.enums.SocialProvider;
 import com.kdev.app.user.exception.EmailDuplicatedException;
 import com.kdev.app.user.exception.UserNotEqualException;
 import com.kdev.app.user.exception.UserNotFoundException;
+import com.kdev.app.user.repositroy.RestrictionRepository;
 import com.kdev.app.user.service.UserRepositoryService;
 
 /**

@@ -20,13 +20,13 @@ import org.springframework.web.bind.annotation.RequestMethod;
 
 import com.kdev.app.board.repository.BoardRepository;
 import com.kdev.app.board.repository.CommentRepository;
-import com.kdev.app.board.repository.RestrictionRepository;
 import com.kdev.app.board.repository.ThumbRepository;
 import com.kdev.app.user.domain.PROVIDER_USER_CP_ID;
 import com.kdev.app.user.domain.Restriction;
 import com.kdev.app.user.domain.RestrictionDTO;
 import com.kdev.app.user.enums.SocialProvider;
 import com.kdev.app.user.exception.UserNotFoundException;
+import com.kdev.app.user.repositroy.RestrictionRepository;
 import com.kdev.app.user.repositroy.UserRepository;
 import com.kdev.app.user.service.UserRepositoryService;
 

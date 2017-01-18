@@ -13,11 +13,10 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
-<title>게시판 자세히 보기</title>
+<title>Community Webservice Platform</title>
 
 <link href="http://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-<link rel="stylesheet"  href="${pageContext.request.contextPath}/assets/css/tether.min.css">
-<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.5/css/bootstrap.min.css">
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/css/bootstrap.min.css">
 <link href="http://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.2/summernote.css" rel="stylesheet">
 <link rel="stylesheet"	href="${pageContext.request.contextPath}/assets/css/style.css">
 
@@ -30,10 +29,10 @@
 			      <ul class="list-none-style left">
 			      <!-- 인증된 사용자의 메뉴 영역 -->
 					<sec:authorize access="isAuthenticated()">
-					    <li><a href="#">IT STACKS - 신입 개발자를 위한 질문 서비스</a></li>
+					    <li><a href="#">Community Webservice Platform</a></li>
 					</sec:authorize>
 					<sec:authorize access="isAnonymous()">
-						 <li><a href="/login">IT STACKS를 이용하기 위해서는 로그인 하셔야 합니다.</a></li>
+						 <li><a href="/login">Community Webservice Platform</a></li>
 					</sec:authorize>
 			      </ul>
 			    </div>
@@ -69,7 +68,7 @@
     <li><a class="subheader">게시판</a></li>
     <!-- 게시판 카테고리 영역  -->
     <li><a href="/board/category/QA" class="waves-effect"><i class="material-icons">folder</i>QA</a></li>
-    <li><a href="/board/category/신입공채" class="waves-effect"><i class="material-icons">folder</i>신입공채</a></li>
+    <li><a href="/board/category/Information" class="waves-effect"><i class="material-icons">folder</i>Information</a></li>
     <!--  -->
     <li><div class="divider"></div></li>
     <li><a class="subheader" class="waves-effect">IT 관련 사이트</a></li>
@@ -131,30 +130,35 @@
 				</span>
 				<p></p>
 					<div class="row">
-								<div class="col s12">
+								<div class="col-sm-12">
+								<b>카테고리</b>
 				<select id="u_b_category" class="browser-default form-control">
 			      <option value="" disabled selected>카테고리를 선택해주세요</option>
 			      <option value="QA" ng-selected="boardContent.category=='QA'">QA</option>
-			      <option value="신입공채" ng-selected="boardContent.category=='신입공채'">신입공채</option>
+			      <option value="Information" ng-selected="boardContent.category=='Information'">Information</option>
 			    </select>
+			    <p></p>
 			</div>
-						<div class="input-field col s12">
+						<div class="col-sm-12">
 							<b>제목</b>
 							<input id="u_b_title" name="u_b_title" class="form-control" type="text" />
+						<p></p>
 						</div>
-						<div class="input-field col s12">
+						<div class="col-sm-12">
 							<b>내용</b>
 							<div id="u_b_description" class="materialize-textarea contentbox"></div>
+						<p></p>
 						</div>
-						<div class="input-field col s12">
+						<div class="col-sm-12">
 							<b>태그</b>
 								<div id="u_b_tags" class="tagging form-control" data-tags-input-name="tag"></div>
-						</div>					
+						<p></p>
+						</div>	
 					</div>
-				<div class="modal-footer white">
-				    <a class="waves-effect waves-light btn-flat" id="updateBoardBtn">수정하기</a>
-					<a class="modal-action modal-close waves-effect waves-light btn-flat" data-ng-click="resetUpdateBoardForm();">닫기</a>
-				</div>
+					<div class="flex-box">
+				    <a class="waves-effect waves-light btn blue lighten-2 white-text btn-full" id="updateBoardBtn">수정하기</a>
+					<a class="modal-action modal-close waves-effect waves-light btn red lighten-2 white-text btn-full" data-ng-click="resetUpdateBoardForm();">닫기</a>
+				</div>	
 				</div>			
 			</div>
 		
@@ -167,23 +171,21 @@
 				</span>
 				<p></p>
 					<div class="row">
-						<div class="col s12">
-				<div class="input-field col s12">
+					<p></p>
+				<div class="col-sm-12">
 							<b>내용</b>
 									<div id="u_c_description" class="materialize-textarea contentbox"></div>
+								<p></p>
 								</div>
-								<div class="input-field col s12"></div>
-																<div class="input-field col s12">
+																<div class="col-sm-12">
 																<b>태그</b>
 								<div id="u_c_tags" class="tagging form-control" data-tags-input-name="tag"></div>
-				</div>
-						</div>					
+				</div>				
 					</div>
+					<div class="flex-box">
+				    <a class="waves-effect waves-light btn blue lighten-2 white-text btn-full" id="updateCommentBtn" >수정하기</a>
+					<a class="modal-action waves-effect waves-light btn red lighten-2 white-text btn-full" data-ng-click="resetUpdateCommentForm()">닫기</a>
 				</div>
-				
-				<div class="modal-footer white">
-				    <a class="waves-effect waves-light btn-flat" id="updateCommentBtn" >수정하기</a>
-					<a class="modal-action modal-close waves-effect waves-light btn-flat" data-ng-click="resetUpdateCommentForm()">닫기</a>
 				</div>
 			</div>
 		</sec:authorize>
@@ -214,9 +216,10 @@
 		    	<span class="chip transparent">
 					<img ng-src="{{comment.user.thumbnail}}" alt="Contact Person">
 					    {{comment.user.nickname}}
+					    <p></p>
 				</span>
 				<div class="">
-					<p class="collection-title" ng-bind-html="trustHtml(comment.description)"></p>
+					<div class="collection-title" ng-bind-html="trustHtml(comment.description)"></div>
 				</div>
 				
 					<div class="" ng-if="comment.tags != '[]'">
@@ -249,41 +252,34 @@
 		  
 		  <sec:authorize access="isAuthenticated()">
 		  <!-- 답변 박스 영역 -->	
-		<div class="collection col m4 commentbox">
+		<div class="collection commentbox">
 			<div class="collection-item">
 		    	<span class="chip transparent">
 					<img src="${user.thumbnail}" alt="Contact Person">
 					    <b>${user.nickname}</b>
 				</span>
 				<div class="row">
-				<div class="col s12">
-				</div>
-			<div class="col s12">
+				<p></p>
+			<div class="col-sm-12">
 				<b>내용</b>
 				<div id="c_description" class="materialize-textarea contentbox"></div>
+				<p></p>
 			</div>
-			<div class="col s12">
-			</div>
-			<div class="col s12">
+			<div class="col-sm-12">
 				<b>태그</b>
 				<div id="c_tags" class="tagging form-control" data-tags-input-name="tag"></div>
+				<p></p>
 			</div>
-			<div class="col s12">
-			</div>
-			<div class="col s12">
+			<div class="col-sm-12">
 			<div class="flex-box">
-			<button id="comment_form_btn" class="btn teal lighten-2 white-text btn-full" onclick="comment(${content.id});">답변하기</button>
+			<button id="comment_form_btn" class="btn teal lighten-2 white-text waves-effect waves-light btn-full" onclick="comment(${content.id});">답변하기</button>
 			</div>
 			</div>
 		    </div>
 		    </div>
 		</div>
 		</sec:authorize>
-		
-	  <div class="center">
-	  	<button class="btn red lighten-2" onclick="history.back();">이전으로</button>
-	  	<p></p>
-	  </div>
+
 	</div>
 	</article>
 	
@@ -332,20 +328,19 @@
 	    </div>
 	</div>
 	
+	<!-- Compiled and minified JavaScript -->		
 <script	src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
-<script src="/assets/js/sockjs-0.3.4.min.js"></script>
-<script src="/assets/js/stomp.min.js"></script>
-
-<!-- Compiled and minified JavaScript -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.1.1/sockjs.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.8/js/materialize.min.js"></script>
-<script src="/assets/js/tether.min.js"></script>
-<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.5/js/bootstrap.min.js" integrity="sha384-BLiI7JTZm+JWlgKa0M0kGRpJbF2J8q+qreVrKBC47e3K6BW78kGLrCkeRX6I9RoK" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/tether/1.4.0/js/tether.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/js/bootstrap.min.js"></script>
 <script src="http://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.2/summernote.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.2/lang/summernote-ko-KR.min.js"></script>
+<script	src="https://code.angularjs.org/1.6.1/angular.min.js"></script>
+<script	src="https://code.angularjs.org/1.6.1/angular-sanitize.min.js"></script>
 <script src="/assets/js/tagging.js"></script>
-<script src="/assets/js/summernote-ko-KR.min.js"></script>
-<script	src="/assets/js/angular.min.js"></script>
 <script	src="/assets/js/dirPagination.js"></script>
-<script	src="/assets/js/angular-sanitize.min.js"></script>
 <script type="text/javascript">
 $(function() {			
 	$(document).ajaxSend(function(e, xhr, options) {
@@ -368,7 +363,6 @@ function withdraw(id){
 			location.href="/";
 		},
 		error	: function(response){
-			console.log(response);
 			Materialize.toast("탈퇴하지 못했습니다", 3000);
 		}
 	});
@@ -386,9 +380,8 @@ $(function() {
 	stompClient.connect({},function(frame) {
 		console.log("Init Stomp");
 		stompClient.subscribe('/board', function(response){
-			console.log(response);
-			Materialize.toast("알림 전송. 개발자 도구를 확인하세요",3000,'green',function(){
-				
+			Materialize.toast(response.message,3000,'green',function(){
+				console.log(response);
 			});
 		});
 		
@@ -416,9 +409,462 @@ $(function() {
 		"tags-limit":8,
 		"edit-on-delete":false
 	});
-	initSummernote();
+	$('.contentbox').summernote({
+		toolbar: [
+		          ['pre',['style']],
+		          ['style', ['bold', 'italic', 'strikethrough', 'underline', 'clear']],
+		          ['font', ['fontname','fontsize']],
+		          ['color', ['color']],
+		          ['para', ['paragraph'],['height']],
+		          ['insert', ['link', 'picture', 'video']],
+		          ['misc',['codeview']]
+		        ],
+		fontNames: ['Noto Sans KR', 'Arial', 'Arial Black', 'Comic Sans MS', 'Courier New'],
+		fontNamesIgnoreCheck: ['Noto Sans KR'],
+		lang: 'ko-KR',
+		callbacks: {
+		    onImageUpload: function(files) {
+		    	
+		    	for(var i=0; i<files.length; i++){
+		    		sendImage(files[i], $(this));
+		    	}
+		      },
+		    onMediaDelete: function(target){
+		    	deleteImage(target[0].src);
+		    }
+		  }
+	});
 });
+
+/**
+ *  에디터 관련 스크립트
+ */
+
+function validation(fileName){
+    var fileNameExtensionIndex = fileName.lastIndexOf('.') + 1; //.뒤부터 확장자
+    var fileNameExtension = fileName.toLowerCase().substring(fileNameExtensionIndex,fileName.length); //확장자 자르기
+     
+    if( !( (fileNameExtension=='jpg') || (fileNameExtension=='gif') || (fileNameExtension=='png') || (fileNameExtension=='bmp') ) ) {
+			Materialize.toast("jpg, gif, png, bmp 확장자만 업로드 가능합니다.",3000,'red',function(){
+				
+			});
+        return true;
+    }
+    else{
+        return false;
+    }
+}
+
+function sendImage(file, summernote){
+	var data = new FormData();
+      data.append("Filedata",file);
+		$.ajax({
+          type: 'POST',
+          url: '/upload/image/',
+          data: data,
+        	contentType: false,
+     		processData: false,
+          dataType: 'JSON', //리턴되는 데이타 타입
+          beforeSubmit: function(){
+          },
+          success: function(fileInfo){
+        	  if(fileInfo.result == 1)
+        		  $(summernote).summernote('insertImage', fileInfo.imageurl, fileInfo.filename); 
+  					Materialize.toast("정상적으로 업로드되었습니다.",3000,'green',function(){
+				
+			});
+          },
+          error: function(fileInfo){
+        	  if(fileInfo.result==-1){ //서버단에서 체크 후 수행됨
+      			Materialize.toast("jpg, gif, png, bmp 확장자만 업로드 가능합니다.",3000,'red',function(){
+    				
+    			});
+                  return false;
+              }
+              else if(fileInfo.result==-2){ //서버단에서 체크 후 수행됨
+      			Materialize.toast("파일이 5MB를 초과하였습니다.",3000,'red',function(){
+    				
+    			});
+                  return false;
+              }
+          }
+      });
+    }
+
+function deleteImage(file){
+		$.ajax({
+          type: 'DELETE',
+          url: '/upload/image/?url='+file,
+          dataType: 'text', //리턴되는 데이타 타입
+          beforeSubmit: function(){
+          },
+          success: function(response){
+    			Materialize.toast("정상적으로 삭제되었습니다.",3000,'green',function(){
+    				
+    			});
+          },error: function(response){
+      			Materialize.toast("오류가 발생하였습니다. 개발자 도구를 통해 확인해주세요",3000,'red',function(){
+    				console.log(response);
+    			});
+          }
+      });
+    }
+
+var app = angular.module('myApp', ['ngSanitize','angularUtils.directives.dirPagination']);
+
+app.controller('DetailController', function($scope, $http, $log, $sce){
+	$scope.messages = new Array();
+	$scope.isBoardUpdate = false;
+	$scope.isCommentUpdate = false;
+	$scope.updateCommentIndex = -1;
+	
+	$scope.updateModel = function (data){
+		$scope.boardContent = data;
+	}
+	$scope.parseJson = function (json) {
+        return JSON.parse(json);
+    }
+	$scope.trustHtml = function(html){
+		return $sce.trustAsHtml(html);
+	}
+	$scope.scrap = function(id){
+		var dataObject = new Object();
+		dataObject.boardid = id;
+		$.ajax({
+	        type: 'POST',
+	        url: '/board/scrap',
+	        contentType: 'application/json',
+	        data: JSON.stringify(dataObject),
+	        dataType: 'TEXT', //리턴되는 데이타 타입
+	        success: function(response){
+	  			Materialize.toast("스크랩 되었습니다.",3000,'green',function(){
+					
+				});
+	        	
+	        },error: function(response){
+	  			Materialize.toast("오류가 발생하였습니다. 개발자 도구를 통해 확인해주세요",3000,'red',function(){
+					console.log(response);
+				});
+	        }
+	    });
+	}
+	
+	$scope.checkThumb = function(){
+		if($scope.boardContent.thumbs.length > 0){
+			var is = false;
+			if($scope.USER == ""){
+				return 1;
+			}
+			for(var i=0; i < $scope.boardContent.thumbs.length; i++){
+				if($scope.boardContent.thumbs[i].board_USER_CP_ID.userid == $scope.USER.id){
+					is = true
+					break;
+				}
+			}
+			if(is)
+				return 2;
+			else
+				return 1;
+		}
+		return 0;	
+	}
+	
+	$scope.toggleThumb = function(){
+		if($scope.USER == ""){
+			return;
+		}
+		var dataObject = new Object();
+		dataObject.boardid = $scope.boardContent.id;
+		$.ajax({
+			type	: 'POST',
+			url		: '/board/thumb',		
+			data	: JSON.stringify(dataObject),
+			contentType: 'application/json',
+			dataType	: 'JSON',
+			success	: function(response){
+				if($scope.checkThumb() == 0 || $scope.checkThumb() == 1){
+					Materialize.toast("추천 하였습니다",3000,'green',function(){
+
+					});
+				}else{
+					Materialize.toast("추천을 취소하였습니다",3000,'orange',function(){
+
+					});
+				}
+				
+				$scope.$apply(function(){
+					$scope.boardContent.thumbs = response;
+				});
+			},
+			error	: function(response){
+				Materialize.toast("오류가 발생하였습니다. 개발자 도구를 확인하세요",3000,'red',function(){
+
+				});
+			}
+		});
+	}
+	
+	$scope.requestBoardDelete = function (){
+		if(!confirm("정말 삭제하시겠습니까??")){
+			return;
+		}
+		$.ajax({
+			type	: 'DELETE',
+			url		: '/board/'+$scope.boardContent.id,
+			dataType	: 'JSON',
+			success	: function(response){
+				Materialize.toast("정상적으로 삭제하였습니다. 잠시후 메인으로 이동합니다",3000,'green',function(){
+					location.href="/";
+				});
+			},
+			error	: function(response){
+				Materialize.toast("오류가 발생하였습니다. 개발자 도구를 확인해주세요",3000,'red',function(){
+					console.log(response);
+				});
+			}
+		});
+	}
+	
+	$scope.requestBoardUpdate = function(){
+		$('#board-div').after($('#updateBoardModal'));
+		$('#board-div').hide();
+		$('#u_b_description').summernote('code', $scope.boardContent.description);
+		$('#u_b_title').val($scope.boardContent.title);
+		var tags = JSON.parse($scope.boardContent.tags);
+		$('#u_b_tags').tagging( "reset" );
+		$('#u_b_tags').tagging("add",tags);
+		Materialize.updateTextFields();
+		$("#updateBoardBtn").attr('onclick', '').unbind('click'); 
+		$("#updateBoardBtn").attr('onclick', '').click(function(){
+			$scope.updateBoard($scope.boardContent);
+		});
+		$scope.isBoardUpdate = true;
+	}
+	
+	$scope.updateBoard = function(board){
+		$('#preloader').show();
+		var BoardObject = new Object();
+		BoardObject.title = $('#u_b_title').val();
+		BoardObject.description = $('#u_b_description').summernote('code');
+		BoardObject.tags = JSON.stringify($('#u_b_tags').tagging("getTags"));
+		BoardObject.id = board.id;
+		BoardObject.category = board.category;
+		BoardObject.selected = board.selected;
+		$.ajax({
+			type	: 'POST',
+			url		: '/board/'+board.id,
+			data	: JSON.stringify(BoardObject),
+			contentType: 'application/json',
+			dataType	: 'JSON',
+			success	: function(response){
+				Materialize.toast("정상적으로 수정되었습니다.",3000,'green',function(){
+
+				});
+				$scope.$apply(function(){
+					$scope.boardContent = response;
+				});
+				$scope.resetUpdateBoardForm();
+			},
+			error : function(response){
+				Materialize.toast("오류가 발생하였습니다. 개발자 도구를 확인해주세요",3000,'red',function(){
+					console.log(response);
+				});
+	    		}
+	    	});
+		$('#preloader').hide();
+	}
+	
+	$scope.requestDeleteComment = function(comment){
+		if(!confirm("정말 삭제하시겠습니까??")){
+			return;
+		}
+		$.ajax({
+			type	: 'DELETE',
+			url		: '/comment/'+comment.id,
+			dataType	: 'JSON',
+			success	: function(response){
+				Materialize.toast("정상적으로 삭제되었습니다",3000,'green',function(){
+					console.log(response);
+				});
+				var index = $scope.boardContent.comments.indexOf(comment);
+				$scope.$apply(function(){
+					$scope.boardContent.comments.splice(index, 1);
+				});
+			},
+			error	: function(response){
+				Materialize.toast("오류가 발생하였습니다. 개발자 도구를 확인해주세요",3000,'red',function(){
+					console.log(response);
+				});
+			}
+		});
+	}
+	
+	$scope.requestUpdateComment = function(comment, index){
+		//모달로 변경합시다.
+		$('#u_c_description').summernote('code',comment.description);
+		var tags = JSON.parse(comment.tags);
+		$('#u_c_tags').tagging( "reset" );
+		$('#u_c_tags').tagging("add",tags);
+		Materialize.updateTextFields();
+		$("#updateCommentBtn").attr('onclick', '').unbind('click'); 
+		$("#updateCommentBtn").attr('onclick', '').click(function(){
+			updateComment(comment, index);
+		});
+		$scope.isCommentUpdate = true;
+	}
+	
+	$scope.selectedComment = function(comment, index){
+		var BoardObject = new Object();
+		BoardObject.title = $scope.boardContent.title;
+		BoardObject.description = $scope.boardContent.description;
+		BoardObject.tags = $scope.boardContent.tags;
+		BoardObject.id = $scope.boardContent.id;
+		BoardObject.category = $scope.boardContent.category;
+		
+		if($scope.boardContent.selected == 0)
+			BoardObject.selected = comment.id;
+		else
+			BoardObject.selected = 0;
+
+		$.ajax({
+			type	: 'POST',
+			url		: '/board/'+$scope.boardContent.id,
+			data 	: JSON.stringify(BoardObject),
+			contentType: 'application/json',
+			dataType	: 'JSON',
+			success	: function(response){
+				if(response.selected == 0){
+					Materialize.toast("댓글 선택취소",3000,'orange',function(){
+						console.log(response);
+					});
+				}else{
+					Materialize.toast("댓글 선택완료",3000,'green',function(){
+						console.log(response);
+					});
+				}
+				
+				$scope.boardContent = response;
+				$scope.$apply();
+			},
+			error	: function(response){
+				Materialize.toast("오류가 발생하였습니다. 개발자 도구를 확인해주세요",3000,'red',function(){
+					console.log(response);
+				});
+			}
+		});
+	}
+	$scope.resetUpdateBoardForm = function(){
+		$('#u_b_description').summernote('code','');
+		$('#u_b_tags').tagging( "reset" );
+		Materialize.updateTextFields();
+		$scope.isBoardUpdate = false;
+		$('#board-div').show();	
+	}
+	$scope.resetUpdateCommentForm = function(){
+		$('#u_c_description').summernote('code','');
+		$('#u_c_tags').tagging( "reset" );
+		Materialize.updateTextFields();
+		$scope.isCommentUpdate = false;
+	}
+	$scope.loadDataSet = function(){
+		$http({
+			method: "GET",
+			url : location.pathname
+		}).then(function(response){
+			$scope.boardContent = response.data;
+		},function(response){
+			Materialize.toast("오류가 발생하였습니다. 개발자 도구를 확인해주세요",3000,'red',function(){
+				console.log(response);
+			});
+		});
+	}
+	$scope.loadUser = function(){
+		$http({
+			method: "GET",
+			url : "/user"
+		}).then(function(response){
+			console.log(response);
+			$scope.USER = response.data;
+		},function(response){
+			Materialize.toast("오류가 발생하였습니다. 개발자 도구를 확인해주세요",3000,'red',function(){
+				console.log(response);
+			});
+		});
+	}
+	
+	$scope.loadUser();
+	$scope.loadDataSet();
+});
+
+function comment(board){
+	$('#preloader').show();
+	var CommentObject = new Object();
+	CommentObject.description = $('#c_description').summernote('code');
+	CommentObject.tags = JSON.stringify($('#c_tags').tagging("getTags"));
+	CommentObject.board = board;
+	$.ajax({
+		type	: 'POST',
+		url		: '/comment',
+		data	: JSON.stringify(CommentObject),
+		contentType: 'application/json',
+		dataType	: 'JSON',
+		success	: function(response){
+			$('#c_description').summernote('code','');
+			$('#c_tags').tagging( "reset" );
+			Materialize.updateTextFields();
+			var scope = angular.element(document.getElementById("DetailController")).scope();
+			scope.$apply(function () {
+				scope.boardContent.comments.push(response);
+			});
+			Materialize.toast("정상적으로 댓글이 작성되었습니다.",3000,'green',function(){
+				
+			});
+		},
+		error : function(response){
+			Materialize.toast("오류가 발생하였습니다. 개발자 도구를 확인해주세요",3000,'red',function(){
+				console.log(response);
+			});
+    		}
+    	});
+	$('#preloader').hide();
+}
+function updateComment(comment, index){
+	$('#preloader').show();
+	var CommentObject = new Object();
+	
+	CommentObject.description = $('#u_c_description').summernote('code');
+	CommentObject.tags = JSON.stringify($('#u_c_tags').tagging("getTags"));
+	CommentObject.id = comment.id;
+	CommentObject.board = comment.board;
+	$.ajax({
+		type	: 'POST',
+		url		: '/comment/'+comment.id,
+		data	: JSON.stringify(CommentObject),
+		contentType: 'application/json',
+		dataType	: 'JSON',
+		success	: function(response){
+			
+			var scope = angular.element(document.getElementById("DetailController")).scope();
+			scope.$apply(function () {
+				scope.boardContent.comments[index] = response;
+				console.log(scope.boardContent.comments);
+				scope.isCommentUpdate = false;
+				$('#u_c_description').summernote('code','');
+				$('#u_c_tags').tagging( "reset" );
+				Materialize.updateTextFields();
+				
+			});
+			Materialize.toast("정상적으로 댓글을 수정하였습니다",3000,'green',function(){
+			});
+		},
+		error : function(response){
+			Materialize.toast("오류가 발생하였습니다. 개발자 도구를 확인해주세요",3000,'red',function(){
+				console.log(response);
+			});
+    		}
+    	});
+	$('#preloader').hide();
+}
 </script>
-<script src="/assets/js/app.js"></script>
 </body>
 </html>

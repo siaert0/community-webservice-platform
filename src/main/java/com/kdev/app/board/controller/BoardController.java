@@ -38,7 +38,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import com.kdev.app.board.domain.BOARD_USER_CP_ID;
 import com.kdev.app.board.domain.Board;
-import com.kdev.app.board.domain.BoardDTO;
+import com.kdev.app.board.domain.Board;
 import com.kdev.app.board.domain.Comment;
 import com.kdev.app.board.domain.CommentDTO;
 import com.kdev.app.board.domain.Scrap;
@@ -118,44 +118,39 @@ public class BoardController {
 	/**
 	 * @author		: K
 	 * @method		: createBoard
-	 * @description	: 게시물 작성 서비스
+	 * @description	: 게시물 생성 API
 	 */
 	@Secured({"ROLE_USER","ROLE_ADMIN"})
 	@RequestMapping(value="/board", method=RequestMethod.POST, produces=MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<Object> createBoard(@RequestBody @Valid BoardDTO.Create createBoard, BindingResult result, Authentication authentication){
+	public ResponseEntity<Object> createBoard(@RequestBody @Valid Board.Create createBoard, BindingResult result, Authentication authentication){
 		
+		// 게시물 작성 시 필요한 정보 검증
 		if(result.hasErrors()){
 			List<Object> errors = new LinkedList<Object>();
-			for(FieldError error : result.getFieldErrors()){
+			result.getFieldErrors().forEach(error ->{
 				Map<String, Object> map = new HashMap<String, Object>();
 				map.put("ErrorField", error.getField());
 				map.put("ErrorMessage", error.getDefaultMessage());
 				errors.add(map);
-			}
+			});
 			throw new ValidErrorException(errors.toString());
 		}
+		
+		// 사용자 정보 저장 (스프링 시큐리티에 의해 검증되어져 있음)
 		UserDetailsVO userDetails = (UserDetailsVO)authentication.getPrincipal();
 		UserVO userVO = modelMapper.map(userDetails, UserVO.class);
 		createBoard.setUser(userVO);
+		
+		// 게시물 생성 요청
 		Board createdBoard = boardRepositoryService.createBoard(createBoard);
+		
+		// 생성한 게시물을 자동으로 스크랩 처리
 		BOARD_USER_CP_ID scrapId = new BOARD_USER_CP_ID();
 		scrapId.setBoardid(createdBoard.getId());
 		scrapId.setUserid(userVO.getId());
 		boardRepositoryService.checkScrap(scrapId);
-		return new ResponseEntity<Object>(createdBoard, HttpStatus.CREATED);
-	}
-	
-	@RequestMapping(value="/top", method = RequestMethod.GET, produces=MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<Object> topData(Model model, @PageableDefault(sort="created", direction = Direction.DESC, size = 10) Pageable pageable){
-		List<Board> QA = boardRepositoryService.findAllBoardByCategory("QA", pageable).getContent();
-		List<Board> REQURIT = boardRepositoryService.findAllBoardByCategory("신입공채", pageable).getContent();
-		List<Comment> COMMENT = boardRepositoryService.findCommentAll(pageable).getContent();
-		Map<String, Object> map = new HashMap<String, Object>();
 		
-		map.put("QA", QA);
-		map.put("REQURIT", REQURIT);
-		map.put("COMMENT", COMMENT);
-		return new ResponseEntity<Object>(map,HttpStatus.ACCEPTED);
+		return new ResponseEntity<Object>(createdBoard, HttpStatus.CREATED);
 	}
 		
 	/**
@@ -167,24 +162,22 @@ public class BoardController {
 	public ResponseEntity<Object> findBoard(@RequestParam(value="category", required=false, defaultValue="") String category, 
 			@RequestParam(value="search", required=false, defaultValue="") String search,
 			@PageableDefault(sort = { "id" }, direction = Direction.DESC, size = 5) Pageable pageable){
+		
+		// 검색 요청
 		Page<Board> page = boardRepositoryService.findAll(search, category, pageable);
 
 		/**
 		 *  자바 8 스트림 : 컬렉션의 저장 요소를 하나씩 참조해서 람다식으로 처리할 수 있도록 해주는 반복자
 		 *  게시물과 댓글의 태그분석
 		 */
-		Stream<Board> parallelStream = page.getContent().parallelStream();
 		Set<String> sets = new HashSet<String>();
-		parallelStream.forEach(board -> {
+		page.getContent().parallelStream().forEach(board -> {
 			String btags = board.getTags();
 			btags = btags.replaceAll("\\[|\\]|\"", "");
-			/*btags = btags.replaceAll("\\]", "");
-			btags = btags.replaceAll("\"", "");*/
 			Arrays.asList(btags.split(",")).parallelStream().forEach(tag->{
 				sets.add(tag);
 			});;
 		});
-		
 		
 		Map<String, Object> map = new HashMap<String, Object>();
 		map.put("page", page);
@@ -200,16 +193,17 @@ public class BoardController {
 	 */
 	@Secured({"ROLE_USER","ROLE_ADMIN"})
 	@RequestMapping(value="/board/{id}", method=RequestMethod.POST, produces=MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<Object> updateBoard(@PathVariable int id, @RequestBody @Valid BoardDTO.Update update, BindingResult result, Authentication authentication){
+	public ResponseEntity<Object> updateBoard(@PathVariable int id, @RequestBody @Valid Board.Update update, BindingResult result, Authentication authentication){
 		
+		// 게시물 수정 시 필요한 정보 검증
 		if(result.hasErrors()){
 			List<Object> errors = new LinkedList<Object>();
-			for(FieldError error : result.getFieldErrors()){
+			result.getFieldErrors().forEach(error ->{
 				Map<String, Object> map = new HashMap<String, Object>();
 				map.put("ErrorField", error.getField());
 				map.put("ErrorMessage", error.getDefaultMessage());
 				errors.add(map);
-			}
+			});
 			throw new ValidErrorException(errors.toString());
 		}
 		
@@ -224,12 +218,14 @@ public class BoardController {
 		}else if(!(boardVO.getUser().getId().equals(userVO.getId())))
 			throw new UserNotEqualException();
 		
+		// 게시물 수정
 		boardVO.setCategory(update.getCategory());
 		boardVO.setDescription(update.getDescription());
 		boardVO.setTitle(update.getTitle());
 		boardVO.setTags(update.getTags());
 		boardVO.setSelected(update.getSelected());
 
+		// 수정 된 게시물을 적용시킴
 		Board updated = boardRepositoryService.updateBoard(boardVO);
 		return new ResponseEntity<Object>(updated, HttpStatus.ACCEPTED);
 	}
@@ -259,5 +255,19 @@ public class BoardController {
 		
 		boardRepositoryService.deleteBoard(id);
 		return new ResponseEntity<Object>(boardVO, HttpStatus.ACCEPTED);
+	}
+	
+	// 최근 게시물 정보 API
+	@RequestMapping(value="/top", method = RequestMethod.GET, produces=MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<Object> topData(Model model, @PageableDefault(sort="created", direction = Direction.DESC, size = 10) Pageable pageable){
+		List<Board> QA = boardRepositoryService.findAllBoardByCategory("QA", pageable).getContent();
+		List<Board> REQURIT = boardRepositoryService.findAllBoardByCategory("신입공채", pageable).getContent();
+		List<Comment> COMMENT = boardRepositoryService.findCommentAll(pageable).getContent();
+		Map<String, Object> map = new HashMap<String, Object>();
+		
+		map.put("QA", QA);
+		map.put("REQURIT", REQURIT);
+		map.put("COMMENT", COMMENT);
+		return new ResponseEntity<Object>(map,HttpStatus.ACCEPTED);
 	}
 }

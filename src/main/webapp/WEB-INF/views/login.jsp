@@ -11,10 +11,9 @@
 <meta id="_csrf" name="_csrf" content="${_csrf.token}" />
 <meta id="_csrf_header" name="_csrf_header" content="${_csrf.headerName}" />
 		
-<title>로그인</title>
+<title>Community Webservice Platform</title>
 <link rel="stylesheet" href="http://fonts.googleapis.com/icon?family=Material+Icons">
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.5/css/bootstrap.min.css">
-<link rel="stylesheet" href="/assets/css/tether.min.css">
 <link rel="stylesheet" href="/assets/css/style.css">
 </head>
 <body>
@@ -26,10 +25,10 @@
 			      <ul class="list-none-style left">
 			      <!-- 인증된 사용자의 메뉴 영역 -->
 					<sec:authorize access="isAuthenticated()">
-					    <li><a href="#">IT STACKS - 신입 개발자를 위한 질문 서비스</a></li>
+					    <li><a href="#">Community Webservice Platform</a></li>
 					</sec:authorize>
 					<sec:authorize access="isAnonymous()">
-						 <li><a href="/login">IT STACKS를 이용하기 위해서는 로그인 하셔야 합니다.</a></li>
+						 <li><a href="/login">Community Webservice Platform</a></li>
 					</sec:authorize>
 			      </ul>
 			    </div>
@@ -64,7 +63,7 @@
     <li><a class="subheader">게시판</a></li>
     <!-- 게시판 카테고리 영역  -->
     <li><a href="/board/category/QA" class="waves-effect"><i class="material-icons">folder</i>QA</a></li>
-    <li><a href="/board/category/신입공채" class="waves-effect"><i class="material-icons">folder</i>신입공채</a></li>
+    <li><a href="/board/category/Information" class="waves-effect"><i class="material-icons">folder</i>Information</a></li>
     <!--  -->
     <li><div class="divider"></div></li>
     <li><a class="subheader" class="waves-effect">IT 관련 사이트</a></li>
@@ -97,12 +96,7 @@
 				</div>
 				<button type="submit"
 					class="btn blue lighten-2 waves-effect waves-light z-depth-0">
-					<i class="material-icons">power_settings_new</i>
-				</button>
-				<button type="button"
-					class="btn red lighten-2 waves-effect waves-light z-depth-0"
-					onclick="location.href='${pageContext.request.contextPath}/'">
-					<i class="material-icons">close</i>
+					로그인
 				</button>
 				<p></p>
 					<div class="flex-box">

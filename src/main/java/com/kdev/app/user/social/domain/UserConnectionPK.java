@@ -1,4 +1,4 @@
-package com.kdev.app.social.domain;
+package com.kdev.app.user.social.domain;
 
 import java.io.Serializable;
 

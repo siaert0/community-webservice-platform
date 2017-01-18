@@ -1,4 +1,4 @@
-package com.kdev.app.board.repository;
+package com.kdev.app.user.repositroy;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
