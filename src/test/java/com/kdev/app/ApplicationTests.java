@@ -21,8 +21,8 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.kdev.app.repository.BoardRepository;
-import com.kdev.app.repository.UserRepository;
+import com.kdev.app.board.repository.BoardRepository;
+import com.kdev.app.user.repositroy.UserRepository;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringBootTest(classes=Application.class) //스프링 부트 1.4부터 변경됨
