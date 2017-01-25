@@ -52,12 +52,6 @@ public class BoardController {
 	@Autowired 
 	private ModelMapper modelMapper;
 	
-	@RequestMapping(value="/board/category/{category}", method = RequestMethod.GET)
-	public String category(Model model, @PathVariable String category){
-		model.addAttribute("category", category);
-		return "board/list";
-	}
-	
 	/**
 	 * @author		: K
 	 * @method		: board_form
