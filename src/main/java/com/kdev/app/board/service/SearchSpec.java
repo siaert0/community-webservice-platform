@@ -1,4 +1,4 @@
-package com.kdev.app.board.domain;
+package com.kdev.app.board.service;
 
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
@@ -9,10 +9,11 @@ import javax.persistence.criteria.Root;
 
 import org.springframework.data.jpa.domain.Specification;
 
+import com.kdev.app.board.domain.Board;
+
 public class SearchSpec {
 	public static Specification<Board> containTitle(final String keyword){
 		return new Specification<Board>() {
-
 			@Override
 			public Predicate toPredicate(Root<Board> root, CriteriaQuery<?> query, CriteriaBuilder cb) {
 				// TODO Auto-generated method stub
@@ -20,13 +21,11 @@ public class SearchSpec {
 					return null;
 				return cb.like(root.get("title"), "%"+keyword+"%");
 			}
-			
 		};
 	}
 	
 	public static Specification<Board> containTags(final String keyword){
 		return new Specification<Board>() {
-
 			@Override
 			public Predicate toPredicate(Root<Board> root, CriteriaQuery<?> query, CriteriaBuilder cb) {
 				// TODO Auto-generated method stub
@@ -34,13 +33,11 @@ public class SearchSpec {
 					return null;
 				return cb.like(root.get("tags"), "%"+keyword+"%");
 			}
-			
 		};
 	}
 	
 	public static Specification<Board> category(final String keyword){
 		return new Specification<Board>() {
-
 			@Override
 			public Predicate toPredicate(Root<Board> root, CriteriaQuery<?> query, CriteriaBuilder cb) {
 				// TODO Auto-generated method stub
@@ -49,7 +46,6 @@ public class SearchSpec {
 				
 				return cb.equal(root.get("category"), keyword);
 			}
-			
 		};
 	}
 }

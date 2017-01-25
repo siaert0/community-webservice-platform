@@ -6,12 +6,14 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.validation.constraints.Size;
+
+import org.hibernate.validator.constraints.Email;
+import org.hibernate.validator.constraints.NotBlank;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.kdev.app.user.enums.Role;
@@ -57,6 +59,44 @@ public class UserVO {
 	
 	public boolean isRoleAdmin(){
 		return this.role.equals(Role.ROLE_ADMIN);
+	}
+	
+	@Data
+	public static class Create{
+		@NotBlank
+		private String id;
+		@Size(min=8)
+		private String password;
+		@Email
+		private String email;
+		@NotBlank
+		private String nickname;
+		private String thumbnail;
+		private String tags;
+		private String role;
+		private SocialProvider socialSignInProvider;
+	}
+	
+	@Data
+	public static class Update{
+		@NotBlank
+		private String id;
+		@Size(min=8)
+		private String password;
+		@Email
+		private String email;
+		@NotBlank
+		private String nickname;
+		private String thumbnail;
+		private String tags;
+		private String role;
+		private SocialProvider socialSignInProvider;
+	}
+	
+	@Data
+	public static class EmailCheck{
+		@Email
+		private String email;
 	}
 }
 

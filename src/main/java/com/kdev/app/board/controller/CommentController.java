@@ -26,12 +26,11 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import com.kdev.app.board.domain.Comment;
-import com.kdev.app.board.domain.CommentDTO;
 import com.kdev.app.board.exception.ValidErrorException;
 import com.kdev.app.board.service.BoardRepositoryService;
-import com.kdev.app.user.domain.UserDetailsVO;
 import com.kdev.app.user.domain.UserVO;
 import com.kdev.app.user.exception.UserNotEqualException;
+import com.kdev.app.user.social.domain.SocialUserDetails;
 
 @Controller
 public class CommentController {
@@ -43,13 +42,6 @@ public class CommentController {
 	@Autowired 
 	private ModelMapper modelMapper;
 	
-	
-	/**
-	 * ######################
-	 * 		댓글 관련 서비스
-	 * ######################
-	 */
-	
 	/**
 	 * @author		: K
 	 * @method		: createComment
@@ -57,11 +49,11 @@ public class CommentController {
 	 */
 	@Secured({"ROLE_USER","ROLE_ADMIN"})
 	@RequestMapping(value="/comment", method=RequestMethod.POST, produces=MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<Object> createComment(@RequestBody @Valid CommentDTO.Create createComment, BindingResult result, Authentication authentication){
+	public ResponseEntity<Object> createComment(@RequestBody @Valid Comment.Create createComment, BindingResult result, Authentication authentication){
 		if(result.hasErrors()){
 			throw new ValidErrorException(result.getAllErrors().toString());
 		}
-		UserDetailsVO userDetails = (UserDetailsVO)authentication.getPrincipal();
+		SocialUserDetails userDetails = (SocialUserDetails)authentication.getPrincipal();
 		UserVO userVO = modelMapper.map(userDetails, UserVO.class);
 		createComment.setUser(userVO);
 		Comment createdComment = boardRepositoryService.createComment(createComment);
@@ -88,8 +80,8 @@ public class CommentController {
 	 */
 	@Secured({"ROLE_USER","ROLE_ADMIN"})
 	@RequestMapping(value="/comment/{id}", method=RequestMethod.POST, produces=MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<Object> updateComment(@PathVariable int id, @RequestBody CommentDTO.Update update, Authentication authentication){
-		UserDetailsVO userDetails = (UserDetailsVO)authentication.getPrincipal();
+	public ResponseEntity<Object> updateComment(@PathVariable int id, @RequestBody Comment.Update update, Authentication authentication){
+		SocialUserDetails userDetails = (SocialUserDetails)authentication.getPrincipal();
 		UserVO userVO = modelMapper.map(userDetails, UserVO.class);
 		Comment commentVO = boardRepositoryService.findCommentOne(id);
 		
@@ -113,7 +105,7 @@ public class CommentController {
 	@Secured({"ROLE_USER","ROLE_ADMIN"})
 	@RequestMapping(value="/comment/{id}", method=RequestMethod.DELETE, produces=MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Object> deleteComment(@PathVariable int id, Authentication authentication){
-		UserDetailsVO userDetails = (UserDetailsVO)authentication.getPrincipal();
+		SocialUserDetails userDetails = (SocialUserDetails)authentication.getPrincipal();
 		UserVO userVO = modelMapper.map(userDetails, UserVO.class);
 		Comment commentVO = boardRepositoryService.findCommentOne(id);
 		

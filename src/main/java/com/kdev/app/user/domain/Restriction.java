@@ -41,4 +41,12 @@ public class Restriction {
 	@Temporal(TemporalType.TIMESTAMP)
 	@Column(name="RT_RELEASED")
 	private Date released;
+	
+	@Data
+	public static class Create {
+		private SocialProvider provider;
+		private String userid;
+		private String reason;
+		private Date released;
+	}
 }

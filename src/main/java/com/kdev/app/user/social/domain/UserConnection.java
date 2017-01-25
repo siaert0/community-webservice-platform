@@ -10,7 +10,6 @@ import lombok.Data;
  * 
  * @author K
  * Spring Social UserConnection Table
- * spring.jpa.hibernate.naming.physical-strategy=org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
  */
 @Entity
 @Table(name="USERCONNECTION",

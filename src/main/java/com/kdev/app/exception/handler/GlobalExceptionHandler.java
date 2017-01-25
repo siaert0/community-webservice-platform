@@ -88,13 +88,14 @@ public class GlobalExceptionHandler {
 		String RequestType = request.getHeader("X-Requested-With");	
 		if(RequestType != null && !RequestType.equals("XMLHttpRequest")){
 			ModelAndView mav = new ModelAndView(DEFAULT_VIEW);
-			mav.setStatus(HttpStatus.BAD_GATEWAY);
-			ExceptionResponse exceptionResponse = new ExceptionResponse();
-			exceptionResponse.setPath(request.getRequestURI());
-			exceptionResponse.setStatus(HttpStatus.BAD_GATEWAY.name());
-			exceptionResponse.setError(exception.getValid());
-			exceptionResponse.setException(exception.getClass().getName());
-			exceptionResponse.setTimestamp(new Date().toString());
+			mav.setStatus(HttpStatus.BAD_GATEWAY);		
+			ExceptionResponse.Builder builder = new ExceptionResponse.Builder();
+			ExceptionResponse exceptionResponse = builder.path(request.getRequestURI())
+					 .error(exception.getValid())
+					 .status(HttpStatus.BAD_GATEWAY.name())
+					 .exception(exception.getClass().getName())
+					 .timestamp(new Date().toString()).build();
+			
 			mav.addObject(exceptionResponse);
 			return mav;
 		}else{

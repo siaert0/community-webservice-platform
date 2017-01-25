@@ -1,15 +1,12 @@
 package com.kdev.app.board.controller;
 
 import java.util.Arrays;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import javax.validation.Valid;
 
@@ -29,7 +26,6 @@ import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -38,17 +34,13 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import com.kdev.app.board.domain.BOARD_USER_CP_ID;
 import com.kdev.app.board.domain.Board;
-import com.kdev.app.board.domain.Board;
 import com.kdev.app.board.domain.Comment;
-import com.kdev.app.board.domain.CommentDTO;
-import com.kdev.app.board.domain.Scrap;
-import com.kdev.app.board.domain.Thumb;
 import com.kdev.app.board.exception.BoardNotFoundException;
 import com.kdev.app.board.exception.ValidErrorException;
 import com.kdev.app.board.service.BoardRepositoryService;
-import com.kdev.app.user.domain.UserDetailsVO;
 import com.kdev.app.user.domain.UserVO;
 import com.kdev.app.user.exception.UserNotEqualException;
+import com.kdev.app.user.social.domain.SocialUserDetails;
 
 @Controller
 public class BoardController {
@@ -59,13 +51,6 @@ public class BoardController {
 	
 	@Autowired 
 	private ModelMapper modelMapper;
-	
-	
-	/**
-	 * ######################
-	 * 		게시물 관련 서비스
-	 * ######################
-	 */
 	
 	@RequestMapping(value="/board/category/{category}", method = RequestMethod.GET)
 	public String category(Model model, @PathVariable String category){
@@ -137,7 +122,7 @@ public class BoardController {
 		}
 		
 		// 사용자 정보 저장 (스프링 시큐리티에 의해 검증되어져 있음)
-		UserDetailsVO userDetails = (UserDetailsVO)authentication.getPrincipal();
+		SocialUserDetails userDetails = (SocialUserDetails)authentication.getPrincipal();
 		UserVO userVO = modelMapper.map(userDetails, UserVO.class);
 		createBoard.setUser(userVO);
 		
@@ -207,7 +192,7 @@ public class BoardController {
 			throw new ValidErrorException(errors.toString());
 		}
 		
-		UserDetailsVO userDetails = (UserDetailsVO)authentication.getPrincipal();
+		SocialUserDetails userDetails = (SocialUserDetails)authentication.getPrincipal();
 		UserVO userVO = modelMapper.map(userDetails, UserVO.class);
 		
 		Board boardVO = boardRepositoryService.findBoardOne(id);
@@ -239,7 +224,7 @@ public class BoardController {
 	@RequestMapping(value="/board/{id}", method=RequestMethod.DELETE, produces=MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Object> deleteBoard(@PathVariable int id, Authentication authentication){
 		
-		UserDetailsVO userDetails = (UserDetailsVO)authentication.getPrincipal();
+		SocialUserDetails userDetails = (SocialUserDetails)authentication.getPrincipal();
 		UserVO userVO = modelMapper.map(userDetails, UserVO.class);
 		Board boardVO = boardRepositoryService.findBoardOne(id);
 		

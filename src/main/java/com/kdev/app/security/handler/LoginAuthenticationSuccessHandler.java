@@ -1,6 +1,7 @@
 package com.kdev.app.security.handler;
 
 import java.io.IOException;
+
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -11,13 +12,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.SavedRequestAwareAuthenticationSuccessHandler;
-import org.springframework.social.connect.ConnectionRepository;
 
 import com.kdev.app.user.domain.PROVIDER_USER_CP_ID;
-import com.kdev.app.user.domain.Restriction;
-import com.kdev.app.user.domain.UserDetailsVO;
-import com.kdev.app.user.enums.SocialProvider;
 import com.kdev.app.user.repositroy.RestrictionRepository;
+import com.kdev.app.user.social.domain.SocialUserDetails;
 
 /**
  * @package		: com.kdev.app
@@ -44,11 +42,11 @@ public class LoginAuthenticationSuccessHandler extends SavedRequestAwareAuthenti
     	Authentication authentication) throws ServletException, IOException {
     	
     	//제재여부 확인
-    	UserDetailsVO userDetails = (UserDetailsVO)authentication.getPrincipal();
+    	SocialUserDetails userDetails = (SocialUserDetails)authentication.getPrincipal();
     	
     	PROVIDER_USER_CP_ID PROVIDER_USER_CP_ID = new PROVIDER_USER_CP_ID();
 		PROVIDER_USER_CP_ID.setUserid(userDetails.getId());
-		PROVIDER_USER_CP_ID.setProvider(userDetails.getSocialProvider());
+		PROVIDER_USER_CP_ID.setProvider(userDetails.getSocialSignInProvider());
 		
 		try{
 		if(restrictionRepository.findOne(PROVIDER_USER_CP_ID) != null){

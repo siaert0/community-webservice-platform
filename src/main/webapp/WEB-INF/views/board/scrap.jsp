@@ -92,7 +92,7 @@
 							      <img style="height:100%;" ng-src="{{x.board.user.thumbnail}}">
 								   {{x.board.user.nickname}}
 								  </span>
-								  <span class="chip transparent teal-text border-flat left">	{{x.board.category}}</span>
+								  <span class="chip transparent teal-text border-flat left">{{x.board.category}}</span>
 								<span class="chip transparent blue-text border-flat left">댓글 {{x.board.comments.length}}</span>
 								<span class="chip transparent red-text border-flat left">추천 {{x.board.thumbs.length}}</span>
 								<span class="chip transparent black-text border-flat">{{x.board.created | date:'yyyy년 MM월 dd일 h:mma'}}</span>

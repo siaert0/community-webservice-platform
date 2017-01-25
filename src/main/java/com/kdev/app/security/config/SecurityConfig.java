@@ -11,10 +11,8 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
-import org.springframework.social.security.SocialUserDetailsService;
 
 import com.kdev.app.security.handler.LoginAuthenticationSuccessHandler;
-import com.kdev.app.user.service.SocialUserService;
 import com.kdev.app.user.service.UserRepositoryService;
 
 @Configuration
@@ -43,6 +41,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 				.logoutSuccessUrl("/")
 		.and()
 			.httpBasic();
+		
+		http.sessionManagement().maximumSessions(1);
 	}
 
 	@Override
@@ -61,11 +61,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 	public PasswordEncoder passwordEncoder(){
 		return new BCryptPasswordEncoder();
 	}
-	
-	@Bean
-    public SocialUserDetailsService socialUserDetailsService() {
-        return new SocialUserService(userDetailsService());
-    }
     
 	@Bean
 	public AuthenticationSuccessHandler successHandler(){

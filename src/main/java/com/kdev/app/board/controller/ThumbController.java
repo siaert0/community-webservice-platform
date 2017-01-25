@@ -19,8 +19,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import com.kdev.app.board.domain.BOARD_USER_CP_ID;
 import com.kdev.app.board.domain.Thumb;
 import com.kdev.app.board.service.BoardRepositoryService;
-import com.kdev.app.user.domain.UserDetailsVO;
 import com.kdev.app.user.domain.UserVO;
+import com.kdev.app.user.social.domain.SocialUserDetails;
 
 @Controller
 public class ThumbController {
@@ -31,12 +31,6 @@ public class ThumbController {
 	
 	@Autowired 
 	private ModelMapper modelMapper;
-	
-	/**
-	 * ######################
-	 * 		추천 관련 서비스
-	 * ######################
-	 */
 
 	/**
 	 * @author		: K
@@ -46,7 +40,7 @@ public class ThumbController {
 	@Secured({"ROLE_USER","ROLE_ADMIN"})
 	@RequestMapping(value="/board/thumb", method=RequestMethod.POST, produces=MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Object> checkThumb(@RequestBody BOARD_USER_CP_ID BOARD_USER_CP_ID, Authentication authentication){
-		UserDetailsVO userDetails = (UserDetailsVO)authentication.getPrincipal();
+		SocialUserDetails userDetails = (SocialUserDetails)authentication.getPrincipal();
 		UserVO userVO = modelMapper.map(userDetails, UserVO.class);
 		BOARD_USER_CP_ID.setUserid(userVO.getId());
 		boardRepositoryService.checkThumb(BOARD_USER_CP_ID);

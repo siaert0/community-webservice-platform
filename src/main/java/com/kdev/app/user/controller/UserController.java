@@ -33,29 +33,23 @@ import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.SessionAttributes;
 
-import com.kdev.app.board.domain.BOARD_USER_CP_ID;
 import com.kdev.app.board.exception.ValidErrorException;
 import com.kdev.app.security.handler.LoginAuthenticationSuccessHandler;
 import com.kdev.app.user.domain.PROVIDER_USER_CP_ID;
 import com.kdev.app.user.domain.Restriction;
-import com.kdev.app.user.domain.UserDTO;
-import com.kdev.app.user.domain.UserDetailsVO;
 import com.kdev.app.user.domain.UserVO;
-import com.kdev.app.user.domain.UserDTO.Create;
-import com.kdev.app.user.domain.UserDTO.EmailCheck;
-import com.kdev.app.user.domain.UserDTO.Update;
 import com.kdev.app.user.enums.SocialProvider;
 import com.kdev.app.user.exception.EmailDuplicatedException;
 import com.kdev.app.user.exception.UserNotEqualException;
 import com.kdev.app.user.exception.UserNotFoundException;
 import com.kdev.app.user.repositroy.RestrictionRepository;
 import com.kdev.app.user.service.UserRepositoryService;
+import com.kdev.app.user.social.domain.SocialUserDetails;
 
 /**
  * @package		: com.kdev.app.controller
@@ -104,14 +98,14 @@ public class UserController {
 		//가입여부를 확인해서 로그인 처리한다.
 		UserVO userVO = userRepositroyService.findUserById(facebookUser.getId());
 		if(userVO != null){
-			UserDetailsVO userDetailsVO = new UserDetailsVO(userVO);
+			SocialUserDetails userDetailsVO = new SocialUserDetails(userVO);
 			Authentication authentication = new UsernamePasswordAuthenticationToken(userDetailsVO, null, userDetailsVO.getAuthorities());
 			SecurityContextHolder.getContext().setAuthentication(authentication);
 			LoginAuthenticationSuccessHandler handler = new LoginAuthenticationSuccessHandler("/");
 			handler.onAuthenticationSuccess(request, response, authentication);
 		}
 		
-		UserDTO.Create user = new UserDTO.Create();
+		UserVO.Create user = new UserVO.Create();
 		user.setId(facebookUser.getId());
 		user.setNickname(facebookUser.getName());
 		user.setThumbnail("https://graph.facebook.com/"+facebookUser.getId()+"/picture");
@@ -141,14 +135,14 @@ public class UserController {
 		//가입여부 확인
 		UserVO userVO = userRepositroyService.findUserById(String.valueOf(KakaoUser.getId()));
 		if(userVO != null){
-			UserDetailsVO userDetailsVO = new UserDetailsVO(userVO);
+			SocialUserDetails userDetailsVO = new SocialUserDetails(userVO);
 			Authentication authentication = new UsernamePasswordAuthenticationToken(userDetailsVO, null, userDetailsVO.getAuthorities());
 			SecurityContextHolder.getContext().setAuthentication(authentication);
 			LoginAuthenticationSuccessHandler handler = new LoginAuthenticationSuccessHandler("/");
 			handler.onAuthenticationSuccess(request, response, authentication);
 		}	
 		
-		UserDTO.Create user = new UserDTO.Create();
+		UserVO.Create user = new UserVO.Create();
 		user.setId(String.valueOf(KakaoUser.getId()));
 		user.setNickname(KakaoUser.getProperties().getNickname());
 		user.setThumbnail(KakaoUser.getProperties().getThumbnail_image());
@@ -161,7 +155,7 @@ public class UserController {
 	
 	// 회원정보 생성
 	@RequestMapping(value="/user", method= RequestMethod.POST, produces=MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<Object> createUser(@ModelAttribute("userProfile") @Valid UserDTO.Create user, BindingResult result){
+	public ResponseEntity<Object> createUser(@ModelAttribute("userProfile") @Valid UserVO.Create user, BindingResult result){
 		if(result.hasErrors()){
 			List<Object> errors = new LinkedList<Object>();
 			for(FieldError error : result.getFieldErrors()){
@@ -173,7 +167,7 @@ public class UserController {
 			throw new ValidErrorException(errors.toString());
 		}
 		UserVO newUser = userRepositroyService.signInUser(user);
-		UserDetailsVO userDetailsVO = new UserDetailsVO(newUser);
+		SocialUserDetails userDetailsVO = new SocialUserDetails(newUser);
 		Authentication authentication = new UsernamePasswordAuthenticationToken(userDetailsVO, null, userDetailsVO.getAuthorities());
 		SecurityContextHolder.getContext().setAuthentication(authentication);
 		return new ResponseEntity<Object>(newUser, HttpStatus.CREATED);
@@ -183,7 +177,7 @@ public class UserController {
 	@Secured({"ROLE_USER","ROLE_ADMIN"})
 	@RequestMapping(value="/user/{id}", method = RequestMethod.GET)
 	public String updateForm(@PathVariable String id, Authentication authentication){
-		UserDetailsVO userDetails = (UserDetailsVO)authentication.getPrincipal();
+		SocialUserDetails userDetails = (SocialUserDetails)authentication.getPrincipal();
 		if(!userDetails.getId().equals(id)){
 			throw new UserNotEqualException();
 		}
@@ -194,7 +188,7 @@ public class UserController {
 	// 회원정보 수정
 	@Secured({"ROLE_USER","ROLE_ADMIN"})
 	@RequestMapping(value="/user/{id}", method= RequestMethod.POST, produces=MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<Object> updateUser(@PathVariable String id, @Valid UserDTO.Update user, BindingResult result, Authentication authentication){
+	public ResponseEntity<Object> updateUser(@PathVariable String id, @Valid UserVO.Update user, BindingResult result, Authentication authentication){
 
 		if(result.hasErrors()){
 			List<Object> errors = new LinkedList<Object>();
@@ -208,7 +202,7 @@ public class UserController {
 			}
 		}
 		
-		UserDetailsVO userDetails = (UserDetailsVO)authentication.getPrincipal();
+		SocialUserDetails userDetails = (SocialUserDetails)authentication.getPrincipal();
 		if(!userDetails.getId().equals(id)){
 			throw new UserNotEqualException();
 		}
@@ -220,7 +214,7 @@ public class UserController {
 		
 		UserVO newUser = userRepositroyService.updateUser(userVO);
 		
-		UserDetailsVO userDetailsVO = new UserDetailsVO(userVO);
+		SocialUserDetails userDetailsVO = new SocialUserDetails(userVO);
 		authentication = new UsernamePasswordAuthenticationToken(userDetailsVO, null, userDetailsVO.getAuthorities());
 		SecurityContextHolder.getContext().setAuthentication(authentication);
 		
@@ -230,7 +224,7 @@ public class UserController {
 	//이메일 중복체크
 	@RequestMapping(value = "/check/email", method = RequestMethod.GET, produces=MediaType.APPLICATION_JSON_VALUE)
 	public @ResponseBody ResponseEntity<Object> checkByEmail(
-			@Valid UserDTO.EmailCheck email,
+			@Valid UserVO.EmailCheck email,
 			BindingResult result) {
 		
 		if(result.hasErrors()){
@@ -255,7 +249,7 @@ public class UserController {
 	@Secured("ROLE_USER")
 	@RequestMapping(value="/user/{id}", method = RequestMethod.DELETE, produces=MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Object> withDraw(@PathVariable String id, Authentication authentication, HttpSession session){
-		UserDetailsVO userDetailsVO = (UserDetailsVO)authentication.getPrincipal();
+		SocialUserDetails userDetailsVO = (SocialUserDetails)authentication.getPrincipal();
 		if(!userDetailsVO.getId().equals(id)){
 			throw new UserNotEqualException();
 		}
@@ -285,7 +279,7 @@ public class UserController {
 	@RequestMapping(value="/user", method=RequestMethod.GET, produces=MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Object> user(Authentication authentication){
 		if(authentication != null){
-			UserDetailsVO userDetails = (UserDetailsVO)authentication.getPrincipal();
+			SocialUserDetails userDetails = (SocialUserDetails)authentication.getPrincipal();
 			UserVO userVO = modelMapper.map(userDetails, UserVO.class);
 			return new ResponseEntity<Object>(userVO, HttpStatus.ACCEPTED);
 		}

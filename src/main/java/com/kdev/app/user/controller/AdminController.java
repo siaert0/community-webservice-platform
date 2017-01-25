@@ -23,7 +23,6 @@ import com.kdev.app.board.repository.CommentRepository;
 import com.kdev.app.board.repository.ThumbRepository;
 import com.kdev.app.user.domain.PROVIDER_USER_CP_ID;
 import com.kdev.app.user.domain.Restriction;
-import com.kdev.app.user.domain.RestrictionDTO;
 import com.kdev.app.user.enums.SocialProvider;
 import com.kdev.app.user.exception.UserNotFoundException;
 import com.kdev.app.user.repositroy.RestrictionRepository;
@@ -87,7 +86,7 @@ public class AdminController {
 	// 회원 제재 등록 및 수정 회원정보를 위하여 탈퇴처리하지 않도록 수정됨
 	@Secured("ROLE_ADMIN")
 	@RequestMapping(value="/restriction", method = RequestMethod.POST, produces=MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<Object> restriction(@RequestBody RestrictionDTO restrictionDTO){
+	public ResponseEntity<Object> restriction(@RequestBody Restriction.Create restrictionDTO){
 		
 		if(userRepositoryService.findUserById(restrictionDTO.getUserid()) == null)
 				throw new UserNotFoundException(""); 

@@ -26,8 +26,8 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.kdev.app.user.domain.UserDetailsVO;
 import com.kdev.app.user.domain.UserVO;
+import com.kdev.app.user.social.domain.SocialUserDetails;
 
 @RestController
 @RequestMapping(value="/upload")
@@ -43,7 +43,7 @@ public class UploadController {
 	public @ResponseBody ResponseEntity<Object> socialUpload(@RequestParam("Filedata") MultipartFile multipartFile, HttpSession httpSession, HttpServletRequest request, Authentication authentication) throws IOException{
 		HashMap<String, Object> fileInfo = new HashMap<String, Object>();
 		
-		UserDetailsVO userDetails = (UserDetailsVO)authentication.getPrincipal();
+		SocialUserDetails userDetails = (SocialUserDetails)authentication.getPrincipal();
 		UserVO userVO = modelMapper.map(userDetails, UserVO.class);
 	    if(multipartFile != null && !(multipartFile.getOriginalFilename().equals(""))) {
 	         
@@ -72,7 +72,7 @@ public class UploadController {
 	        if(!file.exists()) { //디렉토리 존재하지 않을경우 디렉토리 생성
 	            file.mkdirs();
 	        }
-	         
+	        
 	        // 파일 저장명 처리 (사용자 식별 아이디-20150702091941.확장자)
 	        SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMddHHmmss");
 	        String today= formatter.format(new Date());

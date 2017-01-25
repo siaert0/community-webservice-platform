@@ -10,19 +10,25 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.social.security.SocialUserDetailsService;
 import org.springframework.stereotype.Service;
 
 import com.kdev.app.board.exception.NotCreatedException;
 import com.kdev.app.board.exception.NotUpdatedException;
 import com.kdev.app.board.service.BoardRepositoryService;
-import com.kdev.app.user.domain.UserDTO;
-import com.kdev.app.user.domain.UserDetailsVO;
 import com.kdev.app.user.domain.UserVO;
 import com.kdev.app.user.repositroy.UserRepository;
+import com.kdev.app.user.social.domain.SocialUserDetails;
 
+
+/**
+ * @author KDEV
+ * @date 2017. 1. 25.
+ * @description Spring Security, Spring Social Service 통합
+ */
 @Service
 @Transactional
-public class UserRepositoryService implements UserDetailsService {
+public class UserRepositoryService implements UserDetailsService, SocialUserDetailsService {
 	
 	@Autowired
 	private BoardRepositoryService boardRepositoryService;
@@ -36,7 +42,7 @@ public class UserRepositoryService implements UserDetailsService {
 	@Autowired 
 	private ModelMapper modelMapper;
 	
-	public UserVO signInUser(UserDTO.Create user){
+	public UserVO signInUser(UserVO.Create user){
 		UserVO newUser = modelMapper.map(user, UserVO.class);
 		newUser.setPassword(passwordEncoder.encode(newUser.getPassword()));
 		UserVO createdUser = userRepository.save(newUser);
@@ -67,7 +73,8 @@ public class UserRepositoryService implements UserDetailsService {
 		UserVO findUser = findUserByEmail(username);
 		if(findUser == null)
 			throw new UsernameNotFoundException(username);
-		return new UserDetailsVO(findUser);
+		SocialUserDetails userDetails = new SocialUserDetails(findUser);
+		return (UserDetails)userDetails;
 	}
 	
 	public UserVO updateUser(UserVO user){
@@ -83,5 +90,12 @@ public class UserRepositoryService implements UserDetailsService {
 		UserVO userVO = userRepository.findOne(id);
 		boardRepositoryService.deleteBoardAllByUser(userVO);
 		userRepository.delete(userVO);
+	}
+
+	@Override
+	public SocialUserDetails loadUserByUserId(String userId) throws UsernameNotFoundException {
+		// TODO Auto-generated method stub
+		UserDetails userDetails = this.loadUserByUsername(userId);
+		return (SocialUserDetails) userDetails;
 	}
 }

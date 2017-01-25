@@ -23,8 +23,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import com.kdev.app.board.domain.BOARD_USER_CP_ID;
 import com.kdev.app.board.domain.Scrap;
 import com.kdev.app.board.service.BoardRepositoryService;
-import com.kdev.app.user.domain.UserDetailsVO;
 import com.kdev.app.user.domain.UserVO;
+import com.kdev.app.user.social.domain.SocialUserDetails;
 
 @Controller
 public class ScrapController {
@@ -35,13 +35,7 @@ public class ScrapController {
 	
 	@Autowired 
 	private ModelMapper modelMapper;
-	
-	/**
-	 * ######################
-	 * 		스크랩 관련 서비스
-	 * ######################
-	 */
-	
+
 	/**
 	 * @author		: K
 	 * @method		: checkScrap
@@ -50,7 +44,7 @@ public class ScrapController {
 	@Secured({"ROLE_USER","ROLE_ADMIN"})
 	@RequestMapping(value="/board/scrap", method=RequestMethod.POST, produces=MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Object> checkScrap(@RequestBody BOARD_USER_CP_ID BOARD_USER_CP_ID, Authentication authentication){
-		UserDetailsVO userDetails = (UserDetailsVO)authentication.getPrincipal();
+		SocialUserDetails userDetails = (SocialUserDetails)authentication.getPrincipal();
 		UserVO userVO = modelMapper.map(userDetails, UserVO.class);
 		BOARD_USER_CP_ID.setUserid(userVO.getId());
 		boardRepositoryService.checkScrap(BOARD_USER_CP_ID);
@@ -65,7 +59,7 @@ public class ScrapController {
 	@Secured({"ROLE_USER","ROLE_ADMIN"})
 	@RequestMapping(value="/board/scrap", method=RequestMethod.DELETE, produces=MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Object> deleteScrap(@RequestBody BOARD_USER_CP_ID scrapId, Authentication authentication){
-		UserDetailsVO userDetails = (UserDetailsVO)authentication.getPrincipal();
+		SocialUserDetails userDetails = (SocialUserDetails)authentication.getPrincipal();
 		UserVO userVO = modelMapper.map(userDetails, UserVO.class);
 		scrapId.setUserid(userVO.getId());
 		boardRepositoryService.deleteScrap(scrapId);
@@ -80,7 +74,7 @@ public class ScrapController {
 	@Secured({"ROLE_USER","ROLE_ADMIN"})
 	@RequestMapping(value="/board/scrap", method=RequestMethod.GET)
 	public String findScrapUser(Model model, Authentication authentication){
-		UserDetailsVO userDetails = (UserDetailsVO)authentication.getPrincipal();
+		SocialUserDetails userDetails = (SocialUserDetails)authentication.getPrincipal();
 		UserVO userVO = modelMapper.map(userDetails, UserVO.class);
 		model.addAttribute("scrapUser", userVO.getId());
 		return "board/scrap";
@@ -95,7 +89,7 @@ public class ScrapController {
 	@RequestMapping(value="/board/scrap/{user}", method=RequestMethod.GET, produces=MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Object> findScrap(@PathVariable String user, @PageableDefault(sort = { "board" }, direction = Direction.DESC, size = 5) Pageable pageable, Authentication authentication){
 		Page<Scrap> page = null;
-		UserDetailsVO userDetails = (UserDetailsVO)authentication.getPrincipal();
+		SocialUserDetails userDetails = (SocialUserDetails)authentication.getPrincipal();
 		UserVO userVO = modelMapper.map(userDetails, UserVO.class);
 		
 		if(user.equals(""))

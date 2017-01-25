@@ -1,8 +1,5 @@
 package com.kdev.app.board.service;
 
-import static com.kdev.app.board.domain.SearchSpec.category;
-import static com.kdev.app.board.domain.SearchSpec.containTags;
-import static com.kdev.app.board.domain.SearchSpec.containTitle;
 import static org.springframework.data.jpa.domain.Specifications.where;
 
 import java.util.List;
@@ -17,7 +14,6 @@ import org.springframework.transaction.annotation.Transactional;
 import com.kdev.app.board.domain.BOARD_USER_CP_ID;
 import com.kdev.app.board.domain.Board;
 import com.kdev.app.board.domain.Comment;
-import com.kdev.app.board.domain.CommentDTO;
 import com.kdev.app.board.domain.Scrap;
 import com.kdev.app.board.domain.Thumb;
 import com.kdev.app.board.exception.BoardNotFoundException;
@@ -30,7 +26,7 @@ import com.kdev.app.user.domain.UserVO;
 import com.kdev.app.user.exception.UserNotFoundException;
 
 @Service
-@Transactional
+@Transactional //@EnableTransactionManagement
 public class BoardRepositoryService {
 	@Autowired
 	private BoardRepository boardRepository;
@@ -74,7 +70,7 @@ public class BoardRepositoryService {
 	 * And Or연산을 중첩시키는 방법 : Specification
 	 */
 	public Page<Board> findAll(String search, String category, Pageable pageable){
-		return boardRepository.findAll(where(containTitle(search)).or(containTags(search)).and(category(category)), pageable);
+		return boardRepository.findAll(where(SearchSpec.containTitle(search)).or(SearchSpec.containTags(search)).and(SearchSpec.category(category)), pageable);
 	}
 	
 	public Page<Board> findAllBoardByCategory(String category, Pageable pageable){
@@ -109,7 +105,7 @@ public class BoardRepositoryService {
 	 * ===============================================================
 	 */
 	
-	public Comment createComment(CommentDTO.Create create){
+	public Comment createComment(Comment.Create create){
 		UserVO userVO = create.getUser();
 		if(userVO == null)
 			throw new UserNotFoundException("Not Founded User");
