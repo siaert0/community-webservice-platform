@@ -5,7 +5,9 @@
  */
  
  @import url(http://fonts.googleapis.com/earlyaccess/notosanskr.css);
- 
+@import url(http://fonts.googleapis.com/earlyaccess/hanna.css);
+@import url(http://fonts.googleapis.com/earlyaccess/nanumgothiccoding.css);
+@import url(http://fonts.googleapis.com/earlyaccess/jejugothic.css);
 .red {
   background-color: #F44336 !important;
 }
@@ -2655,12 +2657,11 @@ nav ul a span.badge {
 
 .progress {
   position: relative;
-  height: 4px;
+  height: 20px;
   display: block;
   width: 100%;
   background-color: #acece6;
   border-radius: 2px;
-  margin: 0.5rem 0 1rem 0;
   overflow: hidden;
 }
 
@@ -7178,4 +7179,7 @@ p img{
 }
 .hover-black:hover{
 	color:purple;
+}
+.ngc{
+	font-family:'Nanum Gothic Coding'
 }

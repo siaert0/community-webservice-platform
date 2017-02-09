@@ -7,7 +7,7 @@
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<title>Facebook Account</title>
+<title>Community Webservice Platform</title>
 <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/assets/css/access_confirmation_v2.css">
 </head>
 <body>
@@ -17,9 +17,9 @@
     <section>
       <div class="info_app"><img src="https://mud-kage.kakao.com/14/dn/btqbjCnoZ8A/MyiKigHpJbSKusX0u3TPL1/o.jpg" alt="app">
         <div class="info">
-          <h2>페이스북 계정 연동 예제</h2>
+          <h2>페이스북 계정으로 이용하기</h2>
           <ul>
-            <li>로컬호스트</li>
+            <li>Community Webservice Platform</li>
           </ul>
         </div>
       </div>
@@ -29,19 +29,19 @@
 				<section class="main_section privacy">
           <header>
             <h3>개인정보 제3자 제공 동의</h3>
-            <p>페이스북으로부터 개인정보를 수집하는데 동의 하시겠습니까?</p>
+            <p>서비스를 이용하기 위해서는 개인정보 활용 동의를 하셔야 합니다.</p>
           </header>
           <ul class="info_box">
             <li>
               <dl>
                 <dt>제공받는 자</dt>
-                <dd>로컬호스트</dd>
+                <dd>Community Webservice Platform</dd>
               </dl>
             </li>
             <li>
               <dl>
                 <dt>제공받는 목적</dt>
-                <dd>페이스북계정 연결을 통한 개인정보 연동 서비스 제공을 위해</dd>
+                <dd>커뮤니티 웹 서비스 플랫폼의 서비스 이용을 위한 개인 프로필 정보 수집</dd>
               </dl>
             </li>
             <li>

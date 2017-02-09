@@ -2,21 +2,18 @@
 <%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
-<html>
+<html ng-app="myApp">
 <head>
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<!-- 스프링 시큐리티의 CSRF 토큰을 AJAX에서 사용 -->
-<meta id="_csrf" name="_csrf" content="${_csrf.token}" />
-<meta id="_csrf_header" name="_csrf_header" content="${_csrf.headerName}" />
-		
+<!-- 스프링 시큐리티의 CSRF 토큰을 AJAX에서 사용 -->	
 <title>Community Webservice Platform</title>
 <link rel="stylesheet" href="http://fonts.googleapis.com/icon?family=Material+Icons">
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.5/css/bootstrap.min.css">
-<link rel="stylesheet" href="/assets/css/style.css">
+<link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/style.css">
 </head>
-<body>
+<body id="LoginController" ng-controller="LoginController" ng-cloak>
 	<!-- 헤더 영역 -->
 		<header>
 			<nav>
@@ -28,7 +25,7 @@
 					    <li><a href="#">Community Webservice Platform</a></li>
 					</sec:authorize>
 					<sec:authorize access="isAnonymous()">
-						 <li><a href="/login">Community Webservice Platform</a></li>
+						 <li><a href="${pageContext.request.contextPath}/login">Community Webservice Platform</a></li>
 					</sec:authorize>
 			      </ul>
 			    </div>
@@ -38,39 +35,39 @@
       <div class="background blue lighten-1">
       </div>
       <sec:authorize access="isAnonymous()">
-      	  <a href="#"><img class="circle" src="/assets/img/user-star.png" style="margin:0 auto;"></a>
+      	  <a href="#"><img class="circle" src="${pageContext.request.contextPath}/assets/img/user-star.png" style="margin:0 auto;"></a>
 	      <a href="${pageContext.request.contextPath}/login"><span class="white-text name">로그인</span></a><br>
 	  </sec:authorize>
       <sec:authorize access="isAuthenticated()">
       	  <a><img class="circle" src="${user.thumbnail}" style="margin:0 auto;"></a>
 	      <a><span class="white-text name">${user.nickname}</span></a>
-	      <form name="logoutform" action="/logout"	method="post">
+	      <form name="logoutform" action="${pageContext.request.contextPath}/logout"	method="post">
     		<input type="hidden"  name="${_csrf.parameterName}"	value="${_csrf.token}"/>
     	  </form>
 	      <a href="#" onclick="logoutform.submit();"><span class="white-text email">로그아웃</span></a>
       </sec:authorize>
     </div></li>
-    <li><a href="/"><i class="material-icons">home</i>홈</a></li>
+    <li><a href="${pageContext.request.contextPath}/"><i class="material-icons">home</i>홈</a></li>
     <sec:authorize access="hasRole('ROLE_ADMIN')">
-    <li><a href="/admin" class="waves-effect"><i class="material-icons">settings</i>관리페이지</a></li>
+    <li><a href="${pageContext.request.contextPath}/admin" class="waves-effect"><i class="material-icons">settings</i>관리페이지</a></li>
     </sec:authorize>
     <sec:authorize access="isAuthenticated()">
-    <li><a href="/user/${user.id}" class="waves-effect"><i class="material-icons">account_box</i>회원정보수정</a></li>
-    <li><a href="/board/scrap" class="waves-effect"><i class="material-icons">share</i>스크랩</a></li>
-    <li><a href="/board" class="waves-effect"><i class="material-icons">create</i>글쓰기</a></li>
+    <li><a href="${pageContext.request.contextPath}/user/${user.id}" class="waves-effect"><i class="material-icons">account_box</i>회원정보수정</a></li>
+    <li><a href="${pageContext.request.contextPath}/board/scrap" class="waves-effect"><i class="material-icons">share</i>스크랩</a></li>
+    <li><a href="${pageContext.request.contextPath}/board" class="waves-effect"><i class="material-icons">create</i>글쓰기</a></li>
     </sec:authorize>
     <li><div class="divider"></div></li>
     <li><a class="subheader">게시판</a></li>
     <!-- 게시판 카테고리 영역  -->
-    <li><a href="/board/category/QA" class="waves-effect"><i class="material-icons">folder</i>QA</a></li>
-    <li><a href="/board/category/Information" class="waves-effect"><i class="material-icons">folder</i>Information</a></li>
+    <li ng-repeat="x in Categories"><a ng-href="${pageContext.request.contextPath}/board/category/{{x.name}}" class="waves-effect"><i class="material-icons">folder</i>{{x.name}}</a></li>
     <!--  -->
     <li><div class="divider"></div></li>
     <li><a class="subheader" class="waves-effect">IT 관련 사이트</a></li>
     <li><a href="http://stackoverflow.com/" target="_blank" class="waves-effect"><i class="material-icons">link</i>스택 오버플로우</a></li>
     <li><a href="http://okky.kr/" target="_blank" class="waves-effect"><i class="material-icons">link</i>OKKY</a></li>
-    <li><a class="subheader">개발 기록</a></li>
-    <li><a href="http://kdevkr.tistory.com/" target="_blank" class="waves-effect"><i class="material-icons">room</i>개발자 블로그</a></li>
+    <li><a class="subheader">ETC</a></li>
+    <li><a href="${pageContext.request.contextPath}/parse" class="waves-effect"><i class="material-icons">room</i>자바 에러 분석 기능</a></li>
+    <li><a href="https://kdevkr.github.io/" target="_blank" class="waves-effect"><i class="material-icons">room</i>KDev Github Blog</a></li>
 </ul>
 		</header>
 				<!-- 아티클 영역 -->
@@ -100,38 +97,41 @@
 				</button>
 				<p></p>
 					<div class="flex-box">
-			<a class="btn light-blue darken-2 waves-effect waves-light white-text btn-full z-depth-0" href="${pageContext.request.contextPath}/connect/facebook">페이스북 계정으로 이용하기</a> 
-			<a class="btn amber lignten-1 waves-effect waves-light white-text btn-full z-depth-0" href="${pageContext.request.contextPath}/connect/kakao">카카오톡 계정으로 이용하기</a>
+			<a class="btn light-blue darken-2 waves-effect waves-light white-text btn-full z-depth-0" href="${pageContext.request.contextPath}/connect/facebook">페이스북 회원가입</a> 
+			</div>
+			<div class="flex-box">
+			<a class="btn amber lignten-1 waves-effect waves-light white-text btn-full z-depth-0" href="${pageContext.request.contextPath}/connect/kakao">카카오톡 회원가입</a>
 		</div>
 			</form>
 		</div>
 	</div>
-	</article>
-				<div class="fixed-action-btn click-to-toggle">
-					<a class="btn-floating btn-large red button-collapse hide-on-large-only" data-activates="nav-mobile"><i class="material-icons">web</i>
-					</a>
-				</div>
+	</article>		
 				
-				<script type="text/javascript">
+					<script	src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+	<!-- Compiled and minified JavaScript -->
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.8/js/materialize.min.js"></script>
+	<script	src="https://code.angularjs.org/1.6.1/angular.min.js"></script>
+<script type="text/javascript">
+var contextPath = '${pageContext.request.contextPath}';
+var token = '${_csrf.token}';
+var header = '${_csrf.headerName}';
 $(function() {			
 	$(document).ajaxSend(function(e, xhr, options) {
-		xhr.setRequestHeader('${_csrf.headerName}', '${_csrf.token}');
+		xhr.setRequestHeader(header, token);
 	});
 	$(".button-collapse").sideNav();
 });
-</script>
 
-<script>
 function withdraw(id){
 	if(!confirm("정말로 탈퇴하시겠습니까?"))
 		return;
 	
 	$.ajax({
 		type	: 'DELETE',
-		url		: '/user/'+id,
+		url		: contextPath+'/user/'+id,
 		success	: function(response){
 			Materialize.toast("정상적으로 탈퇴되었습니다.", 3000);
-			location.href="/";
+			location.href=${pageContext.request.contextPath}+"/";
 		},
 		error	: function(response){
 			console.log(response);
@@ -140,32 +140,29 @@ function withdraw(id){
 	});
 }
 
-/**
- *  게시물 작성 알림 시스템
- */
- var stompClient = null;
- 
-function sendMessage(message){
-	if(stompClient != null)
-		stompClient.send("/message/notify/", {}, JSON.stringify({'message':message}));
-}
+var app = angular.module('myApp', []);
 
-$(function() {
-	var socket = new SockJS("/websocket");
-	stompClient = Stomp.over(socket);
-	stompClient.debug = null;
-	stompClient.connect({},function(frame) {
-		stompClient.subscribe('/board', function(response){
-			Materialize.toast("알림 전송. 개발자 도구를 확인하세요",3000,'green',function(){
-				console.log(message);
-			});
+app.controller('LoginController', function($scope){
+	$scope.loadCategory = function (){
+		$.ajax({
+			type	: 'GET',
+			url		: contextPath+'/category',
+			dataType	: 'JSON',
+			success	: function(response){
+				if(response != "" && response != null){
+					$scope.$apply(function () {
+						$scope.Categories = response;
+					});
+				}
+			},
+			error	: function(response){
+				Materialize.toast("오류가 발생하였습니다. 개발자 도구를 확인해주세요",3000,'red',function(){
+					console.log(response);
+				});
+			}
 		});
-		
-	}, function(message){
-		Materialize.toast("오류가 발생하였습니다. 개발자 도구를 확인하세요",3000,'red',function(){
-			console.log(message);
-		});
-	});
+	}
+	$scope.loadCategory();
 });
 </script>
 			

@@ -227,6 +227,7 @@ public class UserController {
 			@Valid UserVO.EmailCheck email,
 			BindingResult result) {
 		
+		// 이메일 형식을 체크해서 형식과 맞지 않을 경우에는 검증 에러를 응답합니다.
 		if(result.hasErrors()){
 			List<Object> errors = new LinkedList<Object>();
 			for(FieldError error : result.getFieldErrors()){
@@ -238,10 +239,13 @@ public class UserController {
 			throw new ValidErrorException(errors.toString());
 		}
 		
+		// 이메일 형식이라면 해당 이메일을 가진 사용자가 존재하는 지를 파악해서 이미 존재하는 이메일이란 에러를 응답합니다.
 		UserVO user = userRepositroyService.findUserByEmail(email.getEmail());
 		if(user != null){
 			throw new EmailDuplicatedException();
 		}
+		
+		// 이메일 형식이면서 해당 이메일이 존재하지 않는다면 정상 응답을 합니다.
 		return new ResponseEntity<Object>(email,HttpStatus.OK);
 	}
 	
@@ -270,9 +274,10 @@ public class UserController {
 			return "error";
 		}
 		
-		if(restriction != null)
+		if(restriction != null){
+			model.addAttribute("restrictionUser", userVO);
 			model.addAttribute("restriction", restriction);
-		
+		}
 		return "user/restriction";
 	}
 	

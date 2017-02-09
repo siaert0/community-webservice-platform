@@ -13,12 +13,14 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.kdev.app.board.domain.BOARD_USER_CP_ID;
 import com.kdev.app.board.domain.Board;
+import com.kdev.app.board.domain.Category;
 import com.kdev.app.board.domain.Comment;
 import com.kdev.app.board.domain.Scrap;
 import com.kdev.app.board.domain.Thumb;
 import com.kdev.app.board.exception.BoardNotFoundException;
 import com.kdev.app.board.exception.NotCreatedException;
 import com.kdev.app.board.repository.BoardRepository;
+import com.kdev.app.board.repository.CategoryRepository;
 import com.kdev.app.board.repository.CommentRepository;
 import com.kdev.app.board.repository.ScrapRepository;
 import com.kdev.app.board.repository.ThumbRepository;
@@ -39,6 +41,9 @@ public class BoardRepositoryService {
 	
 	@Autowired
 	private ThumbRepository thumbRepository;
+	
+	@Autowired
+	private CategoryRepository categoryRepository;
 	
 	@Autowired 
 	private ModelMapper modelMapper;
@@ -186,5 +191,25 @@ public class BoardRepositoryService {
 	
 	public Page<Scrap> findScrapByUser(UserVO user, Pageable pageable){
 		return scrapRepository.findByUser(user, pageable);
+	}
+	
+	/** 
+	 *  ===============================================================
+	 *  	CategoryRepository
+	 *  ===============================================================
+	 */
+	
+	public List<Category> findCategories(){
+		return categoryRepository.findAll();
+	}
+	
+	public Category addCategory(Category category){
+		categoryRepository.save(category);
+		return category;
+	}
+	
+	public Category removeCategory(Category category){
+		categoryRepository.delete(category);
+		return category;
 	}
 }

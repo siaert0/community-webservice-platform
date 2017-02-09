@@ -34,6 +34,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import com.kdev.app.board.domain.BOARD_USER_CP_ID;
 import com.kdev.app.board.domain.Board;
+import com.kdev.app.board.domain.Category;
 import com.kdev.app.board.domain.Comment;
 import com.kdev.app.board.exception.BoardNotFoundException;
 import com.kdev.app.board.exception.ValidErrorException;
@@ -239,14 +240,21 @@ public class BoardController {
 	// 최근 게시물 정보 API
 	@RequestMapping(value="/top", method = RequestMethod.GET, produces=MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Object> topData(Model model, @PageableDefault(sort="created", direction = Direction.DESC, size = 10) Pageable pageable){
-		List<Board> QA = boardRepositoryService.findAllBoardByCategory("QA", pageable).getContent();
-		List<Board> REQURIT = boardRepositoryService.findAllBoardByCategory("신입공채", pageable).getContent();
 		List<Comment> COMMENT = boardRepositoryService.findCommentAll(pageable).getContent();
 		Map<String, Object> map = new HashMap<String, Object>();
 		
-		map.put("QA", QA);
-		map.put("REQURIT", REQURIT);
+		List<Category> CATEGORY = boardRepositoryService.findCategories();
+		CATEGORY.forEach(category -> {
+			map.put(category.getName(), boardRepositoryService.findAllBoardByCategory(category.getName(), pageable).getContent());
+		});
+
 		map.put("COMMENT", COMMENT);
 		return new ResponseEntity<Object>(map,HttpStatus.ACCEPTED);
+	}
+	
+	@RequestMapping(value="/category", method = RequestMethod.GET, produces=MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<Object> category(Model model){
+		List<Category> CATEGORY = boardRepositoryService.findCategories();
+		return new ResponseEntity<Object>(CATEGORY,HttpStatus.ACCEPTED);
 	}
 }

@@ -32,7 +32,7 @@
 					    <li><a href="#">Community Webservice Platform</a></li>
 					</sec:authorize>
 					<sec:authorize access="isAnonymous()">
-						 <li><a href="/login">Community Webservice Platform</a></li>
+						 <li><a href="${pageContext.request.contextPath}/login">Community Webservice Platform</a></li>
 					</sec:authorize>
 			      </ul>
 			    </div>
@@ -43,39 +43,39 @@
       <div class="background blue lighten-1">
       </div>
       <sec:authorize access="isAnonymous()">
-      	  <a href="#"><img class="circle" src="/assets/img/user-star.png" style="margin:0 auto;"></a>
+      	  <a href="#"><img class="circle" src="${pageContext.request.contextPath}/assets/img/user-star.png" style="margin:0 auto;"></a>
 	      <a href="${pageContext.request.contextPath}/login"><span class="white-text name">로그인</span></a><br>
 	  </sec:authorize>
       <sec:authorize access="isAuthenticated()">
       	  <a><img class="circle" src="${user.thumbnail}" style="margin:0 auto;"></a>
 	      <a><span class="white-text name">${user.nickname}</span></a>
-	      <form name="logoutform" action="/logout"	method="post">
+	      <form name="logoutform" action="${pageContext.request.contextPath}/logout"	method="post">
     		<input type="hidden"  name="${_csrf.parameterName}"	value="${_csrf.token}"/>
     	  </form>
 	      <a href="#" onclick="logoutform.submit();"><span class="white-text email">로그아웃</span></a>
       </sec:authorize>
     </div></li>
-    <li><a href="/"><i class="material-icons">home</i>홈</a></li>
+    <li><a href="${pageContext.request.contextPath}/"><i class="material-icons">home</i>홈</a></li>
     <sec:authorize access="hasRole('ROLE_ADMIN')">
-    <li><a href="/admin" class="waves-effect"><i class="material-icons">settings</i>관리페이지</a></li>
+    <li><a href="${pageContext.request.contextPath}/admin" class="waves-effect"><i class="material-icons">settings</i>관리페이지</a></li>
     </sec:authorize>
     <sec:authorize access="isAuthenticated()">
-    <li><a href="/user/${user.id}" class="waves-effect"><i class="material-icons">account_box</i>회원정보수정</a></li>
-    <li><a href="/board/scrap" class="waves-effect"><i class="material-icons">share</i>스크랩</a></li>
-    <li><a href="/board" class="waves-effect"><i class="material-icons">create</i>글쓰기</a></li>
+    <li><a href="${pageContext.request.contextPath}/user/${user.id}" class="waves-effect"><i class="material-icons">account_box</i>회원정보수정</a></li>
+    <li><a href="${pageContext.request.contextPath}/board/scrap" class="waves-effect"><i class="material-icons">share</i>스크랩</a></li>
+    <li><a href="${pageContext.request.contextPath}/board" class="waves-effect"><i class="material-icons">create</i>글쓰기</a></li>
     </sec:authorize>
     <li><div class="divider"></div></li>
     <li><a class="subheader">게시판</a></li>
     <!-- 게시판 카테고리 영역  -->
-    <li><a href="/board/category/QA" class="waves-effect"><i class="material-icons">folder</i>QA</a></li>
-    <li><a href="/board/category/Information" class="waves-effect"><i class="material-icons">folder</i>Information</a></li>
+    <li ng-repeat="x in Categories"><a ng-href="${pageContext.request.contextPath}/board/category/{{x.name}}" class="waves-effect"><i class="material-icons">folder</i>{{x.name}}</a></li>
     <!--  -->
     <li><div class="divider"></div></li>
     <li><a class="subheader" class="waves-effect">IT 관련 사이트</a></li>
     <li><a href="http://stackoverflow.com/" target="_blank" class="waves-effect"><i class="material-icons">link</i>스택 오버플로우</a></li>
     <li><a href="http://okky.kr/" target="_blank" class="waves-effect"><i class="material-icons">link</i>OKKY</a></li>
-    <li><a class="subheader">개발 기록</a></li>
-    <li><a href="http://kdevkr.tistory.com/" target="_blank" class="waves-effect"><i class="material-icons">room</i>개발자 블로그</a></li>
+    <li><a class="subheader">ETC</a></li>
+    <li><a href="${pageContext.request.contextPath}/parse" class="waves-effect"><i class="material-icons">room</i>자바 에러 분석 기능</a></li>
+    <li><a href="https://kdevkr.github.io/" target="_blank" class="waves-effect"><i class="material-icons">room</i>KDev Github Blog</a></li>
 </ul>
 	</header>
 	<article style="margin-top:0px;">
@@ -133,9 +133,7 @@
 								<div class="col-sm-12">
 								<b>카테고리</b>
 				<select id="u_b_category" class="browser-default form-control">
-			      <option value="" disabled selected>카테고리를 선택해주세요</option>
-			      <option value="QA" ng-selected="boardContent.category=='QA'">QA</option>
-			      <option value="Information" ng-selected="boardContent.category=='Information'">Information</option>
+			      <option ng-repeat="x in Categories" value="{{x.name}}" ng-selected="boardContent.category=='{{x.name}}'">{{x.name}}</option>
 			    </select>
 			    <p></p>
 			</div>
@@ -330,8 +328,6 @@
 	
 	<!-- Compiled and minified JavaScript -->		
 <script	src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.1.1/sockjs.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.8/js/materialize.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/tether/1.4.0/js/tether.min.js"></script>
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/js/bootstrap.min.js"></script>
@@ -342,25 +338,24 @@
 <script src="/assets/js/tagging.js"></script>
 <script	src="/assets/js/dirPagination.js"></script>
 <script type="text/javascript">
+var contextPath = '${pageContext.request.contextPath}';
 $(function() {			
 	$(document).ajaxSend(function(e, xhr, options) {
 		xhr.setRequestHeader('${_csrf.headerName}', '${_csrf.token}');
 	});
 	$(".button-collapse").sideNav();
 });
-</script>
 
-<script>
 function withdraw(id){
 	if(!confirm("정말로 탈퇴하시겠습니까?"))
 		return;
 	
 	$.ajax({
 		type	: 'DELETE',
-		url		: '/user/'+id,
+		url		: contextPath+'/user/'+id,
 		success	: function(response){
 			Materialize.toast("정상적으로 탈퇴되었습니다.", 3000);
-			location.href="/";
+			location.href=contextPath+"/";
 		},
 		error	: function(response){
 			Materialize.toast("탈퇴하지 못했습니다", 3000);
@@ -368,32 +363,6 @@ function withdraw(id){
 	});
 }
 
-/**
- *  게시물 작성 알림 시스템
- */
- var stompClient = null;
-
-$(function() {
-	var socket = new SockJS("/websocket");
-	stompClient = Stomp.over(socket);
-	stompClient.debug = null;
-	stompClient.connect({},function(frame) {
-		console.log("Init Stomp");
-		stompClient.subscribe('/board', function(response){
-			Materialize.toast(response.message,3000,'green',function(){
-				console.log(response);
-			});
-		});
-		
-	}, function(message){
-		Materialize.toast("오류가 발생하였습니다. 개발자 도구를 확인하세요",3000,'red',function(){
-			console.log(message);
-		});
-	});
-});
-</script>
-
-<script type="text/javascript">
 $(function() {
 	$('#preloader').hide();
 	$('.tagging').tagging({
@@ -460,7 +429,7 @@ function sendImage(file, summernote){
       data.append("Filedata",file);
 		$.ajax({
           type: 'POST',
-          url: '/upload/image/',
+          url: contextPath+'/upload/image/',
           data: data,
         	contentType: false,
      		processData: false,
@@ -494,7 +463,7 @@ function sendImage(file, summernote){
 function deleteImage(file){
 		$.ajax({
           type: 'DELETE',
-          url: '/upload/image/?url='+file,
+          url: contextPath+'/upload/image/?url='+file,
           dataType: 'text', //리턴되는 데이타 타입
           beforeSubmit: function(){
           },
@@ -532,7 +501,7 @@ app.controller('DetailController', function($scope, $http, $log, $sce){
 		dataObject.boardid = id;
 		$.ajax({
 	        type: 'POST',
-	        url: '/board/scrap',
+	        url: contextPath+'/board/scrap',
 	        contentType: 'application/json',
 	        data: JSON.stringify(dataObject),
 	        dataType: 'TEXT', //리턴되는 데이타 타입
@@ -577,7 +546,7 @@ app.controller('DetailController', function($scope, $http, $log, $sce){
 		dataObject.boardid = $scope.boardContent.id;
 		$.ajax({
 			type	: 'POST',
-			url		: '/board/thumb',		
+			url		: contextPath+'/board/thumb',		
 			data	: JSON.stringify(dataObject),
 			contentType: 'application/json',
 			dataType	: 'JSON',
@@ -610,7 +579,7 @@ app.controller('DetailController', function($scope, $http, $log, $sce){
 		}
 		$.ajax({
 			type	: 'DELETE',
-			url		: '/board/'+$scope.boardContent.id,
+			url		: contextPath+'/board/'+$scope.boardContent.id,
 			dataType	: 'JSON',
 			success	: function(response){
 				Materialize.toast("정상적으로 삭제하였습니다. 잠시후 메인으로 이동합니다",3000,'green',function(){
@@ -648,11 +617,11 @@ app.controller('DetailController', function($scope, $http, $log, $sce){
 		BoardObject.description = $('#u_b_description').summernote('code');
 		BoardObject.tags = JSON.stringify($('#u_b_tags').tagging("getTags"));
 		BoardObject.id = board.id;
-		BoardObject.category = board.category;
+		BoardObject.category = $('#u_b_category').val();
 		BoardObject.selected = board.selected;
 		$.ajax({
 			type	: 'POST',
-			url		: '/board/'+board.id,
+			url		: contextPath+'/board/'+board.id,
 			data	: JSON.stringify(BoardObject),
 			contentType: 'application/json',
 			dataType	: 'JSON',
@@ -680,7 +649,7 @@ app.controller('DetailController', function($scope, $http, $log, $sce){
 		}
 		$.ajax({
 			type	: 'DELETE',
-			url		: '/comment/'+comment.id,
+			url		: contextPath+'/comment/'+comment.id,
 			dataType	: 'JSON',
 			success	: function(response){
 				Materialize.toast("정상적으로 삭제되었습니다",3000,'green',function(){
@@ -700,7 +669,6 @@ app.controller('DetailController', function($scope, $http, $log, $sce){
 	}
 	
 	$scope.requestUpdateComment = function(comment, index){
-		//모달로 변경합시다.
 		$('#u_c_description').summernote('code',comment.description);
 		var tags = JSON.parse(comment.tags);
 		$('#u_c_tags').tagging( "reset" );
@@ -728,7 +696,7 @@ app.controller('DetailController', function($scope, $http, $log, $sce){
 
 		$.ajax({
 			type	: 'POST',
-			url		: '/board/'+$scope.boardContent.id,
+			url		: contextPath+'/board/'+$scope.boardContent.id,
 			data 	: JSON.stringify(BoardObject),
 			contentType: 'application/json',
 			dataType	: 'JSON',
@@ -781,7 +749,7 @@ app.controller('DetailController', function($scope, $http, $log, $sce){
 	$scope.loadUser = function(){
 		$http({
 			method: "GET",
-			url : "/user"
+			url : contextPath+"/user"
 		}).then(function(response){
 			console.log(response);
 			$scope.USER = response.data;
@@ -791,7 +759,26 @@ app.controller('DetailController', function($scope, $http, $log, $sce){
 			});
 		});
 	}
-	
+	$scope.loadCategory = function (){
+		$.ajax({
+			type	: 'GET',
+			url		: contextPath+'/category',
+			dataType	: 'JSON',
+			success	: function(response){
+				if(response != "" && response != null){
+					$scope.$apply(function () {
+						$scope.Categories = response;
+					});
+				}
+			},
+			error	: function(response){
+				Materialize.toast("오류가 발생하였습니다. 개발자 도구를 확인해주세요",3000,'red',function(){
+					console.log(response);
+				});
+			}
+		});
+	}
+	$scope.loadCategory();
 	$scope.loadUser();
 	$scope.loadDataSet();
 });
@@ -804,7 +791,7 @@ function comment(board){
 	CommentObject.board = board;
 	$.ajax({
 		type	: 'POST',
-		url		: '/comment',
+		url		: contextPath+'/comment',
 		data	: JSON.stringify(CommentObject),
 		contentType: 'application/json',
 		dataType	: 'JSON',
@@ -838,7 +825,7 @@ function updateComment(comment, index){
 	CommentObject.board = comment.board;
 	$.ajax({
 		type	: 'POST',
-		url		: '/comment/'+comment.id,
+		url		: contextPath+'/comment/'+comment.id,
 		data	: JSON.stringify(CommentObject),
 		contentType: 'application/json',
 		dataType	: 'JSON',

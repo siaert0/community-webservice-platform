@@ -28,7 +28,7 @@
 					    <li><a href="#">Community Webservice Platform</a></li>
 					</sec:authorize>
 					<sec:authorize access="isAnonymous()">
-						 <li><a href="/login">Community Webservice Platform</a></li>
+						 <li><a href="${pageContext.request.contextPath}/login">Community Webservice Platform</a></li>
 					</sec:authorize>
 			      </ul>
 			    </div>
@@ -39,39 +39,39 @@
       <div class="background blue lighten-1">
       </div>
       <sec:authorize access="isAnonymous()">
-      	  <a href="#"><img class="circle" src="/assets/img/user-star.png" style="margin:0 auto;"></a>
+      	  <a href="#"><img class="circle" src="${pageContext.request.contextPath}/assets/img/user-star.png" style="margin:0 auto;"></a>
 	      <a href="${pageContext.request.contextPath}/login"><span class="white-text name">로그인</span></a><br>
 	  </sec:authorize>
       <sec:authorize access="isAuthenticated()">
       	  <a><img class="circle" src="${user.thumbnail}" style="margin:0 auto;"></a>
 	      <a><span class="white-text name">${user.nickname}</span></a>
-	      <form name="logoutform" action="/logout"	method="post">
+	      <form name="logoutform" action="${pageContext.request.contextPath}/logout"	method="post">
     		<input type="hidden"  name="${_csrf.parameterName}"	value="${_csrf.token}"/>
     	  </form>
 	      <a href="#" onclick="logoutform.submit();"><span class="white-text email">로그아웃</span></a>
       </sec:authorize>
     </div></li>
-    <li><a href="/"><i class="material-icons">home</i>홈</a></li>
+    <li><a href="${pageContext.request.contextPath}/"><i class="material-icons">home</i>홈</a></li>
     <sec:authorize access="hasRole('ROLE_ADMIN')">
-    <li><a href="/admin" class="waves-effect"><i class="material-icons">settings</i>관리페이지</a></li>
+    <li><a href="${pageContext.request.contextPath}/admin" class="waves-effect"><i class="material-icons">settings</i>관리페이지</a></li>
     </sec:authorize>
     <sec:authorize access="isAuthenticated()">
-    <li><a href="/user/${user.id}" class="waves-effect"><i class="material-icons">account_box</i>회원정보수정</a></li>
-    <li><a href="/board/scrap" class="waves-effect"><i class="material-icons">share</i>스크랩</a></li>
-    <li><a href="/board" class="waves-effect"><i class="material-icons">create</i>글쓰기</a></li>
+    <li><a href="${pageContext.request.contextPath}/user/${user.id}" class="waves-effect"><i class="material-icons">account_box</i>회원정보수정</a></li>
+    <li><a href="${pageContext.request.contextPath}/board/scrap" class="waves-effect"><i class="material-icons">share</i>스크랩</a></li>
+    <li><a href="${pageContext.request.contextPath}/board" class="waves-effect"><i class="material-icons">create</i>글쓰기</a></li>
     </sec:authorize>
     <li><div class="divider"></div></li>
     <li><a class="subheader">게시판</a></li>
     <!-- 게시판 카테고리 영역  -->
-    <li><a href="/board/category/QA" class="waves-effect"><i class="material-icons">folder</i>QA</a></li>
-    <li><a href="/board/category/신입공채" class="waves-effect"><i class="material-icons">folder</i>Information</a></li>
+    <li ng-repeat="x in Categories"><a ng-href="${pageContext.request.contextPath}/board/category/{{x.name}}" class="waves-effect"><i class="material-icons">folder</i>{{x.name}}</a></li>
     <!--  -->
     <li><div class="divider"></div></li>
     <li><a class="subheader" class="waves-effect">IT 관련 사이트</a></li>
     <li><a href="http://stackoverflow.com/" target="_blank" class="waves-effect"><i class="material-icons">link</i>스택 오버플로우</a></li>
     <li><a href="http://okky.kr/" target="_blank" class="waves-effect"><i class="material-icons">link</i>OKKY</a></li>
-    <li><a class="subheader">개발 기록</a></li>
-    <li><a href="http://kdevkr.tistory.com/" target="_blank" class="waves-effect"><i class="material-icons">room</i>개발자 블로그</a></li>
+    <li><a class="subheader">ETC</a></li>
+    <li><a href="${pageContext.request.contextPath}/parse" class="waves-effect"><i class="material-icons">room</i>자바 에러 분석 기능</a></li>
+    <li><a href="https://kdevkr.github.io/" target="_blank" class="waves-effect"><i class="material-icons">room</i>KDev Github Blog</a></li>
 </ul>
 		</header>
 		<!-- 아티클 영역 -->
@@ -95,7 +95,7 @@
 								<span class="chip transparent black-text border-flat">{{x.created | date:'yyyy년 MM월 dd일 h:mma'}}</span>
 								</div>
 							<div class="card-content" style="padding-top:0;">
-								<a class="hover-black hover" ng-href="/board/{{x.id}}" style="color:#444; font-weight:700; font-size:15px; padding-left:20px;">{{x.title}}</a>
+								<a class="hover-black hover" ng-href="${pageContext.request.contextPath}/board/{{x.id}}" style="color:#444; font-weight:700; font-size:15px; padding-left:20px;">{{x.title}}</a>
 							</div>
 							<div class="card-action" style="padding:5px 10px;" ng-if="x.tags != '[]'">
 								<span class="tags" ng-init="tags=parseJson(x.tags)">
@@ -110,7 +110,7 @@
 					<div class="col-sm-12">
 						<span class="chip purple lighten-2 white-text" style="border-radius:0; width:100%;">Information</span>
 						<div class="collection" style="border:0;">
-							<div class="card sticky-action border-flat" ng-repeat="x in REQURITTopList"  ng-class="{selectedBoard:x.selected != 0, commentedBoard:x.selected == 0 && x.comments.length > 0}" style="margin:0; margin-top:5px;">
+							<div class="card sticky-action border-flat" ng-repeat="x in INFORMATIONTopList"  ng-class="{selectedBoard:x.selected != 0, commentedBoard:x.selected == 0 && x.comments.length > 0}" style="margin:0; margin-top:5px;">
 							<div class="card-content" style="padding:10px; padding-top:15px;">
 								<span class="chip white left">
 							      <img style="height:100%;" ng-src="{{x.user.thumbnail}}">
@@ -122,7 +122,7 @@
 								<span class="chip transparent black-text border-flat">{{x.created | date:'yyyy년 MM월 dd일 h:mma'}}</span>
 								</div>
 							<div class="card-content" style="padding-top:0;">
-								<a class="hover-black hover" ng-href="/board/{{x.id}}" style="color:#444; font-weight:700; font-size:15px;">{{x.title}}</a>
+								<a class="hover-black hover" ng-href="${pageContext.request.contextPath}/board/{{x.id}}" style="color:#444; font-weight:700; font-size:15px;">{{x.title}}</a>
 							</div>
 							<div class="card-action" style="padding:5px 10px;" ng-if="x.tags != '[]'">
 								<span class="tags" ng-init="tags=parseJson(x.tags)">
@@ -143,7 +143,7 @@
 										<img ng-src="{{x.user.thumbnail}}" alt="Contact Person">
 										    {{x.user.nickname}}
 									</span>
-									님이 <a class="teal-text hover" ng-href="/board/{{x.board}}">{{x.board}}번글</a>에 댓글을 달았습니다.
+									님이 <a class="teal-text hover" ng-href="${pageContext.request.contextPath}/board/{{x.board}}">{{x.board}}번글</a>에 댓글을 달았습니다.
 									<span class="chip transparent right">
 										{{x.created | date:'yyyy년 MM월 dd일 h:mma'}}
 									</span>
@@ -156,8 +156,6 @@
 		
 <!-- Compiled and minified JavaScript -->		
 <script	src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.1.1/sockjs.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.8/js/materialize.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/tether/1.4.0/js/tether.min.js"></script>
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/js/bootstrap.min.js"></script>
@@ -165,29 +163,29 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.2/lang/summernote-ko-KR.min.js"></script>
 <script	src="https://code.angularjs.org/1.6.1/angular.min.js"></script>
 <script	src="https://code.angularjs.org/1.6.1/angular-sanitize.min.js"></script>
-<script src="/assets/js/tagging.js"></script>
 <script	src="/assets/js/dirPagination.js"></script>
+<script src="/assets/js/tagging.js"></script>
+
 
 <script type="text/javascript">
+var contextPath = '${pageContext.request.contextPath}';
 $(function() {			
 	$(document).ajaxSend(function(e, xhr, options) {
 		xhr.setRequestHeader('${_csrf.headerName}', '${_csrf.token}');
 	});
 	$(".button-collapse").sideNav();
 });
-</script>
 
-<script>
 function withdraw(id){
 	if(!confirm("정말로 탈퇴하시겠습니까?"))
 		return;
 	
 	$.ajax({
 		type	: 'DELETE',
-		url		: '/user/'+id,
+		url		: contextPath+'/user/'+id,
 		success	: function(response){
 			Materialize.toast("정상적으로 탈퇴되었습니다.", 3000);
-			location.href="/";
+			location.href=contextPath+"/";
 		},
 		error	: function(response){
 			console.log(response);
@@ -195,34 +193,6 @@ function withdraw(id){
 		}
 	});
 }
-
-/**
- *  게시물 작성 알림 시스템
- */
- var stompClient = null;
- 
-function sendMessage(message){
-	if(stompClient != null)
-		stompClient.send("/message/notify/", {}, JSON.stringify({'message':message}));
-}
-
-$(function() {
-	var socket = new SockJS("/websocket");
-	stompClient = Stomp.over(socket);
-	stompClient.debug = null;
-	stompClient.connect({},function(frame) {
-		stompClient.subscribe('/board', function(response){
-			Materialize.toast(response.message,3000,'green',function(){
-				console.log(response);
-			});
-		});
-		
-	}, function(message){
-		Materialize.toast("오류가 발생하였습니다. 개발자 도구를 확인하세요",3000,'red',function(){
-			console.log(message);
-		});
-	});
-});
 </script>
 <script>
 var app = angular.module('myApp', ['ngSanitize','angularUtils.directives.dirPagination']);
@@ -247,13 +217,14 @@ app.controller('HomeController', function($scope){
 	$scope.loadDataSet = function (){
 		$.ajax({
 			type	: 'GET',
-			url		: '/top',
+			url		: contextPath+'/top',
 			dataType	: 'JSON',
 			success	: function(response){
 				if(response != "" && response != null){
 					$scope.$apply(function () {
+						console.log(response);
 						$scope.QATopList = response.QA;
-						$scope.REQURITTopList = response.REQURIT;
+						$scope.INFORMATIONTopList = response.Information;
 						$scope.COMMENTTopList = response.COMMENT;
 					});
 				}
@@ -265,7 +236,27 @@ app.controller('HomeController', function($scope){
 			}
 		});
 	}
+	$scope.loadCategory = function (){
+		$.ajax({
+			type	: 'GET',
+			url		: contextPath+'/category',
+			dataType	: 'JSON',
+			success	: function(response){
+				if(response != "" && response != null){
+					$scope.$apply(function () {
+						$scope.Categories = response;
+					});
+				}
+			},
+			error	: function(response){
+				Materialize.toast("오류가 발생하였습니다. 개발자 도구를 확인해주세요",3000,'red',function(){
+					console.log(response);
+				});
+			}
+		});
+	}
 	$scope.loadDataSet();
+	$scope.loadCategory();
 });
 </script>
 	</body>

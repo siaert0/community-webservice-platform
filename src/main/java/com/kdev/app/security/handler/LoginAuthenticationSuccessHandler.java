@@ -60,6 +60,7 @@ public class LoginAuthenticationSuccessHandler extends SavedRequestAwareAuthenti
     			
     	String redirect = (String)(request.getSession().getAttribute("redirectUrl"));
     	if(redirect != null){
+    		logger.info("{}", redirect);
     		request.getSession().removeAttribute("redirectUrl");
     		response.sendRedirect(redirect);
     		return;

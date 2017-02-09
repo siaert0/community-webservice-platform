@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import com.kdev.app.board.repository.BoardRepository;
 import com.kdev.app.board.repository.CommentRepository;
 import com.kdev.app.board.repository.ThumbRepository;
+import com.kdev.app.board.service.BoardRepositoryService;
 import com.kdev.app.user.domain.PROVIDER_USER_CP_ID;
 import com.kdev.app.user.domain.Restriction;
 import com.kdev.app.user.enums.SocialProvider;

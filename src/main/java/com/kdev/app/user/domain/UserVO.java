@@ -10,6 +10,7 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
 import org.hibernate.validator.constraints.Email;
@@ -66,6 +67,7 @@ public class UserVO {
 		@NotBlank
 		private String id;
 		@Size(min=8)
+		@Pattern(regexp="^(?=.*\\d)(?=.*[~`!@#$%\\^&*()-])(?=.*[a-zA-Z]).{8,20}$")
 		private String password;
 		@Email
 		private String email;
@@ -82,6 +84,7 @@ public class UserVO {
 		@NotBlank
 		private String id;
 		@Size(min=8)
+		@Pattern(regexp="^(?=.*\\d)(?=.*[~`!@#$%\\^&*()-])(?=.*[a-zA-Z]).{8,20}$")
 		private String password;
 		@Email
 		private String email;
