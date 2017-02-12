@@ -453,6 +453,7 @@ public class Board {
 }
 ```
 - 댓글 엔터티  
+```java
 @Entity
 @Table(name = "COMMENTS")
 @Data
@@ -496,6 +497,7 @@ public class Comment {
 		private UserVO user;
 	}
 }
+```
 - 스크랩 엔터티  
 ```java
 @Embeddable
