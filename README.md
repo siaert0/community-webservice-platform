@@ -1,5 +1,5 @@
 #  Community Webservice Platform
-#### *2016-12-26 ~ *
+#### *2016-12-26 ~*  
 
 - Type : 개인 프로젝트  
 - IDE : Spring Tool Suite  
