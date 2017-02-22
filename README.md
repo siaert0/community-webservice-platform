@@ -1,7 +1,6 @@
 #  Community Webservice Platform
-#### *본 프로젝트는 기존 졸업작품을 개선해보기 위하여 2016-12-26일 부터 시작되었습니다.*
+#### *2016-12-26 ~ *
 
-## 개요  
 - Type : 개인 프로젝트  
 - IDE : Spring Tool Suite  
 - WAS : Spring Boot Embedded Tomcat  
@@ -23,13 +22,13 @@
 스프링 시큐리티 예제를 보면 UserConnection 의 테이블을 직접 DDL로 데이터베이스에 만들어두어야 하는 불편함을 보여 스프링 데이터 JPA를 지원을 받아 도메인 엔터티로 구현하였다.  
 
 #### 2.2 Infinity Recursion  
-서비스 로직 구현과정에서 도메인 엔터티 간 연관관계에 의해서 Infinity Recursion라는 계속해서 참조해서 가져오는 문제점으로 인하여 스택 오버플로우 에러가 발생하였다. 이를 보완하기 위하여 @JsonBackReference 어노테이션을 명시하여 다시 참조하지 못하도록 제한하였다.  
+서비스 로직 구현과정에서 도메인 엔터티 간 연관관계에 의해서 `Infinity Recursion`라는 계속해서 참조해서 가져오는 문제점으로 인하여 스택 오버플로우 에러가 발생하였다. 이를 보완하기 위하여 `@JsonBackReference` 어노테이션을 명시하여 다시 참조하지 못하도록 제한하였다.  
 
 #### 2.3 Search And Paging Specification  
-JPA의 메소드의 이름으로 SQL을 만드는 것이 복잡한 Where연산을 표현할 수 없어 And와 Or에 대한 표현이 제대로 되지 않는 문제점이 발생하여 Specification을 구현해서 연산을 적용할 수 있도록 하였다.  
+JPA의 메소드의 이름으로 SQL을 만드는 것이 복잡한 `where`연산을 표현할 수 없어 `And와 Or`에 대한 표현이 제대로 되지 않는 문제점이 발생하여 `Specification`을 구현해서 연산을 적용할 수 있도록 하였다.  
 
 #### 2.4 AccessDeniedException Handling  
-에러를 RuntimeException으로 처리하려고 하려 했으나 AccessDeniedException도 처리함으로 인해 Response is commited 문제점이 발생함을 확인하였다. 그래서 각 에러에 대하여 개별적으로 처리할 수 있도록 변경하였다.  
+에러를 RuntimeException으로 처리하려고 하려 했으나 `AccessDeniedException`도 처리함으로 인해 `Response is commited` 문제점이 발생함을 확인하였다. 그래서 각 에러에 대하여 개별적으로 처리할 수 있도록 변경하였다.  
 
 ## 3. 실행방법  
 
@@ -59,6 +58,7 @@ spring.jpa.hibernate.naming.physical-strategy=org.hibernate.boot.model.naming.Ph
 ```
 
 #### 3.3 Run As - Spring Boot App으로 서버를 실행해주세요  
+실행이 안되시나요 ㅠㅠ 죄송합니다. `Lombok`을 IDE에 적용시켜줘야 합니다. 메이븐 라이브러리 폴더에서 lombok을 찾아 설치해주시기 바랍니다.
 
 ## 4. 추가 구현 계획  
 
