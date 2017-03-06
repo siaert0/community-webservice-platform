@@ -186,6 +186,7 @@ $(function() {
 					location.href=obj.href;
                 	this.close();
                 };
+                notification.sound;
 				setTimeout(function () {
 		            notification.close();
 		        }, 5000);

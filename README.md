@@ -1,12 +1,12 @@
 #  Community Webservice Platform
-#### *2016-12-26 ~*  
+#### *2016-12-26 ~ *  
 
-- Type : 개인 프로젝트  
+- Type : Team -> Personal  
 - IDE : Spring Tool Suite  
 - WAS : Spring Boot Embedded Tomcat  
 - OS : Windows And Linux  
-- Framework : Spring Boot, Spring Security, Spring Social, Spring Data JPA, Bootstrap, AngularJS  
-- Library : Summernote, Tagging.js, Lombok, ModelMapper  
+- Framework : Spring Boot, Spring Security, Spring Social, Spring Data JPA, Spring Websocket, Bootstrap, AngularJS  
+- Library : Summernote, Tagging.js, sockjs.js, stomp.js, Lombok, ModelMapper  
 
 
 ## 1. 커뮤니티 웹 서비스 플랫폼의 목표  
@@ -46,8 +46,7 @@ JPA의 메소드의 이름으로 SQL을 만드는 것이 복잡한 `where`연산
 spring.datasource.initialize=false
 ```
 
-## 4. 추가 구현 계획  
+## 4. 앞으로의 계획  
 
-- 스프링 웹 소켓을 적용하여 알림 기능 구현 예정(알림 기능을 NodeJS + Socket.io로 구현할 가능성 있음)  
-- 회원가입 시 이메일 인증 기능 구현 예정   
-- 관리자 대시보드 구현 예정  
+- 이메일을 통한 비밀번호 발급   
+- 관리자 대시보드  
