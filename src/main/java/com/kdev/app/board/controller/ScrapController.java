@@ -26,20 +26,37 @@ import com.kdev.app.board.service.BoardRepositoryService;
 import com.kdev.app.user.domain.UserVO;
 import com.kdev.app.user.social.domain.SocialUserDetails;
 
+/**
+ * <pre>
+ * com.kdev.app.board.controller
+ * ScrapController.java
+ * </pre>
+ * @author KDEV
+ * @version 
+ * @created 2017. 3. 6.
+ * @updated 2017. 3. 6.
+ * @history -
+ * ==============================================
+ *	2017. 3. 6. -> @Autowird 주입에서 생성자 주입 방식으로 변경
+ * ==============================================
+ */
 @Controller
 public class ScrapController {
 	private static Logger logger = LoggerFactory.getLogger(ScrapController.class);
 	
-	@Autowired
 	private BoardRepositoryService boardRepositoryService;
 	
-	@Autowired 
 	private ModelMapper modelMapper;
-
+	
+	public ScrapController(BoardRepositoryService boardRepositoryService, ModelMapper modelMapper) {
+		this.boardRepositoryService = boardRepositoryService;
+		this.modelMapper = modelMapper;
+	}
+	
 	/**
-	 * @author		: K
-	 * @method		: checkScrap
-	 * @description	: 게시물 스크랩 서비스
+	 * ==============================================
+	 *	게시물 스크랩 RESTful API + JSON
+	 * ==============================================
 	 */
 	@Secured({"ROLE_USER","ROLE_ADMIN"})
 	@RequestMapping(value="/board/scrap", method=RequestMethod.POST, produces=MediaType.APPLICATION_JSON_VALUE)
@@ -52,9 +69,9 @@ public class ScrapController {
 	}
 	
 	/**
-	 * @author		: K
-	 * @method		: deleteScrap
-	 * @description	: 게시물 스크랩 취소 서비스
+	 * ==============================================
+	 *	스크랩 취소 RESTful API + JSON
+	 * ==============================================
 	 */
 	@Secured({"ROLE_USER","ROLE_ADMIN"})
 	@RequestMapping(value="/board/scrap", method=RequestMethod.DELETE, produces=MediaType.APPLICATION_JSON_VALUE)
@@ -67,9 +84,9 @@ public class ScrapController {
 	}
 	
 	/**
-	 * @author		: K
-	 * @method		: findScrapUser
-	 * @description	: 사용자가 스크랩한 게시물 페이지 호출
+	 * ==============================================
+	 *	스크랩 페이지
+	 * ==============================================
 	 */
 	@Secured({"ROLE_USER","ROLE_ADMIN"})
 	@RequestMapping(value="/board/scrap", method=RequestMethod.GET)
@@ -81,9 +98,9 @@ public class ScrapController {
 	}
 	
 	/**
-	 * @author		: K
-	 * @method		: findBoard
-	 * @description	: 스크랩 게시물 가져오기 & 페이징
+	 * ==============================================
+	 *	스크랩 리스트 RESTful API + JSON
+	 * ==============================================
 	 */
 	@Secured({"ROLE_USER","ROLE_ADMIN"})
 	@RequestMapping(value="/board/scrap/{user}", method=RequestMethod.GET, produces=MediaType.APPLICATION_JSON_VALUE)
@@ -94,9 +111,8 @@ public class ScrapController {
 		
 		if(user.equals(""))
 			return new ResponseEntity<Object>(page, HttpStatus.NOT_ACCEPTABLE);
-		else
-			page = boardRepositoryService.findScrapByUser(userVO, pageable);
 		
+		page = boardRepositoryService.findScrapByUser(userVO, pageable);
 		return new ResponseEntity<Object>(page, HttpStatus.ACCEPTED);
 	}
 }

@@ -3,6 +3,7 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags"%>
 <sec:authentication var="user" property="principal"/>
+<!DOCTYPE html>
 <html ng-app="myApp">
 	<head>
 		<meta http-equiv="X-UA-Compatible" content="IE=edge" charset="utf-8">
@@ -141,12 +142,67 @@
 <script	src="https://code.angularjs.org/1.6.1/angular-sanitize.min.js"></script>
 <script src="${pageContext.request.contextPath}/assets/js/tagging.js"></script>
 <script	src="${pageContext.request.contextPath}/assets/js/dirPagination.js"></script>
+<script src="${pageContext.request.contextPath}/assets/js/sockjs.min.js"></script>
+<script src="${pageContext.request.contextPath}/assets/js/stomp.min.js"></script>
+
 <script type="text/javascript">
+var notify_count = 0;
+var title = document.title;
+var stompClient = null;
+
 $(function() {			
 	$(document).ajaxSend(function(e, xhr, options) {
 		xhr.setRequestHeader('${_csrf.headerName}', '${_csrf.token}');
 	});
 	$(".button-collapse").sideNav();
+	
+	if (!("Notification" in window)) {
+		Materialize.toast("알림 기능이 지원되지 않는 브라우저입니다.",3000,'red',function(){});
+	}
+	else if (Notification.permission !== 'denied') {
+	    Notification.requestPermission(function (permission) {
+	      if (permission === "granted") {
+	    	  Materialize.toast("알림 기능이 활성화 되었습니다.",3000,'green',function(){});
+	      }
+	    });
+	}
+	
+	if (Notification.permission === "granted") {
+		var socket = new SockJS("/websocket");
+		stompClient = Stomp.over(socket);
+		stompClient.debug = true;
+		stompClient.connect({},function(frame) {
+			stompClient.subscribe('/notification', function(response){
+				var obj = JSON.parse(response.body);
+				var options = {
+					      body: obj.message,
+					      icon: obj.user.thumbnail
+					  }
+				var notification = new Notification("Community Webservice Platform",options);
+				notify_count++;
+				var newTitle = '(' + notify_count + ') ' + title;
+			    document.title = newTitle;
+				notification.onclick = function(){
+					location.href=obj.href;
+                	this.close();
+                };
+				setTimeout(function () {
+		            notification.close();
+		        }, 5000);
+				
+			});
+			
+		}, function(message){
+			Materialize.toast("오류가 발생하였습니다. 개발자 도구를 확인하세요",3000,'red',function(){
+				console.log(message);
+			});
+		});
+	}
+	
+	$(window).on("focus", function(){
+		notify_count = 0;
+		document.title = title;
+	});
 });
 var contextPath = '${pageContext.request.contextPath}';
 function withdraw(id){

@@ -3,6 +3,7 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags"%>
 <sec:authentication var="user" property="principal"/>
+<!DOCTYPE html>
 <html ng-app="myApp">
 	<head>
 		<meta http-equiv="X-UA-Compatible" content="IE=edge" charset="utf-8">

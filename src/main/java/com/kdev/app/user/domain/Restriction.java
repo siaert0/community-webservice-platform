@@ -13,6 +13,8 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
+import org.hibernate.validator.constraints.NotBlank;
+
 import com.kdev.app.user.enums.SocialProvider;
 
 import lombok.Data;
@@ -44,9 +46,12 @@ public class Restriction {
 	
 	@Data
 	public static class Create {
+		@NotBlank(message="소셜 정보가 필요합니다.")
 		private SocialProvider provider;
+		@NotBlank(message="유저식별정보가 필요합니다.")
 		private String userid;
 		private String reason;
+		@NotBlank(message="최종제한일자가 필요합니다.")
 		private Date released;
 	}
 }

@@ -31,11 +31,18 @@ import com.kdev.app.user.repositroy.UserRepository;
 import com.kdev.app.user.service.UserRepositoryService;
 
 /**
- * @package		: com.kdev.app.controller
- * @filename	: AdminController.java
- * @author		: K
- * @date 		: 2017. 01. 05.
- * @description	: 관리자 기능 관련 컨트롤러
+ * <pre>
+ * com.kdev.app.user.controller
+ * AdminController.java
+ * </pre>
+ * @author KDEV
+ * @version 
+ * @created 2017. 1. 5.
+ * @updated 2017. 1. 5.
+ * @history -
+ * ==============================================
+ *	관리자 관련 요청을 처리하는 컨트롤러
+ * ==============================================
  */
 @Controller
 public class AdminController {

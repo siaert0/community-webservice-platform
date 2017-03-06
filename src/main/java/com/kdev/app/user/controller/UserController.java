@@ -52,11 +52,22 @@ import com.kdev.app.user.service.UserRepositoryService;
 import com.kdev.app.user.social.domain.SocialUserDetails;
 
 /**
- * @package		: com.kdev.app.controller
- * @filename	: UserController.java
- * @author		: K
- * @date 		: 2016. 12. 20.
- * @description	: 사용자 관련 컨트롤러
+ * <pre>
+ * com.kdev.app.user.controller
+ * UserController.java
+ * </pre>
+ * @author KDEV
+ * @version 
+ * @created 2016. 12. 20.
+ * @updated 2017. 3. 6.
+ * @history -
+ * ==============================================
+ *	사용자와 관련된 요청을 처리하는 컨트롤러
+ *	1. 페이스북 사용자 개인정보 수집
+ *	2. 카카오 사용자 개인정보 수집
+ *	3. 회원가입
+ *	4. 회원수정
+ * ==============================================
  */
 @Controller
 @SessionAttributes("userProfile")

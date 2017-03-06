@@ -49,18 +49,30 @@ public class LoginAuthenticationSuccessHandler extends SavedRequestAwareAuthenti
 		PROVIDER_USER_CP_ID.setProvider(userDetails.getSocialSignInProvider());
 		
 		try{
-		if(restrictionRepository.findOne(PROVIDER_USER_CP_ID) != null){
-			SecurityContextHolder.getContext().setAuthentication(null);
-			response.sendRedirect("/user/restriction/"+userDetails.getId());
-			return;
-		}
+			/**
+			 * ==============================================
+			 *	로그인한 사용자가 제제되었는지를 확인합니다.
+			 *	제제되었을 경우 보여줄 페이지로 리다이렉트합니다.
+			 * ==============================================
+			 */
+			if(restrictionRepository.findOne(PROVIDER_USER_CP_ID) != null){
+				SecurityContextHolder.getContext().setAuthentication(null);
+				response.sendRedirect("/user/restriction/"+userDetails.getId());
+				return;
+			}
 		}catch(NullPointerException e){
 			// 존재하지 않을 경우에는 NullPointerException이 발생한다.
+			// 아무것도 하지 않고 넘어가야 로그인 되어집니다.
 		}
-    			
+    	
+		/**
+		 * ==============================================
+		 *	로그인을 시도했을때 이전에 보던 페이지로 리다이렉트 합니다.
+		 *	security.controller.LoginController
+		 * ==============================================
+		 */
     	String redirect = (String)(request.getSession().getAttribute("redirectUrl"));
     	if(redirect != null){
-    		logger.info("{}", redirect);
     		request.getSession().removeAttribute("redirectUrl");
     		response.sendRedirect(redirect);
     		return;

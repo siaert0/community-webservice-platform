@@ -22,20 +22,37 @@ import com.kdev.app.board.service.BoardRepositoryService;
 import com.kdev.app.user.domain.UserVO;
 import com.kdev.app.user.social.domain.SocialUserDetails;
 
+/**
+ * <pre>
+ * com.kdev.app.board.controller
+ * ThumbController.java
+ * </pre>
+ * @author KDEV
+ * @version 
+ * @created 2017. 3. 6.
+ * @updated 2017. 3. 6.
+ * @history -
+ * ==============================================
+ *	2017. 3. 6. -> @Autowird 주입에서 생성자 주입 방식으로 변경
+ * ==============================================
+ */
 @Controller
 public class ThumbController {
 	private static Logger logger = LoggerFactory.getLogger(ThumbController.class);
 	
-	@Autowired
 	private BoardRepositoryService boardRepositoryService;
 	
-	@Autowired 
 	private ModelMapper modelMapper;
+	
+	public ThumbController(BoardRepositoryService boardRepositoryService, ModelMapper modelMapper) {
+		this.boardRepositoryService = boardRepositoryService;
+		this.modelMapper = modelMapper;
+	}
 
 	/**
-	 * @author		: K
-	 * @method		: checkThumb
-	 * @description	: 게시물 추천 및 취소 서비스
+	 * ==============================================
+	 *	게시물 추천 및 취소 RESTful API + JSON
+	 * ==============================================
 	 */
 	@Secured({"ROLE_USER","ROLE_ADMIN"})
 	@RequestMapping(value="/board/thumb", method=RequestMethod.POST, produces=MediaType.APPLICATION_JSON_VALUE)

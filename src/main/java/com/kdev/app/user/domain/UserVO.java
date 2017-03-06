@@ -64,12 +64,12 @@ public class UserVO {
 	
 	@Data
 	public static class Create{
-		@NotBlank
+		@NotBlank(message="사용자식별정보가 존재하지 않습니다")
 		private String id;
-		@Size(min=8)
-		@Pattern(regexp="^(?=.*\\d)(?=.*[~`!@#$%\\^&*()-])(?=.*[a-zA-Z]).{8,20}$")
+		@Size(min=8, message="최소한 8자리 이상이어야 합니다.")
+		@Pattern(regexp="^(?=.*\\d)(?=.*[~`!@#$%\\^&*()-])(?=.*[a-zA-Z]).{8,20}$", message="비밀번호는 8자리 이상 20자리 이하의 영문, 숫자, 특수문자로 구성되어야 합니다.")
 		private String password;
-		@Email
+		@Email(message="이메일 형식이 올바르지 않습니다.")
 		private String email;
 		@NotBlank
 		private String nickname;
@@ -81,12 +81,12 @@ public class UserVO {
 	
 	@Data
 	public static class Update{
-		@NotBlank
+		@NotBlank(message="사용자식별정보가 존재하지 않습니다")
 		private String id;
-		@Size(min=8)
-		@Pattern(regexp="^(?=.*\\d)(?=.*[~`!@#$%\\^&*()-])(?=.*[a-zA-Z]).{8,20}$")
+		@Size(min=8, message="최소한 8자리 이상이어야 합니다.")
+		@Pattern(regexp="^(?=.*\\d)(?=.*[~`!@#$%\\^&*()-])(?=.*[a-zA-Z]).{8,20}$", message="비밀번호는 8자리 이상 20자리 이하의 영문, 숫자, 특수문자로 구성되어야 합니다.")
 		private String password;
-		@Email
+		@Email(message="이메일 형식이 올바르지 않습니다.")
 		private String email;
 		@NotBlank
 		private String nickname;
@@ -98,7 +98,7 @@ public class UserVO {
 	
 	@Data
 	public static class EmailCheck{
-		@Email
+		@Email(message="이메일 형식이 올바르지 않습니다.")
 		private String email;
 	}
 }

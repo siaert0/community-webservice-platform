@@ -32,20 +32,37 @@ import com.kdev.app.user.domain.UserVO;
 import com.kdev.app.user.exception.UserNotEqualException;
 import com.kdev.app.user.social.domain.SocialUserDetails;
 
+/**
+ * <pre>
+ * com.kdev.app.board.controller
+ * CommentController.java
+ * </pre>
+ * @author KDEV
+ * @version 
+ * @created 2017. 3. 6.
+ * @updated 2017. 3. 6.
+ * @history -
+ * ==============================================
+ *	2017. 3. 6. -> @Autowird 주입에서 생성자 주입 방식으로 변경
+ * ==============================================
+ */
 @Controller
 public class CommentController {
 	private static Logger logger = LoggerFactory.getLogger(CommentController.class);
 	
-	@Autowired
 	private BoardRepositoryService boardRepositoryService;
 	
-	@Autowired 
 	private ModelMapper modelMapper;
 	
+	public CommentController(BoardRepositoryService boardRepositoryService, ModelMapper modelMapper) {
+		this.boardRepositoryService = boardRepositoryService;
+		this.modelMapper = modelMapper;
+	}
+
 	/**
-	 * @author		: K
-	 * @method		: createComment
-	 * @description	: 댓글 작성 서비스
+	 * ==============================================
+	 *	댓글 생성 RESTful API + JSON
+	 * ==============================================
 	 */
 	@Secured({"ROLE_USER","ROLE_ADMIN"})
 	@RequestMapping(value="/comment", method=RequestMethod.POST, produces=MediaType.APPLICATION_JSON_VALUE)
@@ -63,9 +80,9 @@ public class CommentController {
 	}
 		
 	/**
-	 * @author		: K
-	 * @method		: findComment
-	 * @description	: 댓글 가져오기 & 페이징 서비스
+	 * ==============================================
+	 *	댓글 리스트 RESTful API + JSON
+	 * ==============================================
 	 */
 	@RequestMapping(value="/comment", method=RequestMethod.GET, produces=MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Object> findComment(@PageableDefault(sort = { "id" }, direction = Direction.DESC, size = 1000) Pageable pageable, @RequestParam int board_id){
@@ -74,9 +91,9 @@ public class CommentController {
 	}
 	
 	/**
-	 * @author		: K
-	 * @method		: updateComment
-	 * @description	: 댓글 수정하기 서비스 [검증 부분 추가 필요]
+	 * ==============================================
+	 *	댓글 수정 RESTful API + JSON
+	 * ==============================================
 	 */
 	@Secured({"ROLE_USER","ROLE_ADMIN"})
 	@RequestMapping(value="/comment/{id}", method=RequestMethod.POST, produces=MediaType.APPLICATION_JSON_VALUE)
@@ -85,9 +102,8 @@ public class CommentController {
 		UserVO userVO = modelMapper.map(userDetails, UserVO.class);
 		Comment commentVO = boardRepositoryService.findCommentOne(id);
 		
-		//관리자일 경우 수정처리
 		if(userVO.isRoleAdmin()){
-
+			//관리자일 경우 수정처리
 		}else if(!(commentVO.getUser().getId().equals(userVO.getId())))
 			throw new UserNotEqualException();
 		
@@ -98,9 +114,9 @@ public class CommentController {
 	}
 	
 	/**
-	 * @author		: K
-	 * @method		: deleteComment
-	 * @description	: 댓글 삭제하기 서비스
+	 * ==============================================
+	 *	댓글 삭제 RESTful API + JSON
+	 * ==============================================
 	 */
 	@Secured({"ROLE_USER","ROLE_ADMIN"})
 	@RequestMapping(value="/comment/{id}", method=RequestMethod.DELETE, produces=MediaType.APPLICATION_JSON_VALUE)
@@ -109,14 +125,10 @@ public class CommentController {
 		UserVO userVO = modelMapper.map(userDetails, UserVO.class);
 		Comment commentVO = boardRepositoryService.findCommentOne(id);
 		
-		//관리자일 경우 삭제처리
-		if(userVO.isRoleAdmin()){
-			boardRepositoryService.deleteComment(id);
-			return new ResponseEntity<Object>(commentVO, HttpStatus.ACCEPTED);
-		}
 		
-		// 작성자 여부 체크
-		if(!(commentVO.getUser().getId().equals(userVO.getId())))
+		if(userVO.isRoleAdmin()){
+			//관리자일 경우 삭제처리
+		}else if(!(commentVO.getUser().getId().equals(userVO.getId())))
 			throw new UserNotEqualException();
 		
 		boardRepositoryService.deleteComment(id);

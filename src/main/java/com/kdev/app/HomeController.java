@@ -11,6 +11,20 @@ import org.springframework.web.bind.annotation.RequestMethod;
 
 import com.kdev.app.board.domain.Category;
 
+/**
+ * <pre>
+ * com.kdev.app
+ * HomeController.java
+ * </pre>
+ * @author KDEV
+ * @version 
+ * @created 2016. 12. 18.
+ * @updated 2016. 12. 18.
+ * @history -
+ * ==============================================
+ *	뷰 페이지 컨트롤러
+ * ==============================================
+ */
 @Controller
 public class HomeController {
 	
@@ -28,10 +42,5 @@ public class HomeController {
 	public String category(Model model, @PathVariable String category){
 		model.addAttribute("category", category);
 		return "board/list";
-	}
-	
-	@RequestMapping(value="/parse", method = RequestMethod.GET)
-	public String parse(Model model){
-		return "parse/home";
 	}
 }

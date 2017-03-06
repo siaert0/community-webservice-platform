@@ -24,12 +24,32 @@ import org.springframework.social.security.AuthenticationNameUserIdSource;
 
 import com.kdev.app.user.controller.SocialConnectController;
 
+/**
+ * <pre>
+ * com.kdev.app.user.social.config
+ * SocialConfig.java
+ * </pre>
+ * @author KDEV
+ * @version 
+ * @created 
+ * @updated 2017. 3. 6. 소스 설명을 위한 주석 추가
+ * @history -
+ * ==============================================
+ *	Spring Social Configuration Class
+ * ==============================================
+ */
 @Configuration
 public class SocialConfig implements SocialConfigurer {
 
 	@Autowired
 	private DataSource dataSource;
 	
+	/**
+	 * ==============================================
+	 *	소셜 프로바이더를 커넥션 팩토리 클래스에 주입합니다. 
+	 *	주의) 페이스북은 spring-social-facebook를 통해 자동으로 주입되어집니다. 
+	 * ==============================================
+	 */
 	@Override
 	public void addConnectionFactories(ConnectionFactoryConfigurer connectionFactoryConfigurer, Environment environment) {
 		// TODO Auto-generated method stub	
@@ -37,6 +57,12 @@ public class SocialConfig implements SocialConfigurer {
 	            environment.getProperty("spring.social.kakao.app-id")));
 	}
 	
+	/**
+	 * ==============================================
+	 *	소셜 커넥션 정보를 데이터베이스로 관리합니다.
+	 *	user.social.domain.UserConnection 클래스에 의해 커넥션을 위한 테이블이 생성되어집니다.
+	 * ==============================================
+	 */
 	@Override
 	public UsersConnectionRepository getUsersConnectionRepository(ConnectionFactoryLocator connectionFactoryLocator) {
 		// TODO Auto-generated method stub

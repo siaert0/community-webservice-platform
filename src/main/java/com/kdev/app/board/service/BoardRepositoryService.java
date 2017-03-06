@@ -27,6 +27,20 @@ import com.kdev.app.board.repository.ThumbRepository;
 import com.kdev.app.user.domain.UserVO;
 import com.kdev.app.user.exception.UserNotFoundException;
 
+/**
+ * <pre>
+ * com.kdev.app.board.service
+ * BoardRepositoryService.java
+ * </pre>
+ * @author KDEV
+ * @version 
+ * @created 2017. 3. 6.
+ * @updated 2017. 3. 6.
+ * @history -
+ * ==============================================
+ *	게시물 관련 서비스
+ * ==============================================
+ */
 @Service
 @Transactional //@EnableTransactionManagement
 public class BoardRepositoryService {
@@ -100,6 +114,7 @@ public class BoardRepositoryService {
 			throw new BoardNotFoundException();
 		return board;
 	}
+	
 	public void deleteBoardAllByUser(UserVO userVO){
 		boardRepository.deleteByUser(userVO);
 	}
@@ -133,6 +148,10 @@ public class BoardRepositoryService {
 	
 	public void deleteCommentAll(int boardid){
 		commentRepository.deleteByBoard(boardid);
+	}
+	
+	public void deleteCommentByUser(UserVO userVO){
+		commentRepository.deleteByUser(userVO);
 	}
 	
 	public Comment findCommentOne(int id){

@@ -21,8 +21,12 @@ public class SocialConnectController extends ConnectController {
 		// TODO Auto-generated constructor stub
 	}
 	
-	/* @method		: connectedView
-	 * @description	: 연결된 소셜계정에 따라 등록페이지를 분기
+	/**
+	 * ==============================================
+	 *	facebook -> signin/facebook
+	 *	kakao -> signin/kakao
+	 *	사용자가 각 소셜 프로바이더를 통해 인증을 완료하면 소셜 프로바이더에 따른 개인정보 수집을 위해 분기합니다.
+	 * ==============================================
 	 */
 	@Override
 	protected String connectedView(String providerId) {

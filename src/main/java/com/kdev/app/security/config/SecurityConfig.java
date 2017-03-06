@@ -15,6 +15,20 @@ import org.springframework.security.web.authentication.AuthenticationSuccessHand
 import com.kdev.app.security.handler.LoginAuthenticationSuccessHandler;
 import com.kdev.app.user.service.UserRepositoryService;
 
+/**
+ * <pre>
+ * com.kdev.app.security.config
+ * SecurityConfig.java
+ * </pre>
+ * @author KDEV
+ * @version 
+ * @created 2016. 12. 27.
+ * @updated 2017. ?. ?.
+ * @history -
+ * ==============================================
+ *	
+ * ==============================================
+ */
 @Configuration
 @EnableGlobalMethodSecurity(securedEnabled = true)
 public class SecurityConfig extends WebSecurityConfigurerAdapter {

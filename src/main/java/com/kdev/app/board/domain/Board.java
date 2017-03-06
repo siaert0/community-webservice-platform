@@ -72,9 +72,9 @@ public class Board {
     
     @Data
 	public static class Create{
-		@NotEmpty
+		@NotEmpty(message="제목을 입력해주세요")
 		private String title;
-		@NotEmpty
+		@NotEmpty(message="카테고리를 선택해주세요")
 		private String category;
 		private String description;
 		private String tags;
@@ -84,9 +84,9 @@ public class Board {
 	@Data
 	public static class Update{
 		private int id;
-		@NotEmpty
+		@NotEmpty(message="제목을 입력해주세요")
 		private String title;
-		@NotEmpty
+		@NotEmpty(message="카테고리를 선택해주세요")
 		private String category;
 		private String description;
 		private String tags;

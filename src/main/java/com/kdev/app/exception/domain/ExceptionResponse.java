@@ -3,9 +3,18 @@ package com.kdev.app.exception.domain;
 import lombok.Data;
 
 /**
+ * <pre>
+ * com.kdev.app.exception.domain
+ * ExceptionResponse.java
+ * </pre>
  * @author KDEV
- * @date 2017. 1. 18.
- * @description 빌더패턴으로 변경
+ * @version 
+ * @created 2017. 1. 18.
+ * @updated 2017. 2. 6.
+ * @history -
+ * ==============================================
+ *	2017. 2. 6. -> 에러 정보 클래스에 대하여 빌더 패턴 적용
+ * ==============================================
  */
 @Data
 public class ExceptionResponse {

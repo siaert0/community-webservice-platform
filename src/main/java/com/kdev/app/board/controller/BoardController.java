@@ -21,6 +21,7 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
@@ -42,33 +43,53 @@ import com.kdev.app.board.service.BoardRepositoryService;
 import com.kdev.app.user.domain.UserVO;
 import com.kdev.app.user.exception.UserNotEqualException;
 import com.kdev.app.user.social.domain.SocialUserDetails;
+import com.kdev.app.websocket.domain.Message;
 
+/**
+ * <pre>
+ * com.kdev.app.board.controller
+ * BoardController.java
+ * </pre>
+ * @author KDEV
+ * @version 
+ * @created 2017. 12. 26.
+ * @updated 2017. 3. 6.
+ * @history -
+ * ==============================================
+ *	2017. 3. 6. -> @Autowird 주입에서 생성자 주입 방식으로 변경
+ * ==============================================
+ */
 @Controller
 public class BoardController {
 	private static Logger logger = LoggerFactory.getLogger(BoardController.class);
 	
-	@Autowired
 	private BoardRepositoryService boardRepositoryService;
 	
-	@Autowired 
 	private ModelMapper modelMapper;
 	
+	@Autowired
+	private SimpMessagingTemplate simpMessagingTemplate;
+	
+	public BoardController(BoardRepositoryService boardRepositoryService, ModelMapper modelMapper) {
+		this.boardRepositoryService = boardRepositoryService;
+		this.modelMapper = modelMapper;
+	}
 	/**
-	 * @author		: K
-	 * @method		: board_form
-	 * @description	: 게시물 작성 페이지 호출, 로그인된 유저만 접근
+	 * ==============================================
+	 *	게시물 생성 페이지
+	 * ==============================================
 	 */
 	@Secured({"ROLE_USER","ROLE_ADMIN"})
 	@RequestMapping(value="/board", method=RequestMethod.GET)
 	public String board_form(Model model){
 		return "board/form";
 	}
-	/**
-	 * @author		: K
-	 * @method		: findBoardOne
-	 * @description	: 해당 번호의 게시물 페이지 호출, 없을 경우 404 에러처리
-	 */
 	
+	/**
+	 * ==============================================
+	 *	게시물 상세보기 페이지
+	 * ==============================================
+	 */
 	@RequestMapping(value="/board/{id}", method=RequestMethod.GET)
 	public String findBoardOne(@PathVariable int id, Model model){
 		Board boardVO = boardRepositoryService.findBoardOne(id);	
@@ -79,11 +100,10 @@ public class BoardController {
 	}
 	
 	/**
-	 * @author		: K
-	 * @method		: findBoardOne
-	 * @description	: 해당 번호의 게시물 서비스, JSON
+	 * ==============================================
+	 *	게시물 상세 정보 RESTful API + JSON
+	 * ==============================================
 	 */
-	
 	@RequestMapping(value="/board/{id}", method=RequestMethod.GET, produces=MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Object> findBoardOneREST(@PathVariable int id){
 		
@@ -96,9 +116,9 @@ public class BoardController {
 	}
 	
 	/**
-	 * @author		: K
-	 * @method		: createBoard
-	 * @description	: 게시물 생성 API
+	 * ==============================================
+	 *	게시물 등록 RESTful API + JSON
+	 * ==============================================
 	 */
 	@Secured({"ROLE_USER","ROLE_ADMIN"})
 	@RequestMapping(value="/board", method=RequestMethod.POST, produces=MediaType.APPLICATION_JSON_VALUE)
@@ -130,13 +150,20 @@ public class BoardController {
 		scrapId.setUserid(userVO.getId());
 		boardRepositoryService.checkScrap(scrapId);
 		
+		Message message = new Message();
+		message.setMessage("새로운 글이 등록되었습니다.");
+		message.setHref("/board/"+createdBoard.getId());
+		message.setUser(userVO);
+		
+		simpMessagingTemplate.convertAndSend("/notification", message);
+		
 		return new ResponseEntity<Object>(createdBoard, HttpStatus.CREATED);
 	}
 		
 	/**
-	 * @author		: K
-	 * @method		: findBoard
-	 * @description	: 게시물 가져오기 & 페이징 서비스 + 검색 기능 추가
+	 * ==============================================
+	 *	게시물 검색 RESTful API + JSON
+	 * ==============================================
 	 */
 	@RequestMapping(value="/board", method=RequestMethod.GET, produces=MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Object> findBoard(@RequestParam(value="category", required=false, defaultValue="") String category, 
@@ -167,9 +194,9 @@ public class BoardController {
 	}
 	
 	/**
-	 * @author		: K
-	 * @method		: updateBoard
-	 * @description	: 게시물 수정하기 서비스
+	 * ==============================================
+	 *	게시물 수정 RESTful API + JSON
+	 * ==============================================
 	 */
 	@Secured({"ROLE_USER","ROLE_ADMIN"})
 	@RequestMapping(value="/board/{id}", method=RequestMethod.POST, produces=MediaType.APPLICATION_JSON_VALUE)
@@ -187,14 +214,13 @@ public class BoardController {
 			throw new ValidErrorException(errors.toString());
 		}
 		
+		// 인증된 사용자 정보를 유저 엔터티로 맵핑
 		SocialUserDetails userDetails = (SocialUserDetails)authentication.getPrincipal();
 		UserVO userVO = modelMapper.map(userDetails, UserVO.class);
-		
 		Board boardVO = boardRepositoryService.findBoardOne(id);
 		
-		//관리자일 경우 수정처리
 		if(userVO.isRoleAdmin()){
-
+			//관리자일 경우에는 수정할 수 있도록 처리합니다.
 		}else if(!(boardVO.getUser().getId().equals(userVO.getId())))
 			throw new UserNotEqualException();
 		
@@ -211,9 +237,10 @@ public class BoardController {
 	}
 	
 	/**
-	 * @author		: K
-	 * @method		: deleteBoard
-	 * @description	: 게시물 삭제 서비스, 관련된 댓글, 스크랩, 추천 모두 삭제
+	 * ==============================================
+	 *	게시물 정보 삭제 RESTful API + JSON
+	 *	관련된 스크랩, 추천을 모두 삭제합니다.
+	 * ==============================================
 	 */
 	@Secured({"ROLE_USER","ROLE_ADMIN"})
 	@RequestMapping(value="/board/{id}", method=RequestMethod.DELETE, produces=MediaType.APPLICATION_JSON_VALUE)
@@ -223,21 +250,20 @@ public class BoardController {
 		UserVO userVO = modelMapper.map(userDetails, UserVO.class);
 		Board boardVO = boardRepositoryService.findBoardOne(id);
 		
-		//관리자일 경우 삭제처리
 		if(userVO.isRoleAdmin()){
-			boardRepositoryService.deleteBoard(id);
-			return new ResponseEntity<Object>(boardVO, HttpStatus.ACCEPTED);
-		}
-			
-		// 작성자 여부 체크
-		if(!(boardVO.getUser().getId().equals(userVO.getId())))
+			//관리자일 경우 삭제처리
+		}else if(!(boardVO.getUser().getId().equals(userVO.getId())))
 			throw new UserNotEqualException();
 		
 		boardRepositoryService.deleteBoard(id);
 		return new ResponseEntity<Object>(boardVO, HttpStatus.ACCEPTED);
 	}
 	
-	// 최근 게시물 정보 API
+	/**
+	 * ==============================================
+	 *	최근 게시물 정보 RESTful API + JSON
+	 * ==============================================
+	 */
 	@RequestMapping(value="/top", method = RequestMethod.GET, produces=MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Object> topData(Model model, @PageableDefault(sort="created", direction = Direction.DESC, size = 10) Pageable pageable){
 		List<Comment> COMMENT = boardRepositoryService.findCommentAll(pageable).getContent();
@@ -252,6 +278,11 @@ public class BoardController {
 		return new ResponseEntity<Object>(map,HttpStatus.ACCEPTED);
 	}
 	
+	/**
+	 * ==============================================
+	 *	카테고리 목록 RESTful API + JSON
+	 * ==============================================
+	 */
 	@RequestMapping(value="/category", method = RequestMethod.GET, produces=MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Object> category(Model model){
 		List<Category> CATEGORY = boardRepositoryService.findCategories();

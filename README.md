@@ -32,36 +32,22 @@ JPA의 메소드의 이름으로 SQL을 만드는 것이 복잡한 `where`연산
 
 ## 3. 실행방법  
 
-#### 3.1 MYSQL 의존성을 제거하고 H2 내장 데이터베이스를 활성화해주세요.
-```xml  
-<!-- H2 -->
-<dependency>
-	<groupId>com.h2database</groupId>
-	<artifactId>h2</artifactId>
-	<scope>runtime</scope>
-</dependency>
-```
-
-#### 3.2 application.properties를 H2 데이터베이스를 사용하기 위한 설정을 해주세요
-```text  
-# DataSource
-spring.datasource.initialize=true
-
-spring.datasource.tomcat.test-while-idle=true
-spring.datasource.tomcat.validation-query=SELECT 1
-
-# JPA / Hibernate
-spring.jpa.show-sql=false
-spring.jpa.hibernate.ddl-auto=update
-spring.jpa.hibernate.naming.strategy=org.hibernate.cfg.EJB3NamingStrategy
-spring.jpa.hibernate.naming.physical-strategy=org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
-```
-
-#### 3.3 Run As - Spring Boot App으로 서버를 실행해주세요  
+#### 3.1 Run As - Spring Boot App으로 서버를 실행해주세요  
 실행이 안되시나요 ㅠㅠ 죄송합니다. `Lombok`을 IDE에 적용시켜줘야 합니다. 메이븐 라이브러리 폴더에서 lombok을 찾아 설치해주시기 바랍니다.
+
+#### 3.2 관리자 계정정보   
+```text
+아이디 : admin
+비밀번호 : 12345678
+```
+
+#### 3.2 초기 실행 후에는 데이터 임포트 설정을 해제하세요   
+```text
+spring.datasource.initialize=false
+```
 
 ## 4. 추가 구현 계획  
 
 - 스프링 웹 소켓을 적용하여 알림 기능 구현 예정(알림 기능을 NodeJS + Socket.io로 구현할 가능성 있음)  
-- 회원가입 시 이메일 인증 기능 구현 예정  
+- 회원가입 시 이메일 인증 기능 구현 예정   
 - 관리자 대시보드 구현 예정  
